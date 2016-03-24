@@ -9,9 +9,9 @@ var ProductSchema = new mongoose.Schema({
   prices: [{price: Number, pricecategory: {type: Number, ref: 'Pricecategory'}}],
   isconsumable: Boolean,
   stock: Number,
-  visiblegroups: [{type: number, ref: 'Usergroup'}],
-  productfamily: [{type: number, ref: 'Productfamily'}],
-  images: [{type: number, ref: 'Productimage'}]
+  visiblegroups: [{type: Number, ref: 'Usergroup'}],
+  productfamily: [{type: Number, ref: 'Productfamily'}],
+  images: [{type: Number, ref: 'Productimage'}]
 });
 
 export default mongoose.model('Product', ProductSchema);
