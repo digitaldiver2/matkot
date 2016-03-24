@@ -22,7 +22,8 @@ var UserSchema = new Schema({
   salt: String,
   google: {},
   github: {},
-  groups: []
+  groups: [{type: Number, ref: 'Usergroup'}],
+  orders: [{type: Number, ref: 'Order'}]
 });
 
 /**
