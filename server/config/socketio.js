@@ -17,6 +17,12 @@ function onConnect(socket) {
   });
 
   // Insert sockets below
+  require('../api/pricecategory/pricecategory.socket').register(socket);
+  require('../api/productimage/productimage.socket').register(socket);
+  require('../api/productfamily/productfamily.socket').register(socket);
+  require('../api/order/order.socket').register(socket);
+  require('../api/product/product.socket').register(socket);
+  require('../api/usergroup/usergroup.socket').register(socket);
   require('../api/thing/thing.socket').register(socket);
 
 }
