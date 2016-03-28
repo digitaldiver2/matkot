@@ -64,6 +64,19 @@ export function show(req, res, next) {
     .catch(err => next(err));
 }
 
+export function admin_show(req, res, next) {
+  var userId = req.params.id;
+
+  return User.findById(userId, '-salt -password -_id -__v').exec()
+    .then(user => {
+      if (!user) {
+        return res.status(404).end();
+      }
+      res.json(user);
+    })
+    .catch(err => next(err));
+}
+
 /**
  * Deletes a user
  * restriction: 'admin'
