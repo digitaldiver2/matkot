@@ -7,19 +7,25 @@
 		        <span class="text-muted">{{user.email}}</span>
 		    </div>
 
-      		<a ng-href="/admin/user/{{user._id}}" class="trash"><span class="fa fa-pencil fa-2x"></span></a>
-      		<a ng-click="admin.delete(user)" class="trash"><span class="fa fa-trash fa-2x"></span></a>
+      		<a ng-href="/admin/user/{{user._id}}" class="edit"><span class="fa fa-pencil fa-2x"></span></a>
+      		<a ng-click="" class="trash"><span class="fa fa-trash fa-2x"></span></a>
 		</li>
 	</ul>
-	<button class="btn btn-default">Add user</button>
+	<button class="btn btn-default" ng-click="usersCtrl.new_user()">Add user</button>
 
 	<h3>Groups</h3>
 	<ul class="list-group">
 		<li class="list-group-item" ng-repeat="group in usersCtrl.groups">
-			{{group.name}}
+			<div class="user-info">
+		        <strong>{{group.name}}</strong><br>
+		        <span class="text-muted">{{group.info}}</span>
+		    </div>
+
+      		<a ng-href="/admin/group/{{group._id}}" class="edit"><span class="fa fa-pencil fa-2x"></span></a>
+      		<a ng-click="" class="trash"><span class="fa fa-trash fa-2x"></span></a>
 		</li>
-	</lu>
-	<button class="btn btn-default">Add group</button>
+	</ul>
+	<button class="btn btn-default" ng-click="usersCtrl.new_group()">Add group</button>
 </div>
 
 
