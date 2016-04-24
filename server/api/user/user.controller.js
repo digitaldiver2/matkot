@@ -4,6 +4,87 @@ import User from './user.model';
 import passport from 'passport';
 import config from '../../config/environment';
 import jwt from 'jsonwebtoken';
+import _ from 'lodash';
+
+
+function respondWithResult(res, statusCode) {
+  statusCode = statusCode || 200;
+  return function(entity) {
+    if (entity) {
+      res.status(statusCode).json(entity);
+    }
+  };
+}
+
+function saveUpdates(updates) {
+  return function(entity) {
+
+
+    //clear groups
+    entity.groups = new Array();
+    //clear orders
+    entity.orders = new Array();
+
+    //push all elements from updates
+
+    //remove groups and orders from updates
+    // console.log('groups');
+    // console.dir(updates.groups);
+    updates.groups.forEach(function (group_id) {
+      // console.log('group');
+      // console.dir(group);
+      // console.log(group._id);
+      // entity.groups.push(group["_id"]);
+      entity.groups.push(group_id);
+    });
+
+    updates.orders.forEach(function (order_id) {
+      entity.orders.push(order_id);
+    })
+
+    delete updates.groups;
+    delete updates.orders;
+    delete updates.groupref;
+    
+
+
+    console.log('updates');
+    console.dir(updates);
+
+    var updated = _.merge(entity, updates);
+
+
+    console.log('updated');
+    console.dir(updated);
+
+    return updated.save()
+      .then(updated => {
+        return updated;
+      });
+  };
+}
+
+function removeEntity(res) {
+  return function(entity) {
+    if (entity) {
+      return entity.remove()
+        .then(() => {
+          res.status(204).end();
+        });
+    }
+  };
+}
+
+function handleEntityNotFound(res) {
+  return function(entity) {
+    if (!entity) {
+      res.status(404).end();
+      return null;
+    }
+    return entity;
+  };
+}
+
 
 function validationError(res, statusCode) {
   statusCode = statusCode || 422;
@@ -15,6 +96,7 @@ function validationError(res, statusCode) {
 function handleError(res, statusCode) {
   statusCode = statusCode || 500;
   return function(err) {
+    console.log(err);
     res.status(statusCode).send(err);
   };
 }
@@ -24,7 +106,8 @@ function handleError(res, statusCode) {
  * restriction: 'admin'
  */
 export function index(req, res) {
-  return User.find({}, '-salt -password').exec()
+  return User.find({}, '-salt -password')
+    .exec()
     .then(users => {
       res.status(200).json(users);
     })
@@ -67,7 +150,10 @@ export function show(req, res, next) {
 export function admin_show(req, res, next) {
   var userId = req.params.id;
 
-  return User.findById(userId, '-salt -password -_id -__v').exec()
+  return User.findById(userId, '-salt -password -_id -__v')
+    .populate('groups')
+    // .populate('orders')
+    .exec()
     .then(user => {
       if (!user) {
         return res.status(404).end();
@@ -110,6 +196,26 @@ export function changePassword(req, res, next) {
         return res.status(403).end();
       }
     });
+}
+
+/**
+ * update data
+ */
+
+ // Updates an existing user in the DB
+export function update(req, res) {
+  console.log('try to update');
+  console.dir(req.body);
+  if (req.body._id) {
+    delete req.body._id;
+  }
+  return User.findById(req.params.id)
+    .populate('groups')
+    .exec()
+    .then(handleEntityNotFound(res))
+    .then(saveUpdates(req.body))
+    .then(respondWithResult(res))
+    .catch(handleError(res));
 }
 
 /**

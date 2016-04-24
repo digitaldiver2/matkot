@@ -24,10 +24,12 @@ class GroupComponent {
   	if (this.id) {
   		this.$http.put('/api/usergroups/' + this.id, this.group);
   	} else {
-	  this.$http.post('/api/usergroups', this.group).then(response => {
-	  	this.$location.path('/admin/group/' + response.data._id);
-	  });
-	}
+      this.$http.post('/api/usergroups', this.group).then(response => {
+	  	// this.$location.path('/admin/group/' + response.data._id);
+      });
+    }
+    this.$location.path('/admin/users');
+
   }
 }
 

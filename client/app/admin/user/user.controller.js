@@ -2,34 +2,74 @@
 (function(){
 
 class UserComponent {
-  constructor($scope, $http, $stateParams) {
-    this.user = {};
+  constructor($scope, $http, $stateParams, $location) {
+    this.isAdmin = false;
 
     this.$http = $http;
     this.$scope = $scope;
+    this.$location = $location;
     this.$scope.user = {};
     this.$scope.userid = $stateParams.id;
   }
 
   $onInit() {
+
+    //first, get all groups loaded
+    this.$http.get('/api/usergroups').then(response => {
+      this.groups = response.data;
+      
+      //if loading with userid, check all groups that are assigned to the user
+      if (this.$scope.userid) {
+        this.$http.get('/api/users/admin/' + this.$scope.userid).then(response => {
+          this.$scope.user = response.data;
+          this.isAdmin = this.$scope.user.role == 'admin';
+
+          //run over all groups and check if needed
+          for (var i=0; i<this.$scope.user.groups.length; i++) {
+            var usergroup = this.$scope.user.groups[i];
+            for (var j=0; j<this.groups.length; j++) {
+              if (usergroup._id == this.groups[j]._id) {
+                this.groups[j].checked = true;
+                break;
+              }
+            }
+          }
+        });       
+        
+      }
+    });
+
   	if (this.$scope.userid) {
 	    this.$http.get('/api/users/admin/' + this.$scope.userid).then(response => {
 	      this.$scope.user = response.data;
-	      this.$scope.user.isAdmin = this.$scope.user.role == 'admin';
-	      // this.socket.syncUpdates('thing', this.awesomeThings);
+	      this.isAdmin = this.$scope.user.role == 'admin';
 	    });
-	}
+    }
   }
 
   changerole () {	
-  	console.log('changing role');
-  	if (this.$scope.user.isAdmin) {
+  	if (this.isAdmin) {
   		this.$scope.user.role = 'admin';
-  		console.log('role to admin');
   	} else {
   		this.$scope.user.role = 'user';
-  		console.log('role to user');
   	}
+  }
+
+
+  getGroups () {
+    this.$scope.user.groups = [];
+    this.groups.forEach(function (usergroup) {
+      if (usergroup.checked) {
+        this.$scope.user.groups.push(usergroup._id);
+      }
+    }, this);
+  }
+
+  submit() {
+    this.getGroups();
+    this.$http.put('/api/users/admin/' + this.$scope.userid, this.$scope.user).then(response => {
+    });
+    this.$location.path('/admin/users');
   }
 }
 

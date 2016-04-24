@@ -2,7 +2,7 @@
 
 	id: {{userid}}
 
-	<form>
+	<form ng-submit="$ctrl.submit()">
 		<div class="form-group">
 	    	<label for="Name">Name</label>
 	    	<input type="text" class="form-control" id="Name" placeholder="Name" ng-model="user.name">
@@ -13,17 +13,24 @@
 		</div>
 		<div class="checkbox">
 			<label>
-		  		<input type="checkbox" ng-model="user.isAdmin" ng-change="$ctrl.changerole()">is admin
+		  		<input type="checkbox" ng-model="$ctrl.isAdmin" ng-change="$ctrl.changerole()">is admin
 			</label>
 		</div>
-	  	<button type="submit" class="btn btn-default">Submit</button>
+	  	
+		<h3>Groups</h3>
+		<label>filter</label>
+		<input type="text" ng-model="search.name">	
+		<ul class="list-group user-list">
+			<li class="list-group-item" ng-repeat="group in $ctrl.groups | filter:search">
+				<!-- <div class="checkbox"> -->
+					<label>
+						<input type="checkbox" ng-model="group.checked" ng-change="$ctrl.change(group)">
+			        		<strong>{{group.name}}</strong>
+		        	</label>
+			</li>
+		</ul>
+
+		<button type="submit" class="btn btn-default">Submit</button>
 	</form>
-
-
-	<ul>
-		<li>is admin</li>
-		<li>add to group</li>
-		<li>remove from group</li>
-	</ul>
 
 </div>
