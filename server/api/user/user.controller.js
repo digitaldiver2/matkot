@@ -31,10 +31,6 @@ function saveUpdates(updates) {
     // console.log('groups');
     // console.dir(updates.groups);
     updates.groups.forEach(function (group_id) {
-      // console.log('group');
-      // console.dir(group);
-      // console.log(group._id);
-      // entity.groups.push(group["_id"]);
       entity.groups.push(group_id);
     });
 
@@ -44,18 +40,7 @@ function saveUpdates(updates) {
 
     delete updates.groups;
     delete updates.orders;
-    delete updates.groupref;
-    
-
-
-    console.log('updates');
-    console.dir(updates);
-
     var updated = _.merge(entity, updates);
-
-
-    console.log('updated');
-    console.dir(updated);
 
     return updated.save()
       .then(updated => {
@@ -204,8 +189,6 @@ export function changePassword(req, res, next) {
 
  // Updates an existing user in the DB
 export function update(req, res) {
-  console.log('try to update');
-  console.dir(req.body);
   if (req.body._id) {
     delete req.body._id;
   }
