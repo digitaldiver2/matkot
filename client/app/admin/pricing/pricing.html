@@ -1,0 +1,14 @@
+<div class="container">
+	<ul class="list-group category-list">
+		<h3>Prijs categorie</h3>
+		<li class="list-group-item" ng-repeat="category in categories | orderBy:'name'">
+			<div class="category-info">
+		        <strong>{{category.name}}</strong>
+		    </div>
+
+      		<a ng-href="/admin/pricecategory/{{category._id}}" class="edit"><span class="fa fa-pencil fa-2x"></span></a>
+      		<a ng-click="$ctrl.DeleteCategory(category._id)" class="trash"><span class="fa fa-trash fa-2x"></span></a>
+		</li>
+	</ul>
+	<button class="btn btn-default" ng-click="$ctrl.NewCategory()">Nieuwe prijs categorie</button>
+</div>

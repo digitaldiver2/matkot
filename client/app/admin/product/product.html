@@ -1,0 +1,51 @@
+<div class="container">
+	<form ng-submit="$ctrl.submit()">
+		<div class="form-group">
+			<label for="name">Titel</label>
+			<input type="text" id="name" ng-model="product.name" class="form-control">
+		</div>
+		<div class="form-group">
+			<label for="info">Omschrijving</label>
+			<textarea id="info" ng-model="product.info" class="form-control"></textarea>
+		</div>
+		<div class="form-group">
+			<label for="active">
+				<input type="checkbox" id="active" ng-model="product.active">
+				Actief
+			</label>
+		</div>
+		<div class="form-group">
+			<label for="consumable">
+				<input type="checkbox" id="consumable" ng-model="product.isconsumable">
+				Verbruiksgoed
+			</label>
+		</div>
+		<div class="form-group">
+			<label for="stock">Aantal</label>
+			<input type="number" id="stock" ng-model="product.stock" class="form-control">
+		</div>
+		<h3>Product groep</h3>
+		<ul class="list-group">
+			<li class="list-group-item" ng-repeat="category in productcategories | orderBy:'name'">
+				<div class="form-group">
+					<label for="{{category._id}}">
+						<input type="checkbox" id="{{category._id}}" ng-model="category.checked">
+						{{category.name}}
+					</label>
+				</div>
+			</li>
+		</ul>
+
+		<h3>Zichtbaar voor:</h3>
+		<p>Indien geen groep geselecteerd, dan is het product beschikbaar voor alle groepen.</p>
+		<ul class="list-group">
+			<li class="list-group-item" ng-repeat="group in groups | orderBy:'name'">
+				<div class="form-group">
+					<label for="{{group._id}}">
+						<input type="checkbox" id="{{group._id}}" ng-model="group.checked">
+							{{group.name}}
+					</label>
+				</div>
+			</li>
+		</ul>
+</div>

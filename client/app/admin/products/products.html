@@ -1,0 +1,28 @@
+<div class="container">
+	<ul class="list-group product-list">
+		<h3>Producten</h3>
+		<li class="list-group-item" ng-repeat="product in $ctrl.products">
+			<div class="product-info">
+		        <strong>{{product.name}}</strong><br>
+		        <span class="text-muted">{{user.email}}</span>
+		    </div>
+
+      		<a ng-href="/admin/product/{{product._id}}" class="edit"><span class="fa fa-pencil fa-2x"></span></a>
+      		<a ng-click="$ctrl.DeleteProduct(product._id)" class="trash"><span class="fa fa-trash fa-2x"></span></a>
+		</li>
+	</ul>
+	<button class="btn btn-default" ng-click="$ctrl.NewProduct()">Nieuw product</button>
+
+	<ul class="list-group productcategory-list">
+		<h3>Product groepen</h3>
+		<li class="list-group-item" ng-repeat="category in $ctrl.productcategories">
+			<div class="category-info">
+		        <strong>{{category.name}}</strong><br>
+		    </div>
+
+      		<a ng-href="/admin/productcategory/{{category._id}}" class="edit"><span class="fa fa-pencil fa-2x"></span></a>
+      		<a ng-click="$ctrl.DeleteGroup(category._id)" class="trash"><span class="fa fa-trash fa-2x"></span></a>
+		</li>
+	</ul>
+	<button class="btn btn-default" ng-click="$ctrl.NewGroup()">Nieuwe groep</button>
+</div>
