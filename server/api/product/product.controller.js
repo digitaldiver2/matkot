@@ -23,6 +23,24 @@ function respondWithResult(res, statusCode) {
 
 function saveUpdates(updates) {
   return function(entity) {
+    console.dir(entity);
+    console.log('--entity--');
+    console.dir(updates);
+    console.log('--updates--');
+
+    entity.visiblegroups = new Array();
+    updates.visiblegroups.forEach(function (group_id) {
+      entity.visiblegroups.push(group_id);
+    });
+    delete updates.visiblegroups;
+
+    entity.productfamily = new Array();
+    updates.productfamily.forEach(function (family_id) {
+      entity.productfamily.push(family_id);
+    });
+    delete updates.productfamily;
+
+
     var updated = _.merge(entity, updates);
     return updated.save()
       .then(updated => {

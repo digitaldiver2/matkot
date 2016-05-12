@@ -18,6 +18,8 @@ class ProductComponent {
       this.$http.get('/api/products/' + this.id).then(response => {
         this.$scope.product = response.data;
         this.loaded['product'] = true;
+        console.log('product:');
+        console.dir(this.$scope.product);
       });
     }
 
@@ -65,7 +67,7 @@ class ProductComponent {
   setgroups() {
     for (var i=0; i<this.$scope.product.visiblegroups.length; i++) {
       for (var j=0; j<this.$scope.groups.length; j++) {
-        if (this.$scope.product.visiblegroups[i]._id == this.$scope.groups[j]._id) {
+        if (this.$scope.product.visiblegroups[i] == this.$scope.groups[j]._id) {
           this.$scope.groups[j].checked = true;
           break;
         }
@@ -76,7 +78,7 @@ class ProductComponent {
   setproductfamilies() {
     for (var i=0; i<this.$scope.product.productfamily.length; i++) {
       for (var j=0; j<this.$scope.productcategories.length; j++) {
-        if (this.$scope.product.productfamily[i]._id == this.$scope.productcategories[j]._id) {
+        if (this.$scope.product.productfamily[i] == this.$scope.productcategories[j]._id) {
           this.$scope.productcategories[j].checked = true;
           break;
         }
