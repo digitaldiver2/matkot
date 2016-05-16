@@ -40,6 +40,12 @@ function saveUpdates(updates) {
     });
     delete updates.productfamily;
 
+    entity.prices = new Array();
+    updates.prices.forEach(function (object) {
+      entity.prices.push(object);
+    });
+    delete updates.prices;
+
 
     var updated = _.merge(entity, updates);
     return updated.save()
