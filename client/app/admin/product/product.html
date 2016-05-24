@@ -57,13 +57,13 @@
 			<li class="list-group-item">
 				<div class="form-group">
 					<label for="standaard">Standaard</label>
-					<input type="number" id="standaard" ng-model="product.defaultprice">
+					<input type="number" step="any" id="standaard" ng-model="product.defaultprice">
 				</div>
 			</li>
 			<li class="list-group-item" ng-repeat="pricecategory in pricecategories">
 				<div class="form-group">
 					<label for="standaard">{{pricecategory.name}}</label>
-					<input type="number" id="standaard" ng-model="pricecategory.price" ng-disabled="!pricecategory.hasprice">
+					<input type="number" step="any" id="standaard" ng-model="pricecategory.price" ng-disabled="!pricecategory.hasprice">
 					<label for="{{pricecategory._id}}">
 						<input type="checkbox" id="{{pricecategory._id}}" ng-model="pricecategory.hasprice" ng-change="$ctrl.todefaultprice(pricecategory)">
 						custom
@@ -73,7 +73,7 @@
 			<li class="list-group-item">
 				<div class="form-group">
 					<label for="replacement">Verlies of kapot</label>
-					<input type="number" id="replacement" ng-model="product.replacementprice">
+					<input type="number" step="any" id="replacement" ng-model="product.replacementprice">
 				</div>
 			</li>
 		</ul>
