@@ -5,6 +5,7 @@ angular.module('matkotApp.admin')
     $stateProvider
       .state('group', {
         url: '/admin/group/:id',
-        template: '<group></group>'
+        template: '<group></group>',
+        authenticate: 'admin'
       });
   });

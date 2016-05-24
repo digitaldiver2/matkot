@@ -5,6 +5,7 @@ angular.module('matkotApp')
     $stateProvider
       .state('pricecategory', {
         url: '/admin/pricecategory/:id',
-        template: '<pricecategory></pricecategory>'
+        template: '<pricecategory></pricecategory>',
+        authenticate: 'admin'
       });
   });

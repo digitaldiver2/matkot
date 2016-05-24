@@ -5,6 +5,7 @@ angular.module('matkotApp')
     $stateProvider
       .state('product', {
         url: '/admin/product/:id',
-        template: '<product></product>'
+        template: '<product></product>',
+        authenticate: 'admin'
       });
   });
