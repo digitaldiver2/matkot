@@ -90,6 +90,25 @@ export function index(req, res) {
     .catch(handleError(res));
 }
 
+// Gets a list of Products available for everyone, without pricing
+export function publicIndex(req, res) {
+  return Product.find({'active': true, visiblegroups: {$exists: true, $size:0}}).exec()
+    .then(respondWithResult(res))
+    .catch(handleError(res));
+}
+
+// Gets a list of Products available for group, with pricing
+export function groupIndex(req, res) {
+  //if group_id == undefined || group_id == '':
+  //no group selected, so use default pricing
+  //else
+  //get pricecategory of group
+  //if specific price available, use that one, else use default price
+  return Product.find({'active': true, visiblegroups: req.params.group_id}).exec()
+    .then(respondWithResult(res))
+    .catch(handleError(res));
+}
+
 // Gets a single Product from the DB
 export function show(req, res) {
   return Product.findById(req.params.id).exec()

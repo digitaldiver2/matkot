@@ -68,7 +68,9 @@ export function index(req, res) {
 
 // Gets a single Usergroup from the DB
 export function show(req, res) {
-  return Usergroup.findById(req.params.id).exec()
+  return Usergroup.findById(req.params.id)
+    .populate('pricecategory')
+    .exec()
     .then(handleEntityNotFound(res))
     .then(respondWithResult(res))
     .catch(handleError(res));

@@ -10,7 +10,7 @@ class InventoryComponent {
   }
 
   $onInit () {
-  	this.$http.get('/api/products').then(response => {
+  	this.$http.get('/api/products/public').then(response => {
   		this.products = response.data;
   	});
 

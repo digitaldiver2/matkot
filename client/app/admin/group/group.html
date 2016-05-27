@@ -2,11 +2,17 @@
 	<form ng-submit="$ctrl.submit()">
 		<div class="form-group">
 	    	<label for="Name">Name</label>
-	    	<input type="text" class="form-control" id="Name" placeholder="Name" ng-model="$ctrl.group.name">
+	    	<input type="text" class="form-control" id="Name" placeholder="Name" ng-model="group.name">
 		</div>
 		<div class="form-group">
 	    	<label for="Info">Info</label>
-	    	<input type="text" class="form-control" id="Info" placeholder="Info" ng-model="$ctrl.group.info">
+	    	<input type="text" class="form-control" id="Info" placeholder="Info" ng-model="group.info">
+		</div>
+		<div class="form-group">
+			<label for="category">Product groep</label>
+			<select ng-model="group.pricecategory" ng-options="category.name for category in pricecategories">
+				<option value="">-</option>
+			</select>
 		</div>
 	  	<button type="submit" class="btn btn-default">Submit</button>
 	</form>

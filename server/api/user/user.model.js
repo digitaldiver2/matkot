@@ -22,9 +22,7 @@ var UserSchema = new Schema({
   salt: String,
   google: {},
   github: {},
-  groupref: {type: Schema.Types.ObjectId, ref: 'Usergroup'},
   groups: [{type: Schema.Types.ObjectId, ref: 'Usergroup'}],
-  // orders: [{type: Schema.Types.ObjectId, ref: 'Order'}]
   orders: [{type: Schema.Types.ObjectId, ref: 'Order'}]
 });
 
