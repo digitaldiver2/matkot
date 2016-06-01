@@ -16,6 +16,7 @@
       <link rel="stylesheet" href="bower_components/bootstrap/dist/css/bootstrap.css" />
       <link rel="stylesheet" href="bower_components/bootstrap-social/bootstrap-social.css" />
       <link rel="stylesheet" href="bower_components/components-font-awesome/css/font-awesome.css" />
+      <link rel="stylesheet" href="bower_components/angular-ui-bootstrap-datetimepicker/datetimepicker.css" />
       <!-- endbower -->
     <!-- endbuild -->
     <!-- build:css({.tmp,client}) app/app.css -->
@@ -33,6 +34,10 @@
       <link rel="stylesheet" href="app/app.css">
       <link rel="stylesheet" href="app/inventory/inventory.css">
       <link rel="stylesheet" href="app/main/main.css">
+      <link rel="stylesheet" href="app/orders/orders.css">
+      <link rel="stylesheet" href="app/request/info/info.css">
+      <link rel="stylesheet" href="app/request/shop/shop.css">
+      <link rel="stylesheet" href="app/request/terms/terms.css">
       <link rel="stylesheet" href="components/footer/footer.css">
       <link rel="stylesheet" href="components/modal/modal.css">
       <link rel="stylesheet" href="components/oauth-buttons/oauth-buttons.css">
@@ -76,6 +81,7 @@
       <script src="bower_components/angular-socket-io/socket.js"></script>
       <script src="bower_components/angular-ui-router/release/angular-ui-router.js"></script>
       <script src="bower_components/angular-validation-match/dist/angular-validation-match.min.js"></script>
+      <script src="bower_components/angular-ui-bootstrap-datetimepicker/datetimepicker.js"></script>
       <!-- endbower -->
       <script src="socket.io-client/socket.io.js"></script>
     <!-- endbuild -->
@@ -85,7 +91,7 @@
       <script src="app/admin/admin.module.js"></script>
       <script src="components/auth/auth.module.js"></script>
       <script src="components/util/util.module.js"></script>
-      <script src="app/admin/users/users.controller.js"></script>
+      <script src="app/inventory/inventory.js"></script>
       <script src="app/admin/admin.controller.js"></script>
       <script src="app/account/account.js"></script>
       <script src="app/admin/admin.router.js"></script>
@@ -103,13 +109,21 @@
       <script src="app/admin/products/products.js"></script>
       <script src="app/admin/user/user.controller.js"></script>
       <script src="app/admin/user/user.js"></script>
-      <script src="app/account/login/login.controller.js"></script>
+      <script src="app/admin/users/users.controller.js"></script>
       <script src="app/admin/users/users.js"></script>
       <script src="app/app.constant.js"></script>
       <script src="app/inventory/inventory.controller.js"></script>
-      <script src="app/inventory/inventory.js"></script>
+      <script src="app/account/login/login.controller.js"></script>
       <script src="app/main/main.controller.js"></script>
       <script src="app/main/main.js"></script>
+      <script src="app/orders/orders.controller.js"></script>
+      <script src="app/orders/orders.js"></script>
+      <script src="app/request/info/info.controller.js"></script>
+      <script src="app/request/info/info.js"></script>
+      <script src="app/request/shop/shop.controller.js"></script>
+      <script src="app/request/shop/shop.js"></script>
+      <script src="app/request/terms/terms.controller.js"></script>
+      <script src="app/request/terms/terms.js"></script>
       <script src="app/account/settings/settings.controller.js"></script>
       <script src="components/auth/auth.service.js"></script>
       <script src="components/auth/interceptor.service.js"></script>

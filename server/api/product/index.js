@@ -7,8 +7,8 @@ var router = express.Router();
 
 router.get('/', controller.index);
 router.get('/public', controller.publicIndex);
-router.get('/group/:group_id', controller.groupIndex);
 router.get('/:id', controller.show);
+router.get('/group/:group_id', controller.groupIndex);
 router.post('/', controller.create);
 router.put('/:id', controller.update);
 router.patch('/:id', controller.update);

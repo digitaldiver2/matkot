@@ -1,0 +1,18 @@
+<div class="container">
+	<button class="btn btn-default" ng-click="$ctrl.newOrder()">Nieuwe aanvraag</button>
+	<ul class="list-group">
+		<li class="list-group-item" ng-repeat="order in userorders">
+			<div class="order-info">
+		        <strong>{{order.name}}</strong><br>
+		        <strong>{{order.state}}</strong><br>
+		    </div>
+
+      		<a ng-href="/request/info/{{order._id}}" class="edit"><span class="fa fa-pencil fa-2x"></span></a>
+      		<a ng-click="$ctrl.DeleteOrder(order._id)" class="trash"><span class="fa fa-trash fa-2x"></span></a>
+		</li>
+	</ul>
+	<ul class="list-group">
+		<li class="list-group-item" ng-repeat="group in $ctrl.user.groups">
+			{{group.name}}
+		</li>
+</div>

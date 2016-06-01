@@ -11,6 +11,14 @@
 
 import _ from 'lodash';
 import Order from './order.model';
+import Usergroup from '../usergroup/usergroup.model';
+
+
+
+function groupAlign (order) {
+  //if order changes from group, make sure the correct prices are used, and only allowed products are possible
+
+}
 
 function respondWithResult(res, statusCode) {
   statusCode = statusCode || 200;
@@ -23,7 +31,13 @@ function respondWithResult(res, statusCode) {
 
 function saveUpdates(updates) {
   return function(entity) {
+    entity.products = new Array();
+    updates.products.forEach(function (product) {
+      entity.products.push(product);
+    });
+    delete updates.products;
     var updated = _.merge(entity, updates);
+    console.dir(updated);
     return updated.save()
       .then(updated => {
         return updated;
@@ -55,6 +69,7 @@ function handleEntityNotFound(res) {
 function handleError(res, statusCode) {
   statusCode = statusCode || 500;
   return function(err) {
+    console.log(err);
     res.status(statusCode).send(err);
   };
 }
@@ -62,6 +77,23 @@ function handleError(res, statusCode) {
 // Gets a list of Orders
 export function index(req, res) {
   return Order.find().exec()
+    .then(respondWithResult(res))
+    .catch(handleError(res));
+}
+
+// Gets a list of Orders for user
+export function userindex(req, res) {
+  var userid = req.params.id;
+
+  return Order.find({creator: userid}).exec()
+    .then(respondWithResult(res))
+    .catch(handleError(res));
+}
+
+// Gets a list of Orders for group
+export function groupindex(req, res) {
+  var groupid = req.params.id;
+  return Order.find({group: groupid}).exec()
     .then(respondWithResult(res))
     .catch(handleError(res));
 }

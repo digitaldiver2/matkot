@@ -6,26 +6,28 @@ var OrderSchema = new mongoose.Schema({
   name: String,
   info: String,
   active: Boolean,
-  comments: [{date: Date, creator: {type: Number, ref: 'User'}, body: String}],
+  comments: [{date: Date, creator: {type: mongoose.Schema.Types.ObjectId, ref: 'User'}, body: String}],
   products: [
 	  	{
-	  		product: {type: Number, ref: 'Product'},
-	  		requested: Number,
+	  		product: {type: mongoose.Schema.Types.ObjectId, ref: 'Product'},
+	  		ordered: Number,
 	  		received: Number,
 	  		returned: Number,
 	  		unitprice: Number
 		}
 	],
-  state: String, //Draft/Request/Order/Delivered/Returned/Closed
-  creator: {type: Number, ref: 'User'},
-  modifier: {type: Number, ref: 'User'},
+  state: {type:String, enum: ['DRAFT', 'ORDERED', 'APPROVED', 'DELIVERED', 'RETURNED', 'SHORTAGE', 'CLOSED'], default: 'DRAFT'}, //Draft/Request/Order/Delivered/Returned/Closed
+  creator: {type: mongoose.Schema.Types.ObjectId, ref: 'User'},
+  modifier: {type: mongoose.Schema.Types.ObjectId, ref: 'User'},
   creationdate: Date,
   modifieddate: Date,
-  group: {type: Number, ref: 'Usergroup'},
-  owner: {type: Number, ref: 'User'},
-  deliverydate: Date,
+  group: {type: mongoose.Schema.Types.ObjectId, ref: 'Usergroup'},
+  owner: {type: mongoose.Schema.Types.ObjectId, ref: 'User'},
+  eventstart: Date,
+  eventstop: Date,
+  pickupdate: Date,
   returndate: Date,
-  pricecategory: {type: Number, ref: 'Pricecategory'},
+  pricecategory: {type: mongoose.Schema.Types.ObjectId, ref: 'Pricecategory'},
   changehistory: [String]
 
 });
