@@ -1,0 +1,51 @@
+<div class="container">
+	<h3>Aangevraagd</h3>
+	<div class="list-group" ng-show="$ctrl.requested.length">
+		<a class="list-group-item" ng-repeat="order in $ctrl.requested" ng-click="$ctrl.open($index)">
+			{{order.name}} <span class="badge">{{order.state}}</span>
+		</a>
+	</div>
+	<div ng-hide="$ctrl.requested.length">
+		Er zijn geen nieuwe aanvragen.
+	</div>
+
+	<h3>Komende ontleningen</h3>
+	<div class="list-group" ng-show="$ctrl.approved.length">
+		<a class="list-group-item" ng-repeat="order in $ctrl.approved | orderBy:'pickupdate'" ng-click="$ctrl.open($index)">
+			{{order.name}} <span class="badge">{{order.state}}</span>
+		</a>
+	</div>
+	<div ng-hide="$ctrl.approved.length">
+		Er zijn geen komende ontleningen.
+	</div>
+	<h3>Uitgeleend</h3>
+	<div class="list-group" ng-show="$ctrl.delivered.length">
+		<a class="list-group-item" ng-repeat="order in $ctrl.delivered | orderBy:'returndate'" ng-click="$ctrl.open($index)">
+			{{order.name}} <span class="badge">{{order.state}}</span>
+		</a>
+	</div>
+	<div ng-hide="$ctrl.delivered.length">
+		Er is niets uitgeleend.
+	</div>
+
+	<h3>Onvolledig</h3>
+	<div class="list-group" ng-show="$ctrl.shorts.length">
+		<a class="list-group-item" ng-repeat="order in $ctrl.shorts | orderBy:'returndate'" ng-click="$ctrl.open($index)">
+			{{order.name}} <span class="badge">{{order.state}}</span>
+		</a>
+	</div>
+	<div ng-hide="$ctrl.shorts.length">
+		Er zijn geen tekorten	
+	</div>
+
+	<h3>Afgewerkte ontleningen</h3>
+	<div class="list-group" ng-show="$ctrl.closed.length">
+		<a class="list-group-item" ng-repeat="order in $ctrl.closed | orderBy:'returndate'" ng-click="$ctrl.open($index)">
+			{{order.name}} <span class="badge">{{order.state}}</span>
+		</a>
+	</div>
+	<div ng-hide="$ctrl.closed.length">
+		Er zijn geen afgewerkte ontleningen	
+	</div>
+
+</div>

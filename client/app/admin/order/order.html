@@ -1,0 +1,51 @@
+<div class="container">
+	<form>
+		<h3>Info</h3>
+		<div class="form-group">
+			<label for="Category">Vereniging *</label>
+			<select id="Category" class="form-control" 
+				ng-model="order.group" 
+				ng-options="group as group.name for group in groups">
+				<option value="">Prive</option>
+			</select>	
+		</div>
+		<div class="form-group">
+			<label for="Naam">Naam evenement *</label>
+			<input type="text" class="form-control" id="NaamEvenement" placeholder='Evenement' ng-model='order.name'>
+		</div>
+		<div class="form-group">
+			<label for="">Start evenement</label>
+			<datetimepicker ng-model="order.eventstart" 
+                date-format="dd-MMM-yyyy" 
+                date-options="dateOptions">
+			</datetimepicker>
+		</div>
+		<div class="form-group">
+			<label for="">Einde evenement</label>
+			<datetimepicker ng-model="order.eventstop" 
+                date-format="dd-MMM-yyyy" 
+                date-options="dateOptions">
+			</datetimepicker>
+		</div>
+		<div class="form-group">
+			<label for="">Afhaal datum</label>
+			<datetimepicker ng-model="order.pickupdate" 
+                date-format="dd-MMM-yyyy" 
+                date-options="dateOptions" 
+                date-disabled="isDisabledDate(date, mode)">
+			</datetimepicker>
+		</div>
+		<div class="form-group">
+			<label for="">Retour datum</label>
+			<datetimepicker ng-model="order.returndate" 
+                date-format="dd-MMM-yyyy" 
+                date-options="dateOptions" 
+                date-disabled="isDisabledDate(date, mode)">
+			</datetimepicker>
+		</div>
+
+		<h3>Product lijst</h3>
+		<button class="btn btn-default" ng-click="$ctrl.submit()">Opslaan</button>
+		<button class="btn btn-danger" ng-click="$ctrl.remove()">Verwijderen</button>
+	</form>
+</div>

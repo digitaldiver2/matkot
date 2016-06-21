@@ -17,6 +17,7 @@ class InfoComponent {
 	  		//load request
 	  		this.$http.get('/api/orders/' + this.id).then(response => {
 		        this.$scope.request = response.data;
+		        console.log(this.$scope.request.group);
 		        this.$scope.request.eventstart = new Date(this.$scope.request.eventstart );
 		        this.$scope.request.eventstop = new Date(this.$scope.request.eventstop );
 		        this.$scope.request.pickupdate = new Date(this.$scope.request.pickupdate );
