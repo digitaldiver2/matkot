@@ -22,7 +22,7 @@ class ShopComponent {
   	} else {
   		this.$http.get('/api/orders/' + this.id).then(response => {
   			this.$scope.request = response.data;
-  			var group_id = this.$scope.request.group? this.$scope.request.group: '0';
+  			var group_id = this.$scope.request.group? this.$scope.request.group._id: '0';
 	  		this.$http.get('/api/products/group/' + group_id).then(resp => {
 	  			this.$scope.products = resp.data;
 	  			this.productmap = this.$scope.products.map(this.mapfct);
@@ -65,15 +65,17 @@ class ShopComponent {
   	var group = this.$scope.request.group;
   	var pricecategory = undefined;
   	//if group is undefined, use defaults
-  	if (group == undefined) {
+  	if (group == undefined || group.pricecategory == undefined) {
   		pricecategory = '';
   	} else {
   		pricecategory = group.pricecategory;
   	}
+
   	for (var i=0; i< this.$scope.products.length; i++) {
   		var product = this.$scope.products[i];
-		product.unitprice = product.defaultprice;
-  		if (product.prices.length > 0) {
+		  product.unitprice = product.defaultprice;
+      //if product has custom prices and there is a group specified
+  		if (product.prices.length > 0 && pricecategory != '') {
   			for (var j=0; j<product.prices.length; j++) {
   				if (product.prices[j].pricecategory == pricecategory._id) {
   					product.unitprice = product.prices[j].price;

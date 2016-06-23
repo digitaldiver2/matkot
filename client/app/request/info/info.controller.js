@@ -7,24 +7,46 @@ class InfoComponent {
 		this.$scope = $scope;
 		this.$location = $location;
 		this.$http = $http;
-		this.$scope.user = Auth.getCurrentUser();
+		this.Auth = Auth;
 		this.id = $stateParams.id;
 		this.$scope.request = {};
 	}
 
 	$onInit () {
-		if (this.id) {
-	  		//load request
-	  		this.$http.get('/api/orders/' + this.id).then(response => {
-		        this.$scope.request = response.data;
-		        console.log(this.$scope.request.group);
-		        this.$scope.request.eventstart = new Date(this.$scope.request.eventstart );
-		        this.$scope.request.eventstop = new Date(this.$scope.request.eventstop );
-		        this.$scope.request.pickupdate = new Date(this.$scope.request.pickupdate );
-		        this.$scope.request.returndate = new Date(this.$scope.request.returndate );
-	      	});
-  		}
-  		this.isNoDraft();
+
+		this.$scope.user = this.Auth.getCurrentUser(user => {
+			if (user) {
+				this.$scope.user = user;
+				if (this.id) {
+			  		//load request
+			  		this.$http.get('/api/orders/' + this.id).then(response => {
+				        this.$scope.request = response.data;
+				        console.log(this.$scope.request.group);
+				        this.setGroupSelected(this.$scope.request.group);
+				        this.$scope.request.eventstart = new Date(this.$scope.request.eventstart );
+				        this.$scope.request.eventstop = new Date(this.$scope.request.eventstop );
+				        this.$scope.request.pickupdate = new Date(this.$scope.request.pickupdate );
+				        this.$scope.request.returndate = new Date(this.$scope.request.returndate );
+				        this.isNoDraft();
+			      	});
+		  		} else {
+		  			this.isNoDraft();
+		  		}
+			} else {
+				console.log('error loading user');
+			}
+		});
+		
+  		
+    }
+
+    setGroupSelected (group) {
+    	for (var i=0; i<this.$scope.user.groups; i++) {
+    		if (group._id == this.$scope.user.groups[i]) {
+    			this.$scope.request.group = this.$scope.user.groups[i];
+    			break;
+    		}
+    	}
     }
 
   	submit (proceed) {

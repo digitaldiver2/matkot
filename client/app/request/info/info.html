@@ -5,7 +5,7 @@
 			<label for="Category">Vereniging *</label>
 			<select id="Category" class="form-control" 
 				ng-model="request.group" 
-				ng-options="group as group.name for group in user.groups"
+				ng-options="group as group.name for group in user.groups track by group._id"
 				ng-disabled="$ctrl.isNoDraft()">
 				<option value="">Prive</option>
 			</select>	

@@ -6,20 +6,31 @@ class OrdersComponent {
   	this.$scope = $scope;
   	this.$http = $http;
   	this.$location = $location;
-  	this.user = Auth.getCurrentUser();
-  	this.groups = {};
+    this.Auth = Auth;
+  	this.$scope.groups = {};
   }
 
   $onInit () {
-  	this.$http.get('/api/orders/user/' + this.user._id).then (response => {
-  		this.$scope.userorders = response.data;
-  	});
-  	for (var i=0; i<this.user.groups.length; i++) {
-  		this.$http.get('/api/orders/group/' + this.user.groups[i]._id).then (response => {
-  			this.user.groups[i].orders = response.data;
-  		});
-  	}
+    this.Auth.getCurrentUser(user => {
+      this.handleUser(user);
+    });  	
   }
+
+  handleUser (user) {
+    if (user) {
+      this.user = user;
+      this.$scope.groups = this.user.groups;
+      this.$http.get('/api/orders/user/' + this.user._id).then (response => {
+        this.$scope.userorders = response.data;
+      });
+      this.$scope.groups.forEach((group) => {
+        this.$http.get('/api/orders/group/' + group._id).then(response => {
+          group.orders = response.data;
+        });
+      });
+    }
+  }
+
 
   newOrder () {
   	this.$location.path('/request/terms');
