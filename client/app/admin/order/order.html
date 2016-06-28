@@ -5,7 +5,7 @@
 			<label for="Category">Vereniging *</label>
 			<select id="Category" class="form-control" 
 				ng-model="order.group" 
-				ng-options="group as group.name for group in groups">
+				ng-options="group as group.name for group in groups track by group._id">
 				<option value="">Prive</option>
 			</select>	
 		</div>
@@ -45,7 +45,79 @@
 		</div>
 
 		<h3>Product lijst</h3>
-		<button class="btn btn-default" ng-click="$ctrl.submit()">Opslaan</button>
+		<form>
+			<div class="form-group">
+				<div class="input-group">
+					<div class="input-group-addon"><i class="fa fa-search"></i></div>
+					
+					<input type="text" class="form-control" placeholder="sku" ng-model="searchProduct2.product.code">
+				</div>
+				<div class="input-group">
+					<div class="input-group-addon"><i class="fa fa-search"></i></div>
+					
+					<input type="text" class="form-control" placeholder="naam" ng-model="searchProduct2.product.name">
+				</div>      
+			</div>
+		</form>
+		<table class="table">
+			<thead>
+				<tr>
+					<th>
+						<a href="#" ng-click="sortType = 'product.code'; sortReverse = !sortReverse">
+							SKU
+							<span ng-show="sortType == 'product.code' && !sortReverse" class="fa fa-caret-down"></span>
+							<span ng-show="sortType == 'product.code' && sortReverse" class="fa fa-caret-up"></span>
+						</a>
+					</th>
+					<th>
+						<a href="#" ng-click="sortType = 'product.name'; sortReverse = !sortReverse">
+							Naam
+							<span ng-show="sortType == 'product.name' && !sortReverse" class="fa fa-caret-down"></span>
+							<span ng-show="sortType == 'product.name' && sortReverse" class="fa fa-caret-up"></span>
+						</a>
+					</th>
+					<th>Totaal</th>
+					<th>Beschikbaar</th>
+					<th>Aangevraagd</th>
+					<th>Goedgekeurd</th>
+					<th>Gekregen</th>
+					<th>Terug</th>
+				</tr>
+
+			</thead>
+			<tbody>
+				<tr ng-repeat="productitem in order.products | orderBy:sortType:sortReverse | filter:searchProduct2 ">
+					<td>{{productitem.product.code}}</td>
+					<td>{{productitem.product.name}}</td>
+					<td>{{productitem.product.stock}}</td>
+					<td>{{productitem.product.available}}</td>
+					<td>{{productitem.ordered}}</td>
+					<td>
+						<input type="number" ng-model="productitem.approved" ng-disabled="order.state!='DRAFT' && order.state != 'ORDERED'">
+					</td>
+					<td>
+						<input type="number" ng-model="productitem.received" ng-disabled="order.state!='APPROVED'">
+					</td>
+					<td>
+						<input type="number" ng-model="productitem.returned" ng-disabled="order.state!='DELIVERED' && order.state != 'SHORTAGE'">
+					</td>
+				</tr>
+			</tbody>
+		</table>
+
+		<div class="form-group">
+			<label for="state">Status</label>
+			<select class="form-control" id="state" ng-model="order.state">
+				<option value="DRAFT">Concept</option>
+				<option value="ORDERED">Aangevraagd</option>
+				<option value="APPROVED">Goedgekeurd</option>
+				<option value="DELIVERED">Uitgeleend</option>
+				<option value="SHORTAGE">Te korten</option>
+				<option value="CLOSED">Afgesloten</option>
+			</select>
+		</div>
+
+		<button class="btn btn-default" ng-click="$ctrl.save()">Opslaan</button>
 		<button class="btn btn-danger" ng-click="$ctrl.remove()">Verwijderen</button>
 	</form>
 </div>

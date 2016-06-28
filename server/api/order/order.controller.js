@@ -101,7 +101,8 @@ export function groupindex(req, res) {
 // Gets a single Order from the DB
 export function show(req, res) {
   return Order.findById(req.params.id)
-    .populate('group').exec()
+    .populate('group')
+    .populate('products.product').exec()
     .then(handleEntityNotFound(res))
     .then(respondWithResult(res))
     .catch(handleError(res));

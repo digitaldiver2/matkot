@@ -31,6 +31,16 @@ class OrderComponent {
   		this.$location.path('/admin/orders');
   	}
   }
+
+  save () {
+    this.$http.put('/api/orders/' + this.id, this.$scope.order).then(resp => {
+      this.$location.path('/admin/orders');
+    }, err => {
+      console.log(err);
+      alert(err);
+    });
+
+  }
 }
 
 angular.module('matkotApp.admin')

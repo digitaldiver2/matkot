@@ -11,6 +11,7 @@ var OrderSchema = new mongoose.Schema({
 	  	{
 	  		product: {type: mongoose.Schema.Types.ObjectId, ref: 'Product'},
 	  		ordered: Number,
+        approved: Number,
 	  		received: Number,
 	  		returned: Number,
 	  		unitprice: Number

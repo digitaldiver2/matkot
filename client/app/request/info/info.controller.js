@@ -21,8 +21,7 @@ class InfoComponent {
 			  		//load request
 			  		this.$http.get('/api/orders/' + this.id).then(response => {
 				        this.$scope.request = response.data;
-				        console.log(this.$scope.request.group);
-				        this.setGroupSelected(this.$scope.request.group);
+				        // this.setGroupSelected(this.$scope.request.group);
 				        this.$scope.request.eventstart = new Date(this.$scope.request.eventstart );
 				        this.$scope.request.eventstop = new Date(this.$scope.request.eventstop );
 				        this.$scope.request.pickupdate = new Date(this.$scope.request.pickupdate );
@@ -40,14 +39,14 @@ class InfoComponent {
   		
     }
 
-    setGroupSelected (group) {
-    	for (var i=0; i<this.$scope.user.groups; i++) {
-    		if (group._id == this.$scope.user.groups[i]) {
-    			this.$scope.request.group = this.$scope.user.groups[i];
-    			break;
-    		}
-    	}
-    }
+    // setGroupSelected (group) {
+    // 	for (var i=0; i<this.$scope.user.groups; i++) {
+    // 		if (group._id == this.$scope.user.groups[i]) {
+    // 			this.$scope.request.group = this.$scope.user.groups[i];
+    // 			break;
+    // 		}
+    // 	}
+    // }
 
   	submit (proceed) {
   		//don't update if not in draft mode
