@@ -6,6 +6,7 @@ class SettingsController {
     this.submitted = false;
 
     this.Auth = Auth;
+    this.user = this.Auth.getCurrentUser();
   }
 
   changePassword(form) {
@@ -20,6 +21,19 @@ class SettingsController {
           form.password.$setValidity('mongoose', false);
           this.errors.other = 'Incorrect password';
           this.message = '';
+        });
+    }
+  }
+
+  updateSettings(form) {
+    if (form.$valid) {
+      this.Auth.updateSettings(this.user)
+        .then(() => {
+          this.message = 'Settings successfully changed.';
+        })
+        .catch(() => {
+          this.errors.other = 'error updating settings';
+          this.message = 'errormessage updating settings';
         });
     }
   }

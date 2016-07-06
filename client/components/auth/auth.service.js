@@ -88,6 +88,24 @@ function AuthService($location, $http, $cookies, $q, appConfig, Util, User) {
       }).$promise;
     },
 
+
+    /**
+     * update settings
+     *
+     * @param  {Object}   userObject
+     * @param  {Function} callback    - optional, function(error, user)
+     * @return {Promise}
+     */
+    updateSettings (userobject, callback) {
+      return User.update({ id: currentUser._id }, userobject, 
+        function() {
+        return safeCb(callback)(null);
+      }, function(err) {
+        return safeCb(callback)(err);
+      }).$promise;
+    },
+
+
     /**
      * Gets all available info on a user
      *   (synchronous|asynchronous)
