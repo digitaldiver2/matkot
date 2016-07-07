@@ -9,35 +9,57 @@
           <label>Telefoon</label>
           <input type="text" class="form-control" name="phone" ng-model="vm.user.phone">
         </div>
-        <button class="btn btn-lg btn-primary" type="submit">Wijzigingen opslaan</button>
-      </form>
+        <div>
+          <h2>Mijn groepen</h2>
+          <ul class="list-group">
+            <li class="list-group-item" ng-repeat="group in vm.user.groups | orderBy:'name'">
+              {{group.name}}<a ng-click="vm.delete_group(group)" class="trash"><span class="fa fa-trash fa-2x"></span></a>
+            </li>
+          </ul>
+          <div class="list-group">
+            <div class="list-group-item" ng-repeat="group in vm.user.requested_groups | orderBy:'name'">
+              {{group.name}} <span class="badge">Aangevraagd</span>
+              <a ng-click="vm.delete_requested_group(group)" class="trash">
+                <span class="fa fa-trash fa-2x"></span>
+              </a>
+            </div>
+          </div>
+          <div class="form-group">
+            <label>Groep aanvragen</label>
+            <select class="form-control" 
+            ng-model="vm.group2request" 
+            ng-options="group as group.name for group in vm.groups | filter:{selectable: true}  track by group._id"></select>
+            <button class="btn btn-default" type="button" ng-click="vm.request_group()">Aanvragen</button>
+          </div>
+          <button class="btn btn-lg btn-primary" type="submit">Wijzigingen opslaan</button>
+        </form>
+      </div>
     </div>
-  </div>
-  <div class="row">
-    <div class="col-sm-12">
-      <h1>Change Password</h1>
-    </div>
-    <div class="col-sm-12">
-      <form class="form" name="form" ng-submit="vm.changePassword(form)" novalidate>
+    <div class="row">
+      <div class="col-sm-12">
+        <h1>Change Password</h1>
+      </div>
+      <div class="col-sm-12">
+        <form class="form" name="form" ng-submit="vm.changePassword(form)" novalidate>
 
-        <div class="form-group">
-          <label>Current Password</label>
+          <div class="form-group">
+            <label>Current Password</label>
 
-          <input type="password" name="password" class="form-control" ng-model="vm.user.oldPassword"
-                 mongoose-error/>
-          <p class="help-block" ng-show="form.password.$error.mongoose">
+            <input type="password" name="password" class="form-control" ng-model="vm.user.oldPassword"
+            mongoose-error/>
+            <p class="help-block" ng-show="form.password.$error.mongoose">
               {{ vm.errors.other }}
-          </p>
-        </div>
+            </p>
+          </div>
 
-        <div class="form-group">
-          <label>New Password</label>
+          <div class="form-group">
+            <label>New Password</label>
 
-          <input type="password" name="newPassword" class="form-control" ng-model="vm.user.newPassword"
-                 ng-minlength="3"
-                 required/>
-          <p class="help-block"
-             ng-show="(form.newPassword.$error.minlength || form.newPassword.$error.required) && (form.newPassword.$dirty || vm.submitted)">
+            <input type="password" name="newPassword" class="form-control" ng-model="vm.user.newPassword"
+            ng-minlength="3"
+            required/>
+            <p class="help-block"
+            ng-show="(form.newPassword.$error.minlength || form.newPassword.$error.required) && (form.newPassword.$dirty || vm.submitted)">
             Password must be at least 3 characters.
           </p>
         </div>
@@ -46,20 +68,20 @@
           <label>Confirm New Password</label>
 
           <input type="password" name="confirmPassword" class="form-control" ng-model="vm.user.confirmPassword"
-                 match="vm.user.newPassword"
-                 ng-minlength="3"
-                 required=""/>
+          match="vm.user.newPassword"
+          ng-minlength="3"
+          required=""/>
           <p class="help-block"
-             ng-show="form.confirmPassword.$error.match && vm.submitted">
-            Passwords must match.
-          </p>
+          ng-show="form.confirmPassword.$error.match && vm.submitted">
+          Passwords must match.
+        </p>
 
-        </div>
+      </div>
 
-        <p class="help-block"> {{ vm.message }} </p>
+      <p class="help-block"> {{ vm.message }} </p>
 
-        <button class="btn btn-lg btn-primary" type="submit">Save changes</button>
-      </form>
-    </div>
+      <button class="btn btn-lg btn-primary" type="submit">Save changes</button>
+    </form>
   </div>
+</div>
 </div>

@@ -25,21 +25,30 @@ function saveUpdates(updates) {
     //clear orders
     entity.orders = new Array();
 
+    //clear requested groups
+    entity.requested_groups = new Array();
+
     //push all elements from updates
 
     //remove groups and orders from updates
     // console.log('groups');
-    // console.dir(updates.groups);
+
     updates.groups.forEach(function (group_id) {
       entity.groups.push(group_id);
     });
 
     updates.orders.forEach(function (order_id) {
       entity.orders.push(order_id);
-    })
+    });
+
+    updates.requested_groups.forEach(function (order_id) {
+      entity.requested_groups.push(order_id);
+    });
 
     delete updates.groups;
     delete updates.orders;
+    delete updates.requested_groups;
+
     var updated = _.merge(entity, updates);
 
     return updated.save()
@@ -123,7 +132,9 @@ export function show(req, res, next) {
   var userId = req.params.id;
 
   return User.findById(userId)
-    .populate('groups').exec()
+    .populate('groups')
+    .populate('requested_groups')
+    .exec()
     .then(user => {
       if (!user) {
         return res.status(404).end();
@@ -138,7 +149,7 @@ export function admin_show(req, res, next) {
 
   return User.findById(userId, '-salt -password -_id -__v')
     .populate('groups')
-    // .populate('orders')
+    .populate('requested_groups')
     .exec()
     .then(user => {
       if (!user) {
@@ -195,6 +206,7 @@ export function update(req, res) {
   }
   return User.findById(req.params.id)
     .populate('groups')
+    .populate('requested_groups')
     .exec()
     .then(handleEntityNotFound(res))
     .then(saveUpdates(req.body))
@@ -210,6 +222,7 @@ export function me(req, res, next) {
 
   return User.findOne({ _id: userId }, '-salt -password')
   .populate('groups')
+  .populate('requested_groups')
   .exec()
     .then(user => { // don't ever give out the password or salt
       if (!user) {
