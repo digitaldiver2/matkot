@@ -17,7 +17,7 @@
 			</label>
 		</div>
 	  	
-		<h3>Groups</h3>
+		<h3>Groepen</h3>
 		<label>filter</label>
 		<input type="text" ng-model="search.name">	
 		<ul class="list-group user-list">
@@ -30,7 +30,33 @@
 			</li>
 		</ul>
 
-		<button type="submit" class="btn btn-default">Opslaan</button>
+<!-- 		<h3>Groepen</h3>
+		<ul class="list-group user-list"> 
+			<li class="list-group-item" ng-repeat="group in user.groups">
+				<div class="user-info">
+			        <strong>{{group.name}}</strong><br>
+			        <span class="text-muted">{{group.info}}</span>
+			    </div>
+			    <i class="fa fa-times" aria-hidden="true"></i>
+			</li>
+		</ul>
+ -->
+		<h3>Aangevraagd</h3>
+		<ul class="list-group user-list">
+			<li class="list-group-item" ng-repeat="group in user.requested_groups">
+				<div class="user-info">
+			        <strong>{{group.name}}</strong><br>
+			        <span class="text-muted">{{group.info}}</span>
+			    </div>
+				<button type="button" class="btn btn-default" ng-click="$ctrl.approve(group)">Toestaan</button>
+			</li>
+		</ul>
+		<div ng-hide="user.requested_groups.length">
+			Er zijn geen groepen in aanvraag.
+		</div>
+
+		<br>
+		<button type="submit" class="btn btn-primary">Opslaan</button>
 	</form>
 
 </div>

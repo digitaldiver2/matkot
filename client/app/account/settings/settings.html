@@ -11,18 +11,24 @@
         </div>
         <div>
           <h2>Mijn groepen</h2>
-          <ul class="list-group">
+          <ul class="list-group user-list">
             <li class="list-group-item" ng-repeat="group in vm.user.groups | orderBy:'name'">
-              {{group.name}}<a ng-click="vm.delete_group(group)" class="trash"><span class="fa fa-trash fa-2x"></span></a>
+              <div class="user-info">
+                <strong>{{group.name}}</strong>
+              </div>
+              <a ng-click="vm.delete_group(group)" class="trash"><span class="fa fa-trash fa-2x"></span></a>
             </li>
           </ul>
-          <div class="list-group">
-            <div class="list-group-item" ng-repeat="group in vm.user.requested_groups | orderBy:'name'">
-              {{group.name}} <span class="badge">Aangevraagd</span>
+          <div class="list-group user-list">
+            <li class="list-group-item" ng-repeat="group in vm.user.requested_groups | orderBy:'name'">
+              <div class="user-info">
+                <strong>{{group.name}}</strong>
+              </div>
+              <span class="badge">Aangevraagd</span>
               <a ng-click="vm.delete_requested_group(group)" class="trash">
                 <span class="fa fa-trash fa-2x"></span>
               </a>
-            </div>
+            </li>
           </div>
           <div class="form-group">
             <label>Groep aanvragen</label>

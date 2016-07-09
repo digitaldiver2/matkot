@@ -71,6 +71,27 @@ class UserComponent {
     });
     this.$location.path('/admin/users');
   }
+
+  approve(group) {
+    var index = this.getIndexById(group._id, this.groups);
+    if (index != undefined) {
+      this.groups[index].checked = true;
+    } 
+
+    this.$scope.user.groups.push(group);
+    var index = this.$scope.user.requested_groups.indexOf(group);
+    this.$scope.user.requested_groups.splice(index, 1);
+  }
+
+  getIndexById (id, array) {
+    for (var i=0; i<array.length; i++) {
+      var object = array[i];
+      if (array[i]._id && array[i]._id == id) {
+        return i;
+      }
+    }
+    return undefined;
+  }
 }
 
 angular.module('matkotApp.admin')
