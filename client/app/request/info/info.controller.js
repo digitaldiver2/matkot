@@ -10,6 +10,11 @@ class InfoComponent {
 		this.Auth = Auth;
 		this.id = $stateParams.id;
 		this.$scope.request = {};
+
+		this.$scope.closedDates = function (calendarDate, mode) {
+			console.log("disabled: " + calendarDate + " " + mode);
+		return mode === 'day' && calendarDate.getDay() != 3;
+		};
 	}
 
 	$onInit () {
@@ -28,8 +33,6 @@ class InfoComponent {
 				        this.$scope.request.returndate = new Date(this.$scope.request.returndate );
 				        this.isNoDraft();
 			      	});
-		  		} else {
-		  			this.isNoDraft();
 		  		}
 			} else {
 				console.log('error loading user');
@@ -38,15 +41,6 @@ class InfoComponent {
 		
   		
     }
-
-    // setGroupSelected (group) {
-    // 	for (var i=0; i<this.$scope.user.groups; i++) {
-    // 		if (group._id == this.$scope.user.groups[i]) {
-    // 			this.$scope.request.group = this.$scope.user.groups[i];
-    // 			break;
-    // 		}
-    // 	}
-    // }
 
   	submit (proceed) {
   		//don't update if not in draft mode
@@ -81,7 +75,6 @@ class InfoComponent {
 
 	isNoDraft () {
 		var result = (this.id == undefined || this.id == '') || (this.$scope.request && this.$scope.request.state == 'DRAFT');
-		console.log('is draft? ' + result);
 	    return !result;
 	}
 }
