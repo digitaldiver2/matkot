@@ -1,0 +1,23 @@
+<div class="container">
+	<h2>Instellingen</h2>
+	<h3>Orders</h3>
+	<form class="form" ng-submit="$ctrl.save()">
+		<div class="form-group">
+			<label for="ordercounter">Orderteller</label>
+			<input class="form-control" type="number" ng-model="$ctrl.settings.ordercounter" name="ordercounter">
+		</div>
+		<div class="form-group">
+			<label for="prefix">Prefix</label>
+			<input class="form-control" type="text" ng-model="$ctrl.settings.orderprefix" name="prefix">
+		</div>
+		<div class="form-group">
+			<label for="padding">Padding</label>
+			<input class="form-control" type="number" ng-model="$ctrl.settings.ordernumberwidth" name="padding">
+		</div>
+
+		<div class="example">
+			Voorbeeld: {{$ctrl.calculateResult ()}}
+		</div>
+		<button type="submit" class="btn btn-default">Opslaan</button>
+	</form>
+</div>

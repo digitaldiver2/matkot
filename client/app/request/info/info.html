@@ -18,7 +18,8 @@
 			<label for="">Start evenement</label>
 			<datetimepicker ng-model="request.eventstart" 
                 date-format="dd-MMM-yyyy" 
-                ng-disabled="$ctrl.isNoDraft()"
+                readonly-time="$ctrl.isNoDraft()"
+                readonly-date="$ctrl.isNoDraft()"
                 show-meridian="false">
 			</datetimepicker>
 		</div>
@@ -26,7 +27,8 @@
 			<label for="">Einde evenement</label>
 			<datetimepicker ng-model="request.eventstop" 
                 date-format="dd-MMM-yyyy" 
-                ng-disabled="$ctrl.isNoDraft()"
+                readonly-time="$ctrl.isNoDraft()"
+                readonly-date="$ctrl.isNoDraft()"
                 show-meridian="false">
 			</datetimepicker>
 		</div>
@@ -35,7 +37,7 @@
 			<datetimepicker ng-model="request.pickupdate" 
                 date-format="dd-MMM-yyyy" 
                 date-disabled="closedDates(date, mode)"
-                ng-disabled="$ctrl.isNoDraft()"
+                readonly-date="$ctrl.isNoDraft()"
                 readonly-time="true"
                 show-meridian="false"
                 hidden-time="true">
@@ -46,7 +48,7 @@
 			<datetimepicker ng-model="request.returndate" 
                 date-format="dd-MMM-yyyy" 
                 date-disabled="closedDates(date, mode)" 
-                ng-disabled="$ctrl.isNoDraft()"
+                readonly-date="$ctrl.isNoDraft()"
                 readonly-time="true"
                 show-meridian="false"
                 hidden-time="true"> 
