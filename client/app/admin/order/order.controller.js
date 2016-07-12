@@ -12,7 +12,6 @@ class OrderComponent {
   $onInit () {
   	this.$http.get('/api/orders/' + this.id).then (resp => {
   		this.$scope.order = resp.data;
-  		console.log(this.$scope.order.group);
   		this.$scope.order.eventstart = new Date(this.$scope.order.eventstart );
         this.$scope.order.eventstop = new Date(this.$scope.order.eventstop );
         this.$scope.order.pickupdate = new Date(this.$scope.order.pickupdate );
@@ -32,14 +31,52 @@ class OrderComponent {
   	}
   }
 
-  save () {
-    this.$http.put('/api/orders/' + this.id, this.$scope.order).then(resp => {
-      this.$location.path('/admin/orders');
-    }, err => {
-      console.log(err);
-      alert(err);
-    });
+  calculateOrderNumber (prefix, width, number) {
+      var strnumber = number.toString();
+      var numberlength = strnumber.length;
 
+      var result = prefix;
+      for (var i=0; i< width - numberlength; i++) {
+        result = result + '0';
+      }
+      result = result + strnumber;
+      return result;
+  }
+
+  setOrderNumberIfNeeded () {
+    if (this.$scope.order.state != 'DRAFT' && this.$scope.order.ordernumber == undefined) {
+      this.settings.ordercounter += 1;
+      this.$scope.order.ordernumber = this.calculateOrderNumber(this.settings.orderprefix, this.settings.ordernumberwidth, this.settings.ordercounter); 
+    }
+  }
+
+  save () {
+    if (this.$scope.order.state != 'DRAFT' && this.$scope.order.ordernumber == undefined) {
+      this.$http.get('/api/settings').then(response => {
+        this.settings = response.data;
+        //increase ordernumber
+        this.settings.ordercounter += 1;
+        this.$scope.order.ordernumber = this.calculateOrderNumber(this.settings.orderprefix, this.settings.ordernumberwidth, this.settings.ordercounter); 
+
+        //save order
+        this.$http.put('/api/orders/' + this.id, this.$scope.order).then(resp => {
+          //save last ordernumber in settings after success
+          this.$http.put('/api/settings/' + this.settings._id, this.settings);
+          this.$location.path('/admin/orders');
+        }, err => {
+          console.log(err);
+          alert(err);
+        });
+      });
+    } else {
+      //no ordernumber needed, just save order
+      this.$http.put('/api/orders/' + this.id, this.$scope.order).then(resp => {
+        this.$location.path('/admin/orders');
+      }, err => {
+        console.log(err);
+        alert(err);
+      });
+    }
   }
 }
 

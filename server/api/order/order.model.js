@@ -29,7 +29,8 @@ var OrderSchema = new mongoose.Schema({
   pickupdate: Date,
   returndate: Date,
   pricecategory: {type: mongoose.Schema.Types.ObjectId, ref: 'Pricecategory'},
-  changehistory: [String]
+  changehistory: [String],
+  ordernumber: String
 
 });
 

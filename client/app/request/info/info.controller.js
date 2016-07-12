@@ -47,7 +47,6 @@ class InfoComponent {
   		if (!this.isNoDraft()) {
 			this.$scope.request.modifier = this.$scope.user._id;
 		  	if (this.id) {
-		  		this.$scope.request.owner = this.$scope.user._id;
 		  		this.$http.put('/api/orders/' + this.id, this.$scope.request);
 				if (proceed) {
 					this.$location.path('/request/shop/' + this.id);
@@ -56,6 +55,7 @@ class InfoComponent {
 				}
 		  	} else {
 		  		this.$scope.request.creator = this.$scope.user._id;
+		  		this.$scope.request.owner = this.$scope.user._id;
 				this.$http.post('/api/orders/', this.$scope.request).then(response => {
 					if (proceed) {
 						this.$location.path('/request/shop/' + response.data._id);

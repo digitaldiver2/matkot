@@ -1,6 +1,12 @@
 <div class="container">
 	<form>
 		<h3>Info</h3>
+		<p>
+			<strong>Ordernummer:</strong> {{order.ordernumber}}</br>
+			<strong>Eigenaar:</strong> {{order.owner.name}}</br>
+			<strong>Telefoon:</strong> {{order.owner.phone}}</br>
+			<strong>Mail:</strong> {{order.owner.email}}
+		</p>
 		<div class="form-group">
 			<label for="Category">Vereniging *</label>
 			<select id="Category" class="form-control" 

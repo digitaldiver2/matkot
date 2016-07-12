@@ -25,12 +25,8 @@ function indexRespondWithResult(res, statusCode) {
   console.log('indexRespondWithResult');
   statusCode = statusCode || 200;
   return function(entity) {
-    console.log(typeof(entity), entity.length);
-    console.dir(entity);
-    console.log('-----');
     if (!entity || entity.length != 1) {
       Settings.find().remove().then(() => {
-        console.log('create default');
         var defaultsettings = new Settings();
         defaultsettings.save(function (err) {
           if (err) return handleError(err);
@@ -40,7 +36,6 @@ function indexRespondWithResult(res, statusCode) {
       });
     }
     else {
-      console.log('return existing');
       res.status(statusCode).json(entity[0]);
     }
   };
