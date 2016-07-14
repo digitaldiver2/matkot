@@ -1,18 +1,34 @@
 <div class="container">
 	<button class="btn btn-default" ng-click="$ctrl.newOrder()">Nieuwe aanvraag</button>
+	<br>
+	<h3>Mijn aanvragen</h3>
 	<ul class="list-group">
-		<li class="list-group-item" ng-repeat="order in userorders">
-			<div class="order-info">
+		<li class="list-group-item" ng-repeat="order in userorders | orderBy:'ordernumber':true">
+			<div class="user-info">
 		        <strong>{{order.name}}</strong><br>
 		        <strong>{{order.state}}</strong><br>
+		        <strong>{{order.ordernumber}}</strong>
 		    </div>
 
       		<a ng-href="/request/info/{{order._id}}" class="edit"><span class="fa fa-pencil fa-2x"></span></a>
       		<a ng-click="$ctrl.DeleteOrder(order._id)" class="trash"><span class="fa fa-trash fa-2x"></span></a>
 		</li>
 	</ul>
-	<ul class="list-group">
-		<li class="list-group-item" ng-repeat="group in groups">
-			{{group.name}}
-		</li>
+
+	<div ng-repeat="group in groups | orderBy:'name'">
+		<h3>{{group.name}}</h3>
+
+		<ul class="list-group">
+			<li class="list-group-item" ng-repeat="order in group.orders | orderBy:'ordernumber':true">
+				<div class="user-info">
+			        <strong>{{order.name}}</strong><br>
+			        <strong>{{order.state}}</strong><br>
+			        <strong>{{order.ordernumber}}</strong>
+			    </div>
+
+	      		<a ng-href="/request/info/{{order._id}}" class="edit"><span class="fa fa-pencil fa-2x"></span></a>
+	      		<a ng-click="$ctrl.DeleteOrder(order._id)" class="trash"><span class="fa fa-trash fa-2x"></span></a>
+			</li>
+		</ul>
+	</div>
 </div>

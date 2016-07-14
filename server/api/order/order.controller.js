@@ -76,7 +76,10 @@ function handleError(res, statusCode) {
 
 // Gets a list of Orders
 export function index(req, res) {
-  return Order.find().exec()
+  return Order.find()
+    .populate('group')
+    .populate('owner')
+    .exec()
     .then(respondWithResult(res))
     .catch(handleError(res));
 }

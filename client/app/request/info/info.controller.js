@@ -10,10 +10,11 @@ class InfoComponent {
 		this.Auth = Auth;
 		this.id = $stateParams.id;
 		this.$scope.request = {};
+		this.$scope.isDraft = false;
+		this.test = false;
 
 		this.$scope.closedDates = function (calendarDate, mode) {
-			console.log("disabled: " + calendarDate + " " + mode);
-		return mode === 'day' && calendarDate.getDay() != 3;
+			return mode === 'day' && calendarDate.getDay() != 3;
 		};
 	}
 
@@ -39,8 +40,22 @@ class InfoComponent {
 			}
 		});
 		
+		this.$scope.returnCollapsed = true;
+		this.$scope.pickupCollapsed = true;
+		this.$scope.eventstartCollapsed = true;
+		this.$scope.eventstopCollapsed = true;
+
+		this.$scope.retouroptions = {
+			dateDisabled: this.closedDates
+		};
+		this.$scope.pickupoptions = {
+			dateDisabled: this.closedDates
+		}
   		
     }
+	closedDates (data) {
+		return data.mode === 'day' && data.date.getDay() != 3;
+	};
 
   	submit (proceed) {
   		//don't update if not in draft mode
@@ -75,6 +90,7 @@ class InfoComponent {
 
 	isNoDraft () {
 		var result = (this.id == undefined || this.id == '') || (this.$scope.request && this.$scope.request.state == 'DRAFT');
+		this.$scope.isDraft = result;
 	    return !result;
 	}
 }
