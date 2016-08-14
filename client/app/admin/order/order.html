@@ -179,6 +179,22 @@
 			</tbody>
 		</table>
 
+		<button class="btn btn-default" ng-click="addProductCollapsed=!addProductCollapsed">+</button>
+		<div uib-collapse="addProductCollapsed">
+			<div class="input-group col-sm-2" >
+				<div class="input-group-addon"><i class="fa fa-search"></i></div>
+				
+				<input type="text" class="form-control" placeholder="naam" ng-model="AddProductSearch.name">
+			</div>
+			<ul id="addProductList" class="list-group">	
+				<li class="list-group-item row" ng-repeat="product in products | filter:AddProductSearch as filtered">
+					<p class="col-sm-6">{{product.code}} {{product.name}}</p><button class="btn btn-default col-sm-1" ng-click="$ctrl.Add(product)">Toevoegen</button>
+				</li>
+			</ul>
+			<p ng-hide="filtered.length">Geen resultaten</p>
+		</div>
+
+
 		<div class="form-group">
 			<label for="state">Status</label>
 			<select class="form-control" id="state" ng-model="order.state">

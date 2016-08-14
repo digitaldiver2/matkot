@@ -16,6 +16,12 @@ class OrderComponent {
         this.$scope.order.eventstop = new Date(this.$scope.order.eventstop );
         this.$scope.order.pickupdate = new Date(this.$scope.order.pickupdate );
         this.$scope.order.returndate = new Date(this.$scope.order.returndate );
+
+
+        //get products
+        this.$http.get('/api/products').then(resp => {
+          this.$scope.products = resp.data;
+        });
   	});
 
   	this.$http.get('/api/usergroups').then(response => {
@@ -27,6 +33,7 @@ class OrderComponent {
     this.$scope.pickupCollapsed = true;
     this.$scope.eventstartCollapsed = true;
     this.$scope.eventstopCollapsed = true;
+    this.$scope.addProductCollapsed = true;
 
     this.$scope.retouroptions = {
       dateDisabled: this.closedDates
@@ -34,12 +41,17 @@ class OrderComponent {
     this.$scope.pickupoptions = {
       dateDisabled: this.closedDates
     }
-      
+    this.$scope.closedDates = function (calendarDate, mode) {
+      return mode === 'day' && calendarDate.getDay() != 3;
+    };
+
+    
   }
 
-  this.$scope.closedDates = function (calendarDate, mode) {
-    return mode === 'day' && calendarDate.getDay() != 3;
-  };
+  Add (product) {
+    this.$scope.order.products.push({'product': product});
+  }
+
 
   remove () {
   	var r = confirm("Ben je zeker dat je dit order wilt verwijderen?");
