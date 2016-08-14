@@ -34,6 +34,9 @@ class InfoComponent {
 				        this.$scope.request.returndate = new Date(this.$scope.request.returndate );
 				        this.isNoDraft();
 			      	});
+		  		} else {
+		  			//function should be called to enable controls
+		  			this.isNoDraft();
 		  		}
 			} else {
 				console.log('error loading user');
@@ -91,6 +94,7 @@ class InfoComponent {
 	isNoDraft () {
 		var result = (this.id == undefined || this.id == '') || (this.$scope.request && this.$scope.request.state == 'DRAFT');
 		this.$scope.isDraft = result;
+		console.log(!result);
 	    return !result;
 	}
 }

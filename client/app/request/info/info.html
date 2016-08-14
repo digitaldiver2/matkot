@@ -22,10 +22,10 @@
 			</a>
 			<div uib-collapse="eventstartCollapsed">
 				<div class="well">
-					<uib-timepicker ng-model="request.eventstart" ng-change="$ctrl.changedTime()" show-meridian="ismeridian" ng-disabled="!isDraft">
-					</uib-timepicker>
 					<uib-datepicker ng-model="request.eventstart" datepicker-options="options" ng-disabled="!isDraft">
 					</uib-datepicker>
+					<uib-timepicker ng-model="request.eventstart" ng-change="$ctrl.changedTime()" show-meridian="ismeridian" ng-disabled="!isDraft">
+					</uib-timepicker>
 				</div>
 			</div>
 		</div>
@@ -37,10 +37,10 @@
 			</a>
 			<div uib-collapse="eventstopCollapsed">
 				<div class="well">
-					<uib-timepicker ng-model="request.eventstop" show-meridian="ismeridian" ng-disabled="!isDraft">
-					</uib-timepicker>
 					<uib-datepicker ng-model="request.eventstop" datepicker-options="options" ng-disabled="!isDraft">
 					</uib-datepicker>
+					<uib-timepicker ng-model="request.eventstop" show-meridian="ismeridian" ng-disabled="!isDraft">
+					</uib-timepicker>
 				</div>
 			</div>
 		</div>
@@ -52,16 +52,10 @@
 				</a>
 			<div uib-collapse="pickupCollapsed">
 				<div class="well">
-					<uib-timepicker 
-					ng-model="request.pickupdate" 
-					show-meridian="ismeridian" 
-					ng-disabled="!isDraft">
-					</uib-timepicker>
-					<uib-datepicker 
-					ng-model="request.pickupdate" 
-					datepicker-options="pickupoptions" 
-					ng-disabled="!isDraft" >
+					<uib-datepicker ng-model="request.pickupdate" datepicker-options="pickupoptions" ng-disabled="!isDraft" >
 					</uib-datepicker>
+					<uib-timepicker ng-model="request.pickupdate" show-meridian="ismeridian" ng-disabled="!isDraft">
+					</uib-timepicker>
 				</div>
 			</div>
 		</div>
@@ -74,16 +68,10 @@
 			</a>
 			<div uib-collapse="returnCollapsed">
 				<div class="well">
-					<uib-timepicker 
-					ng-model="request.returndate" 
-					show-meridian="ismeridian" 
-					ng-disabled="!isDraft">
-					</uib-timepicker>
-					<uib-datepicker 
-					ng-model="request.returndate" 
-					datepicker-options="retouroptions" 
-					ng-disabled="!isDraft" >
+					<uib-datepicker ng-model="request.returndate" datepicker-options="retouroptions" ng-disabled="!isDraft" >
 					</uib-datepicker>
+					<uib-timepicker ng-model="request.returndate" show-meridian="ismeridian" ng-disabled="!isDraft">
+					</uib-timepicker>
 				</div>
 			</div>
 		</div>

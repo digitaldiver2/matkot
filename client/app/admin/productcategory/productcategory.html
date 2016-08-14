@@ -6,4 +6,16 @@
 		</div>
 		<button type="submit" class="btn btn-default">Opslaan</button>
 	</form>
+
+	<h2>Producten</h2>
+	<ul class="list-group" id="productlist" ng-show="$ctrl.products.length">
+		<li class="list-group-item" ng-repeat="product in $ctrl.products | orderBy: 'name'">
+			<div class="row">
+				<div class="col-sm-11">
+					<strong>{{product.name}}</strong><br>
+			    </div>
+			</div>
+		</li>
+	</ul>
+	<p ng-hide="$ctrl.products.length">Geen producten geselecteerd in deze groep.</p>
 </div>

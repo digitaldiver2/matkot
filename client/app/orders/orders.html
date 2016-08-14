@@ -18,6 +18,9 @@
 	<div ng-repeat="group in groups | orderBy:'name'">
 		<h3>{{group.name}}</h3>
 
+		<div ng-hide="group.orders.length">
+			Geen aanvragen beschikbaar voor deze groep
+		</div>
 		<ul class="list-group">
 			<li class="list-group-item" ng-repeat="order in group.orders | orderBy:'ordernumber':true">
 				<div class="user-info">

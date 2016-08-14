@@ -1,27 +1,47 @@
 <div class="container">
-	<ul class="list-group product-list">
-		<h3>Producten</h3>
-		<li class="list-group-item" ng-repeat="product in $ctrl.products">
-			<div class="product-info">
-		        <strong>{{product.name}}</strong><br>
-		        <span class="text-muted">{{user.email}}</span>
-		    </div>
-
-      		<a ng-href="/admin/product/{{product._id}}" class="edit"><span class="fa fa-pencil fa-2x"></span></a>
-      		<a ng-click="$ctrl.DeleteProduct(product._id)" class="trash"><span class="fa fa-trash fa-2x"></span></a>
+	<h3>Producten</h3>
+	<div class="form-group">
+		<div class="input-group">
+			<div class="input-group-addon"><i class="fa fa-search"></i></div>
+			
+			<input type="text" class="form-control" ng-model="productname.name">
+		</div>   
+	</div>
+	<ul class="list-group product-list"  id="productlist">
+		<li class="list-group-item" ng-repeat="product in $ctrl.products | orderBy: 'name' | filter:productname">
+			<div class="row">
+				<div class="col-sm-11">
+					<strong>{{product.name}}</strong></br>
+					<span class="text-muted">{{product.description}}</span>
+				</div>
+				<div class="col-sm-1">
+		      		<a ng-href="/admin/product/{{product._id}}" class="edit"><span class="fa fa-pencil fa-2x"></span></a>
+      				<a ng-click="$ctrl.DeleteProduct(product._id)" class="trash"><span class="fa fa-trash fa-2x"></span></a>
+      			</div>
+			</div>
 		</li>
 	</ul>
 	<button class="btn btn-default" ng-click="$ctrl.NewProduct()">Nieuw product</button>
 
-	<ul class="list-group productcategory-list">
-		<h3>Product groepen</h3>
-		<li class="list-group-item" ng-repeat="category in $ctrl.productcategories">
-			<div class="category-info">
-		        <strong>{{category.name}}</strong><br>
-		    </div>
-
-      		<a ng-href="/admin/productcategory/{{category._id}}" class="edit"><span class="fa fa-pencil fa-2x"></span></a>
-      		<a ng-click="$ctrl.DeleteGroup(category._id)" class="trash"><span class="fa fa-trash fa-2x"></span></a>
+	<h3>Product groepen</h3>
+	<div class="form-group">
+		<div class="input-group">
+			<div class="input-group-addon"><i class="fa fa-search"></i></div>
+			
+			<input type="text" class="form-control" ng-model="categoryname.name">
+		</div>   
+	</div>
+	<ul class="list-group productcategory-list" id="categorylist">
+		<li class="list-group-item" ng-repeat="category in $ctrl.productcategories | orderBy: 'name' |filter:categoryname">
+			<div class="row">
+				<div class="col-sm-11">
+					<strong>{{category.name}}</strong><br>
+			    </div>
+			    <div class="col-sm-1">
+		      		<a ng-href="/admin/productcategory/{{category._id}}" class="edit"><span class="fa fa-pencil fa-2x"></span></a>
+		      		<a ng-click="$ctrl.DeleteGroup(category._id)" class="trash"><span class="fa fa-trash fa-2x"></span></a>
+		      	</div>
+			</div>
 		</li>
 	</ul>
 	<button class="btn btn-default" ng-click="$ctrl.NewGroup()">Nieuwe groep</button>

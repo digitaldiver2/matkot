@@ -1,0 +1,9 @@
+#productlist {
+    height: 500px;
+    overflow-y: scroll;
+}
+
+#categorylist {
+	height: 300px;
+	overflow-y: scroll;
+}

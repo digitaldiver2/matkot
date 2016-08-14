@@ -9,6 +9,7 @@ router.get('/', controller.index);
 router.get('/public', controller.publicIndex);
 router.get('/:id', controller.show);
 router.get('/group/:group_id', controller.groupIndex);
+router.get('/category/:category_id', controller.categoryIndex);
 router.post('/', controller.create);
 router.put('/:id', controller.update);
 router.patch('/:id', controller.update);

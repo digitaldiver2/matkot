@@ -98,14 +98,33 @@ export function groupIndex(req, res) {
   if (req.params.group_id != 0) {
     query = {
       $or:[
-        { visiblegroups: req.params.group_id},
-        { visiblegroups: {$exists:true, $size:0}}
+        {visiblegroups: req.params.group_id},
+        {visiblegroups: {$exists:true, $size:0}},
+        {visiblegroups: {$exists: false}}
       ]
     };
   } else {
       query = {
-        visiblegroups: {$exists:true, $size:0}
+        $or: [
+          {visiblegroups: {$exists:true, $size:0}},
+          {visiblegroups: {$exists: false}}
+        ]
       };
+  }
+
+  return Product.find(query).exec()
+    .then(respondWithResult(res))
+    .catch(handleError(res));
+}
+
+//get list of products for specific category
+// Gets a list of Products available for group, with pricing
+export function categoryIndex(req, res) {
+  var query = undefined;
+  if (req.params.group_id != 0) {
+    query = {productfamily: req.params.category_id};
+  } else {
+      query = {};
   }
   return Product.find(query).exec()
     .then(respondWithResult(res))

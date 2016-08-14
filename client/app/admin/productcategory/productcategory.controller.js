@@ -15,6 +15,10 @@ class ProductcategoryComponent {
   		this.$http.get('/api/productfamilies/' + this.id).then(response=> {
   			this.category = response.data;
   		});
+
+      this.$http.get('/api/products/category/' + this.id).then(response => {
+        this.products = response.data;
+      });
   	}
   }
 

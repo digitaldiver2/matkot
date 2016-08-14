@@ -30,30 +30,38 @@
 		</div>
 		<h3>Product groep</h3>
 		<ul class="list-group">
-			<li class="list-group-item" ng-repeat="category in productcategories | orderBy:'name'">
-				<div class="form-group">
-					<label for="{{category._id}}">
-						<input type="checkbox" id="{{category._id}}" ng-model="category.checked">
-						{{category.name}}
-					</label>
-				</div>
-			</li>
+			<div ng-repeat="category in productcategories | orderBy:'name'">
+				<input type="checkbox" id="{{category._id}}" ng-model="category.checked">
+				{{category.name}}
+			</div>
 		</ul>
 
 		<h3>Zichtbaar voor</h3>
 		<p>Indien geen groep geselecteerd, dan is het product beschikbaar voor alle groepen.</p>
 		<ul class="list-group">
-			<li class="list-group-item" ng-repeat="group in groups | orderBy:'name'">
-				<div class="form-group">
-					<label for="{{group._id}}">
-						<input type="checkbox" id="{{group._id}}" ng-model="group.checked">
-							{{group.name}} 
-					</label>
-				</div>
-			</li>
+			<div ng-repeat="group in groups | orderBy:'name'">
+				<input type="checkbox" id="{{group._id}}" ng-model="group.checked">
+				{{group.name}} 
+			</div>
 		</ul>
 		<h3>Prijzen</h3>
-		<ul class="list-group">
+		<table>
+			<tr>
+				<td>Standaard</td>
+				<td><input type="number" step="any" id="standaard" ng-model="product.defaultprice"></td>
+			</tr>
+			<tr ng-repeat="pricecategory in pricecategories">
+				<td>{{pricecategory.name}}</td>
+				<td><input type="number" step="any" id="standaard" ng-model="pricecategory.price" ng-disabled="!pricecategory.hasprice"></td>
+				<td><input type="checkbox" id="{{pricecategory._id}}" ng-model="pricecategory.hasprice" ng-change="$ctrl.todefaultprice(pricecategory)"></td>
+				<td>custom</td>
+			</tr>
+			<tr>
+				<td>Verlies of kapot</td>
+				<td><input type="number" step="any" id="replacement" ng-model="product.replacementprice"></td>
+			</tr>
+		</table>
+<!-- 		<ul class="list-group">
 			<li class="list-group-item">
 				<div class="form-group">
 					<label for="standaard">Standaard</label>
@@ -77,6 +85,6 @@
 				</div>
 			</li>
 		</ul>
-		<button class="btn btn-default" type="submit">Opslaan</button>
+ -->		<button class="btn btn-default" type="submit">Opslaan</button>
 	</form>
 </div>

@@ -21,7 +21,25 @@ class OrderComponent {
   	this.$http.get('/api/usergroups').then(response => {
         this.$scope.groups = response.data;
     });
+
+
+    this.$scope.returnCollapsed = true;
+    this.$scope.pickupCollapsed = true;
+    this.$scope.eventstartCollapsed = true;
+    this.$scope.eventstopCollapsed = true;
+
+    this.$scope.retouroptions = {
+      dateDisabled: this.closedDates
+    };
+    this.$scope.pickupoptions = {
+      dateDisabled: this.closedDates
+    }
+      
   }
+
+  this.$scope.closedDates = function (calendarDate, mode) {
+    return mode === 'day' && calendarDate.getDay() != 3;
+  };
 
   remove () {
   	var r = confirm("Ben je zeker dat je dit order wilt verwijderen?");

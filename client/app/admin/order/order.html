@@ -19,7 +19,7 @@
 			<label for="Naam">Naam evenement *</label>
 			<input type="text" class="form-control" id="NaamEvenement" placeholder='Evenement' ng-model='order.name'>
 		</div>
-		<div class="form-group">
+		<!-- <div class="form-group">
 			<label for="">Start evenement</label>
 			<datetimepicker ng-model="order.eventstart" 
                 date-format="dd-MMM-yyyy" 
@@ -48,21 +48,86 @@
                 date-options="dateOptions" 
                 date-disabled="isDisabledDate(date, mode)">
 			</datetimepicker>
+		</div> -->
+
+				<div class="form-group">
+			<label>Start Evenement: </label>
+			<a  ng-click="eventstartCollapsed = !eventstartCollapsed">{{order.eventstart | date:'EEE dd/MM/yy HH:mm'}}
+				<i class="fa fa-pencil fa" aria-hidden="true"></i>
+			</a>
+			<div uib-collapse="eventstartCollapsed">
+				<div class="well">
+					<uib-datepicker ng-model="order.eventstart" datepicker-options="options" >
+					</uib-datepicker>
+					<uib-timepicker ng-model="order.eventstart" ng-change="$ctrl.changedTime()" show-meridian="ismeridian" >
+					</uib-timepicker>
+				</div>
+			</div>
+		</div>
+
+		<div class="form-group">
+			<label>Einde Evenement: </label>
+			<a ng-click="eventstopCollapsed = !eventstopCollapsed">{{order.eventstop | date:'EEE dd/MM/yy HH:mm'}}
+				<i class="fa fa-pencil fa" aria-hidden="true"></i>
+			</a>
+			<div uib-collapse="eventstopCollapsed">
+				<div class="well">
+					<uib-datepicker ng-model="order.eventstop" datepicker-options="options" >
+					</uib-datepicker>
+					<uib-timepicker ng-model="order.eventstop" show-meridian="ismeridian" >
+					</uib-timepicker>
+				</div>
+			</div>
+		</div>
+
+		<div class="form-group">
+				<label>Afhaal tijdstip: </label>
+				<a ng-click="pickupCollapsed = !pickupCollapsed">{{order.pickupdate | date:'EEE dd/MM/yy HH:mm'}}
+					<i class="fa fa-pencil fa" aria-hidden="true"></i>
+				</a>
+			<div uib-collapse="pickupCollapsed">
+				<div class="well">
+					<uib-datepicker ng-model="order.pickupdate" datepicker-options="pickupoptions"  >
+					</uib-datepicker>
+					<uib-timepicker ng-model="order.pickupdate" show-meridian="ismeridian" >
+					</uib-timepicker>
+				</div>
+			</div>
+		</div>
+<!-- \ -->
+
+		<div class="form-group">
+			<label>Retour moment: </label>
+			<a ng-click="returnCollapsed = !returnCollapsed">{{order.returndate | date:'EEE dd/MM/yy HH:mm'}}
+				<i class="fa fa-pencil fa" aria-hidden="true"></i>
+			</a>
+			<div uib-collapse="returnCollapsed">
+				<div class="well">
+					<uib-datepicker ng-model="order.returndate" datepicker-options="retouroptions"  >
+					</uib-datepicker>
+					<uib-timepicker ng-model="order.returndate" show-meridian="ismeridian" >
+					</uib-timepicker>
+				</div>
+			</div>
 		</div>
 
 		<h3>Product lijst</h3>
 		<form>
-			<div class="form-group">
-				<div class="input-group">
-					<div class="input-group-addon"><i class="fa fa-search"></i></div>
-					
-					<input type="text" class="form-control" placeholder="sku" ng-model="searchProduct2.product.code">
+			<div class="form-group row">
+				<div class="col-sm-2">
+					<div class="input-group">
+						<div class="input-group-addon"><i class="fa fa-search"></i></div>
+						
+						<input type="text" class="form-control" placeholder="sku" ng-model="searchProduct2.product.code">
+					</div>
 				</div>
-				<div class="input-group">
-					<div class="input-group-addon"><i class="fa fa-search"></i></div>
-					
-					<input type="text" class="form-control" placeholder="naam" ng-model="searchProduct2.product.name">
-				</div>      
+				<div class="col-sm-2">
+					<div class="input-group">
+						<div class="input-group-addon"><i class="fa fa-search"></i></div>
+						
+						<input type="text" class="form-control" placeholder="naam" ng-model="searchProduct2.product.name">
+					</div>      
+				</div>
 			</div>
 		</form>
 		<table class="table">
@@ -88,8 +153,8 @@
 					<th>Goedgekeurd</th>
 					<th>Gekregen</th>
 					<th>Terug</th>
+					<th>Tekort</th>
 				</tr>
-
 			</thead>
 			<tbody>
 				<tr ng-repeat="productitem in order.products | orderBy:sortType:sortReverse | filter:searchProduct2 ">
@@ -106,6 +171,9 @@
 					</td>
 					<td>
 						<input type="number" ng-model="productitem.returned" ng-disabled="order.state!='DELIVERED' && order.state != 'SHORTAGE'">
+					</td>
+					<td>
+						{{productitem.received - productitem.returned}}
 					</td>
 				</tr>
 			</tbody>
