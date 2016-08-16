@@ -149,6 +149,7 @@
 					</th>
 					<th>Totaal</th>
 					<th>Beschikbaar</th>
+					<th>Prijs</th>
 					<th>Aangevraagd</th>
 					<th>Goedgekeurd</th>
 					<th>Gekregen</th>
@@ -162,12 +163,13 @@
 					<td>{{productitem.product.name}}</td>
 					<td>{{productitem.product.stock}}</td>
 					<td>{{productitem.product.available}}</td>
+					<td>{{productitem.product.unitprice | currency : "€"}}
 					<td>{{productitem.ordered}}</td>
 					<td>
 						<input type="number" ng-model="productitem.approved" ng-disabled="order.state!='DRAFT' && order.state != 'ORDERED'">
 					</td>
 					<td>
-						<input type="number" ng-model="productitem.received" ng-disabled="order.state!='APPROVED'">
+						<input type="number" ng-model="productitem.received" ng-disabled="order.state!='APPROVED' && order.state != 'CANCELLED'">
 					</td>
 					<td>
 						<input type="number" ng-model="productitem.returned" ng-disabled="order.state!='DELIVERED' && order.state != 'SHORTAGE'">
@@ -181,14 +183,24 @@
 
 		<button class="btn btn-default" ng-click="addProductCollapsed=!addProductCollapsed">+</button>
 		<div uib-collapse="addProductCollapsed">
-			<div class="input-group col-sm-2" >
-				<div class="input-group-addon"><i class="fa fa-search"></i></div>
-				
-				<input type="text" class="form-control" placeholder="naam" ng-model="AddProductSearch.name">
+			<div class="row">
+				<div class="input-group">
+					<div class="col-sm-6">
+						<div class="input-group-addon"><i class="fa fa-search"></i></div>
+						
+						<input type="text" class="form-control" placeholder="naam" ng-model="AddProductSearch.name">
+					</div>
+					<select id="pricecategory" class="form-control col-sm-6" 
+						ng-model="pricecategory" 
+						ng-options="category as category.name for category in pricecategories track by category._id"
+						ng-change="$ctrl.UpdatePriceCategory(pricecategory)">
+						<option value="">Prive</option>
+					</select>	
+				</div>
 			</div>
 			<ul id="addProductList" class="list-group">	
-				<li class="list-group-item row" ng-repeat="product in products | filter:AddProductSearch as filtered">
-					<p class="col-sm-6">{{product.code}} {{product.name}}</p><button class="btn btn-default col-sm-1" ng-click="$ctrl.Add(product)">Toevoegen</button>
+				<li class="list-group-item row" ng-repeat="product in products | filter:AddProductSearch | orderBy: 'name' as filtered">
+					<p class="col-sm-6">{{product.code}} {{product.name}} {{product.unitprice | currency: "€"}}</p><button class="btn btn-default col-sm-1" ng-click="$ctrl.Add(product)">Toevoegen</button>
 				</li>
 			</ul>
 			<p ng-hide="filtered.length">Geen resultaten</p>
@@ -204,6 +216,7 @@
 				<option value="DELIVERED">Uitgeleend</option>
 				<option value="SHORTAGE">Te korten</option>
 				<option value="CLOSED">Afgesloten</option>
+				<option value="CANCELLED">Geannuleerd</option>
 			</select>
 		</div>
 

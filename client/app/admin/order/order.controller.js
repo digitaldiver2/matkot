@@ -21,6 +21,11 @@ class OrderComponent {
         //get products
         this.$http.get('/api/products').then(resp => {
           this.$scope.products = resp.data;
+
+          this.$http.get('/api/pricecategories').then(response => {
+            this.$scope.pricecategories = response.data;
+            this.UpdatePriceCategory();
+          });
         });
   	});
 
@@ -28,6 +33,7 @@ class OrderComponent {
         this.$scope.groups = response.data;
     });
 
+    
 
     this.$scope.returnCollapsed = true;
     this.$scope.pickupCollapsed = true;
@@ -46,6 +52,22 @@ class OrderComponent {
     };
 
     
+  }
+
+  UpdatePriceCategory(category) {
+    for (var i=0; i<this.$scope.products.length; i++) {
+      var product = this.$scope.products[i];
+      product.unitprice = product.defaultprice ? product.defaultprice : 0.0;
+      if (category != null) {
+        for (var j=0; j<product.prices.length; j++) {
+          if (product.prices[j].Pricecategory == category._id) {
+            product.unitprice = product.prices[j].price;
+            break;
+          }
+        }
+      }
+      console.log(product.unitprice);
+    }
   }
 
   Add (product) {

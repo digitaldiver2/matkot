@@ -17,7 +17,7 @@ var OrderSchema = new mongoose.Schema({
 	  		unitprice: Number
 		}
 	],
-  state: {type:String, enum: ['DRAFT', 'ORDERED', 'APPROVED', 'DELIVERED','SHORTAGE', 'CLOSED'], default: 'DRAFT'}, //Draft/Request/Order/Delivered/Returned/Closed
+  state: {type:String, enum: ['DRAFT', 'ORDERED', 'APPROVED', 'DELIVERED','SHORTAGE', 'CLOSED', 'CANCELLED'], default: 'DRAFT'}, //Draft/Request/Order/Delivered/Returned/Closed
   creator: {type: mongoose.Schema.Types.ObjectId, ref: 'User'},
   modifier: {type: mongoose.Schema.Types.ObjectId, ref: 'User'},
   creationdate: Date,
@@ -30,7 +30,8 @@ var OrderSchema = new mongoose.Schema({
   returndate: Date,
   pricecategory: {type: mongoose.Schema.Types.ObjectId, ref: 'Pricecategory'},
   changehistory: [String],
-  ordernumber: String
+  ordernumber: String,
+  totalpaid: Number
 
 });
 

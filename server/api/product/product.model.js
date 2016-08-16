@@ -7,8 +7,11 @@ var ProductSchema = new mongoose.Schema({
   name: String,
   info: String,
   active: Boolean,
-  prices: [{price: Number, pricecategory: {type: Schema.Types.ObjectId, ref: 'Pricecategory'}}],
-  defaultprice: Number,
+  prices: [{price: Number, Pricecategory: {type: Schema.Types.ObjectId, ref: 'Pricecategory'}}],
+  defaultprice: {
+    type: Number,
+    default: 0.0
+  },
   replacementprice: Number,
   isconsumable: Boolean,
   stock: Number,

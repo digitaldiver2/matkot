@@ -117,8 +117,7 @@ export function groupIndex(req, res) {
     .catch(handleError(res));
 }
 
-//get list of products for specific category
-// Gets a list of Products available for group, with pricing
+//get list of products for specific productcategory
 export function categoryIndex(req, res) {
   var query = undefined;
   if (req.params.group_id != 0) {
