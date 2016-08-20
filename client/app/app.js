@@ -10,7 +10,6 @@ angular.module('matkotApp', [
   'btford.socket-io',
   'ui.router',
   'ui.bootstrap',
-  'ui.bootstrap.datetimepicker',
   'validation.match'
 ])
   .config(function($urlRouterProvider, $locationProvider) {

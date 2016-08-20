@@ -15,6 +15,13 @@ class ShopComponent {
   	return x._id;
   }
 
+
+  greaterThan (prop, val){
+    return function(item){
+      return item[prop] > val;
+    }
+  }
+
   $onInit () {
   	if (this.id == undefined || this.id == '') {
   		this.$location.path('/');
@@ -26,7 +33,6 @@ class ShopComponent {
 	  		this.$http.get('/api/products/group/' + group_id).then(resp => {
 	  			this.$scope.products = resp.data;
 	  			this.productmap = this.$scope.products.map(this.mapfct);
-	  			this.$scope.productmap = this.$scope.products.map(this.mapfct);
 	  			this.selectCorrectPrice();
 	  			this.syncProductList();
 	  		});
@@ -43,8 +49,7 @@ class ShopComponent {
   }
 
   isNoDraft () {
-    var result = this.$scope.request && this.$scope.request.state == 'DRAFT'
-    console.log("is draft?" + result);
+    var result = this.$scope.request && this.$scope.request.state == 'DRAFT';
     return !result;
   }
 
@@ -74,6 +79,8 @@ class ShopComponent {
   	for (var i=0; i< this.$scope.products.length; i++) {
   		var product = this.$scope.products[i];
 		  product.unitprice = product.defaultprice;
+      //use same for loop to set ordered quantity default on 0
+      product.ordered = 0;
       //if product has custom prices and there is a group specified
   		if (product.prices.length > 0 && pricecategory != '') {
   			for (var j=0; j<product.prices.length; j++) {
@@ -89,7 +96,7 @@ class ShopComponent {
   syncProductList () {
   	for (var i=0; i <this.$scope.request.products.length; i++) {
   		var product = this.$scope.request.products[i];
-  		var index = this.productmap.indexOf(product.product);
+  		var index = this.productmap.indexOf(product.product._id);
   		var shopproduct = this.$scope.products[index];
   		shopproduct.ordered = product.ordered;
   	}
@@ -120,6 +127,10 @@ class ShopComponent {
   saveAndRequest () {
   	this.$scope.request.state = 'ORDERED';
     this.save();
+  }
+
+  clear (product) {
+    product.ordered = 0;
   }
 }
 

@@ -8,6 +8,7 @@ class OrdersComponent {
   	this.$location = $location;
     this.Auth = Auth;
   	this.$scope.groups = {};
+    this.$scope.errmsg = '';
   }
 
   $onInit () {
@@ -20,7 +21,16 @@ class OrdersComponent {
     if (user) {
       this.user = user;
       this.$scope.groups = this.user.groups;
-      this.$http.get('/api/orders/user/' + this.user._id).then (response => {
+      this.refreshOrders()
+    }
+  }
+
+  canBeDeleted (order) {
+    return order.state == 'DRAFT' && !order.ordernumber;
+  }
+
+  refreshOrders () {
+    this.$http.get('/api/orders/user/' + this.user._id).then (response => {
         this.$scope.userorders = response.data;
       });
       this.$scope.groups.forEach((group) => {
@@ -28,12 +38,26 @@ class OrdersComponent {
           group.orders = response.data;
         });
       });
-    }
   }
 
 
   newOrder () {
   	this.$location.path('/request/terms');
+  }
+
+  DeleteOrder (order) {
+    console.dir(order);
+    this.$http.delete('/api/orders/' + order._id)
+      .then (response => {
+        console.log('removing..');
+        //to refresh
+        this.refreshOrders();
+      })
+      .catch(err => {
+        console.dir(err);
+        console.log(err.data);
+        this.$scope.errmsg = err.data;
+      });
   }
 }
 

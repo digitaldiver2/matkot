@@ -14,12 +14,6 @@ import Order from './order.model';
 import Usergroup from '../usergroup/usergroup.model';
 
 
-
-function groupAlign (order) {
-  //if order changes from group, make sure the correct prices are used, and only allowed products are possible
-
-}
-
 function respondWithResult(res, statusCode) {
   statusCode = statusCode || 200;
   return function(entity) {
@@ -45,13 +39,23 @@ function saveUpdates(updates) {
   };
 }
 
+//'dont remove entity if state is not draft or if an ordernumber is available
 function removeEntity(res) {
   return function(entity) {
-    if (entity) {
+    console.log('a');
+    if (entity && entity.state == 'DRAFT' && entity.ordernumber == undefined) {
+    console.log('b');
       return entity.remove()
         .then(() => {
+    console.log('c');
           res.status(204).end();
         });
+    } else {
+    console.log('d');
+      console.error('unable to remove order because state was not draft or ordernumber already assigned');
+    console.log('e');
+      res.status(999).send('Aanvraag kant niet verwijderd worden omdat ze geen concept is of omdat ze al een ordernummer heeft.');
+    console.log('f');
     }
   };
 }
@@ -133,6 +137,7 @@ export function update(req, res) {
 }
 
 // Deletes a Order from the DB
+// restrictions: it's only possible 
 export function destroy(req, res) {
   return Order.findById(req.params.id).exec()
     .then(handleEntityNotFound(res))
