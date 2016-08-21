@@ -24,8 +24,7 @@ var UserSchema = new Schema({
   google: {},
   github: {},
   groups: [{type: Schema.Types.ObjectId, ref: 'Usergroup'}],
-  requested_groups:[{type: Schema.Types.ObjectId, ref: 'Usergroup'}],
-  orders: [{type: Schema.Types.ObjectId, ref: 'Order'}]
+  requested_groups:[{type: Schema.Types.ObjectId, ref: 'Usergroup'}]
 });
 
 /**

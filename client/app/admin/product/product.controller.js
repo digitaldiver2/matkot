@@ -19,8 +19,6 @@ class ProductComponent {
       this.$http.get('/api/products/' + this.id).then(response => {
         this.$scope.product = response.data;
         this.loaded['product'] = true;
-        console.log('product:');
-        console.dir(this.$scope.product);
       });
     }
 
@@ -60,8 +58,6 @@ class ProductComponent {
   }
 
   todefaultprice (category) {
-    console.log('todefaultprice');
-    console.log(category.hasprice);
     if (!category.hasprice) {
       category.price = $scope.product.defaultprice;
     }
@@ -71,8 +67,6 @@ class ProductComponent {
     this.updategroups();
     this.updateproductfamilies();
     this.updatepricecategories();
-    console.log('---send product---');
-    console.dir(this.$scope.product);
 
   	if (this.id) {
   		//update
@@ -112,6 +106,7 @@ class ProductComponent {
       //find categorie in product prices
       this.$scope.pricecategories[j].hasprice = false;
       this.$scope.pricecategories[j].price = this.$scope.product.defaultprice;
+
       for (var i=0; i<this.$scope.product.prices.length; i++) {
         if (this.$scope.product.prices[i].pricecategory == this.$scope.pricecategories[j]._id) {
           this.$scope.pricecategories[j].price = this.$scope.product.prices[i].price;
@@ -145,10 +140,12 @@ class ProductComponent {
     this.$scope.product.prices = [];
     for (var j=0; j<this.$scope.pricecategories.length; j++) {
       if (this.$scope.pricecategories[j].hasprice) {
-        this.$scope.product.prices.push({
-          price: this.$scope.pricecategories[j].price,
-          pricecategory: this.$scope.pricecategories[j]._id
-        });
+        this.$scope.product.prices.push(
+          {
+            price: this.$scope.pricecategories[j].price,
+            pricecategory: this.$scope.pricecategories[j]._id
+          }
+        );
       }
     }
   }

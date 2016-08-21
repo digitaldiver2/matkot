@@ -1,4 +1,4 @@
-'use strict';
+  'use strict';
 
 import mongoose from 'mongoose';
 import {Schema} from 'mongoose';
@@ -7,7 +7,7 @@ var ProductSchema = new mongoose.Schema({
   name: String,
   info: String,
   active: Boolean,
-  prices: [{price: Number, Pricecategory: {type: Schema.Types.ObjectId, ref: 'Pricecategory'}}],
+  prices: [{price: Number, pricecategory: {type: Schema.Types.ObjectId, ref: 'Pricecategory'}}],
   defaultprice: {
     type: Number,
     default: 0.0

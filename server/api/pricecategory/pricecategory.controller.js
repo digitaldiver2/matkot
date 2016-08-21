@@ -12,6 +12,12 @@
 import _ from 'lodash';
 import Pricecategory from './pricecategory.model';
 
+//needed for deletion check
+import Order from '../order/order.model';
+import Product from '../product/product.model';
+import Usergroup from '../usergroup/usergroup.model';
+
+
 function respondWithResult(res, statusCode) {
   statusCode = statusCode || 200;
   return function(entity) {
@@ -30,6 +36,11 @@ function saveUpdates(updates) {
       });
   };
 }
+
+//check if entity is used in other models:
+// usergroup model -> usergroup.pricecategory
+// product model -> product.prices[].Pricecategory
+// order model -> order.pricecategory
 
 function removeEntity(res) {
   return function(entity) {
