@@ -1,6 +1,7 @@
 'use strict';
 
 import User from './user.model';
+import Order from '../order/order.model';
 import passport from 'passport';
 import config from '../../config/environment';
 import jwt from 'jsonwebtoken';
@@ -18,8 +19,9 @@ function respondWithResult(res, statusCode) {
 
 function saveUpdates(updates) {
   return function(entity) {
-
-
+    // console.dir(entity);
+    // console.dir(updates);
+    // console.log('====================');
     //clear groups
     entity.groups = new Array();
     //clear orders
@@ -32,18 +34,24 @@ function saveUpdates(updates) {
 
     //remove groups and orders from updates
     // console.log('groups');
+    if (updates.groups) {
+      updates.groups.forEach(function (group_id) {
+        entity.groups.push(group_id);
+      });
+    }
 
-    updates.groups.forEach(function (group_id) {
-      entity.groups.push(group_id);
-    });
+    if (updates.orders) {
+      updates.orders.forEach(function (order_id) {
+        entity.orders.push(order_id);
+      });
+    }
 
-    updates.orders.forEach(function (order_id) {
-      entity.orders.push(order_id);
-    });
+    if (updates.requested_groups) {
+      updates.requested_groups.forEach(function (order_id) {
+        entity.requested_groups.push(order_id);
+      });
+    }
 
-    updates.requested_groups.forEach(function (order_id) {
-      entity.requested_groups.push(order_id);
-    });
 
     delete updates.groups;
     delete updates.orders;
@@ -61,10 +69,17 @@ function saveUpdates(updates) {
 function removeEntity(res) {
   return function(entity) {
     if (entity) {
-      return entity.remove()
-        .then(() => {
-          res.status(204).end();
-        });
+      Order.count({$or: [{creator: entity._id}, {modifier: entity._id}, {owner: entity._id}]}).then (function (count) {
+        if (count > 0) {
+          res.status(999).send('Unable to remove item because it is used by one or more documents');
+        } else {
+          // return entity.remove()
+          //   .then(() => {
+          //     res.status(204).end();
+          //   });
+          res.status(999).send('Unable to remove item because it is used by one or more documents');
+        }
+      });      
     }
   };
 }
@@ -165,11 +180,25 @@ export function admin_show(req, res, next) {
  * restriction: 'admin'
  */
 export function destroy(req, res) {
-  return User.findByIdAndRemove(req.params.id).exec()
-    .then(function() {
-      res.status(204).end();
-    })
-    .catch(handleError(res));
+  // return User.findByIdAndRemove(req.params.id).exec()
+  //   .then(function() {
+  //     res.status(204).end();
+  //   })
+  //   .catch(handleError(res));
+
+  return User.findById(req.params.id).exec().then(user => {
+    Order.count({$or: [{creator: user._id}, {modifier: user._id}, {owner: user._id}]}).then (function (count) {
+        if (count > 0) {
+          res.status(999).send('Unable to remove item because it is used by one or more documents');
+        } else {
+          return user.remove()
+            .then(() => {
+              res.status(204).end();
+            });
+        }
+      });   
+  });
+
 }
 
 /**

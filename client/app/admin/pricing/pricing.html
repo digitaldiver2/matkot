@@ -1,4 +1,7 @@
 <div class="container">
+	<div class="alert alert-danger" ng-show="errmsg !=''">
+		{{errmsg}}
+	</div>
 	<ul class="list-group category-list">
 		<h3>Prijs categorie</h3>
 		<li class="list-group-item" ng-repeat="category in categories | orderBy:'name'">

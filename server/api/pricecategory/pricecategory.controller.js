@@ -29,6 +29,7 @@ function respondWithResult(res, statusCode) {
 
 function saveUpdates(updates) {
   return function(entity) {
+    console.log(isInUse(entity));
     var updated = _.merge(entity, updates);
     return updated.save()
       .then(updated => {
@@ -39,16 +40,44 @@ function saveUpdates(updates) {
 
 //check if entity is used in other models:
 // usergroup model -> usergroup.pricecategory
-// product model -> product.prices[].Pricecategory
+// product model -> product.prices[].pricecategory
 // order model -> order.pricecategory
+function isInUse(entity) {
+  var promises = [];
+  promises.push(Product.count({prices: {$elemMatch: {pricecategory:entity._id}}}));
+  promises.push(Usergroup.count({pricecategory: entity._id}));
+  promises.push(Order.count({pricecategory: entity._id}));
+
+  Promise.all(promises).then(function (results) {
+    for (var i=0; i< results.length; i++) {
+      if (results[i] > 0) {
+        return false;
+      }
+    }
+    return true;
+  });
+}
 
 function removeEntity(res) {
   return function(entity) {
     if (entity) {
-      return entity.remove()
-        .then(() => {
-          res.status(204).end();
-        });
+      //check if entity is used in other models:
+      var promises = [];
+      promises.push(Product.count({prices: {$elemMatch: {pricecategory:entity._id}}}));
+      promises.push(Usergroup.count({pricecategory: entity._id}));
+      promises.push(Order.count({pricecategory: entity._id}));
+
+      Promise.all(promises).then(function (results) {
+        for (var i=0; i< results.length; i++) {
+          if (results[i] > 0) {
+            return res.status(999).send('Unable to remove item because it is used by one or more documents');
+          }
+        }
+        return entity.remove()
+          .then(() => {
+            res.status(204).end();
+          });
+      });
     }
   };
 }

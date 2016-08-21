@@ -1,4 +1,7 @@
 <div class="container">
+	<div class="alert alert-danger" ng-show="errmsg !=''">
+		{{errmsg}}
+	</div>
 	<form ng-submit="$ctrl.submit()">
 		<div class="form-group">
 			<label for="name">Titel</label>

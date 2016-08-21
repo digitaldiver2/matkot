@@ -11,6 +11,7 @@
 
 import _ from 'lodash';
 import Product from './product.model';
+import Order from '../order/order.model';
 
 function respondWithResult(res, statusCode) {
   statusCode = statusCode || 200;
@@ -53,10 +54,16 @@ function saveUpdates(updates) {
 function removeEntity(res) {
   return function(entity) {
     if (entity) {
-      return entity.remove()
-        .then(() => {
-          res.status(204).end();
-        });
+      Order.count({products: { $elemMatch: {product: entity._id}}}).then (function (count) {
+        if (count > 0) {
+          res.status(999).send('Unable to remove item because it is used by one or more documents');
+        } else {
+          return entity.remove()
+            .then(() => {
+              res.status(204).end();
+            });
+        }
+      });      
     }
   };
 }

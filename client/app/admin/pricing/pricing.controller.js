@@ -8,6 +8,7 @@ class PricingComponent {
   	this.$location = $location;
 
   	this.$scope.categories = [];
+    this.$scope.errmsg = '';
   }
 
   $onInit() {
@@ -25,8 +26,17 @@ class PricingComponent {
   }
 
   DeleteCategory(id) {
-  	this.$http.delete ('/api/pricecategories/' + id);
-  	this.loadCategories();
+    var proceed = confirm("Ben je zeker dat je dit item wilt verwijderen? Dit kan niet ongedaan gemaakt worden.");
+
+    if (proceed) {
+    	this.$http.delete ('/api/pricecategories/' + id)
+        .then(response => {
+          this.loadCategories();
+        })
+        .catch(err => {
+          this.$scope.errmsg = err.data;
+        });
+    }
   }
 }
 

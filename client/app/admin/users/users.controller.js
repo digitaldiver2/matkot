@@ -3,11 +3,13 @@
 
 class UsersComponent {
   constructor($http, $scope, socket, $location) {
+    this.$scope = $scope;
     this.$http = $http;
     this.$location = $location;
     this.socket = socket;
     this.users = [];
     this.groups = [];
+    this.$scope.errmsg = '';
   }
 
   $onInit() {
@@ -26,9 +28,40 @@ class UsersComponent {
 
   }
 
-
   new_group () {
     this.$location.path('/admin/group/');
+  }
+
+  delete_group (usergroup) {
+    var proceed = confirm("Ben je zeker dat je dit item wilt verwijderen? Dit kan niet ongedaan gemaakt worden.");
+
+    if (proceed) {
+      this.$http.delete('/api/usergroups/' + usergroup._id)
+        .then(response => {
+          this.$http.get('/api/usergroups').then(response => {
+              this.groups = response.data;
+            });
+        })
+        .catch(err => {
+          this.$scope.errmsg = err.data;
+        });
+    }
+  }
+
+  delete_user (user) {
+    var proceed = confirm("Ben je zeker dat je dit item wilt verwijderen? Dit kan niet ongedaan gemaakt worden.");
+
+    if (proceed) {
+      this.$http.delete('/api/users/' + user._id)
+        .then(response => {
+          this.$http.get('/api/users').then(response => {
+              this.users = response.data;
+            });
+        })
+        .catch(err => {
+          this.$scope.errmsg = err.data;
+        });
+    }
   }
   // addThing() {
   //   if (this.newThing) {

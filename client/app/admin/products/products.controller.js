@@ -8,6 +8,7 @@ class ProductsComponent {
     this.$location = $location;
     this.products = [];
     this.productcategories = [];
+    this.$scope.errmsg = '';
   }
 
   $onInit() {
@@ -28,14 +29,37 @@ class ProductsComponent {
   }
 
   DeleteGroup (id) {
-  	this.$http.delete('/api/productfamilies/' + id);
-  	this.$http.get('/api/productfamilies').then(response => {
-  		this.productcategories = response.data;
-  	});
+    var proceed = confirm("Ben je zeker dat je dit item wilt verwijderen? Dit kan niet ongedaan gemaakt worden.");
+
+    if (proceed) {
+    	this.$http.delete('/api/productfamilies/' + id)
+        .then(response => {
+          this.$http.get('/api/productfamilies').then(response => {
+              this.productcategories = response.data;
+            });
+        })
+        .catch(err => {
+          this.$scope.errmsg = err.data;
+        });
+    }
   }
 
   DeleteProduct (id) {
-  	//product can only be deleted if there are NO references to it, else it needs to be deactivated
+    var proceed = confirm("Ben je zeker dat je dit item wilt verwijderen? Dit kan niet ongedaan gemaakt worden.");
+
+    if (proceed) {
+    	//product can only be deleted if there are NO references to it, else it needs to be deactivated
+      this.$http.delete('/api/products/' + id)
+        .then(response => {
+          this.$http.get('/api/products')
+            .then(response => {
+              this.products = response.data;
+            });
+        })
+        .catch(err => {
+          this.$scope.errmsg = err.data;
+        });
+    } 
   }
 }
 

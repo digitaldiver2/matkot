@@ -11,6 +11,9 @@
 
 import _ from 'lodash';
 import Usergroup from './usergroup.model';
+import Order from '../order/order.model';
+import Product from '../product/product.model';
+import User from '../user/user.model';
 
 function respondWithResult(res, statusCode) {
   statusCode = statusCode || 200;
@@ -34,10 +37,23 @@ function saveUpdates(updates) {
 function removeEntity(res) {
   return function(entity) {
     if (entity) {
-      return entity.remove()
-        .then(() => {
-          res.status(204).end();
-        });
+      //check if entity is used in other models:
+      var promises = [];
+      promises.push(Product.count({visiblegroups: entity._id}));
+      promises.push(Order.count({group: entity._id}));
+      promises.push(User.count({groups: entity._id}));
+
+      Promise.all(promises).then(function (results) {
+        for (var i=0; i< results.length; i++) {
+          if (results[i] > 0) {
+             return res.status(999).send('Unable to remove item because it is used by one or more documents');
+          }
+        }
+        return entity.remove()
+          .then(() => {
+            res.status(204).end();
+          });
+      });
     }
   };
 }

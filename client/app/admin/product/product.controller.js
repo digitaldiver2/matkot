@@ -12,6 +12,7 @@ class ProductComponent {
     this.$scope.productcategories = undefined;
     this.$scope.pricecategories = undefined;
     this.loaded = {};
+    this.$scope.errmsg = '';
   }
 
   $onInit() {

@@ -1,4 +1,7 @@
 <div class="container">
+	<div class="alert alert-danger" ng-show="errmsg !=''">
+		{{errmsg}}
+	</div>
 	<ul class="list-group user-list">
 		<h3>Users</h3>
 		<li class="list-group-item " ng-class="{'list-group-item-danger': user.requested_groups.length}" ng-repeat="user in usersCtrl.users">
@@ -8,7 +11,7 @@
 		    </div>
 
       		<a ng-href="/admin/user/{{user._id}}" class="edit"><span class="fa fa-pencil fa-2x"></span></a>
-      		<a ng-click="" class="trash"><span class="fa fa-trash fa-2x"></span></a>
+      		<a ng-click="usersCtrl.delete_user(user)" class="trash"><span class="fa fa-trash fa-2x"></span></a>
 		</li>
 	</ul>
 	<button class="btn btn-default" ng-click="usersCtrl.new_user()">Add user</button>
@@ -22,7 +25,7 @@
 		    </div>
 
       		<a ng-href="/admin/group/{{group._id}}" class="edit"><span class="fa fa-pencil fa-2x"></span></a>
-      		<a ng-click="" class="trash"><span class="fa fa-trash fa-2x"></span></a>
+      		<a ng-click="usersCtrl.delete_group(group)" class="trash"><span class="fa fa-trash fa-2x"></span></a>
 		</li>
 	</ul>
 	<button class="btn btn-primary" ng-click="usersCtrl.new_group()">Add group</button>
