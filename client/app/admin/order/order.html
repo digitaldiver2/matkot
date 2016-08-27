@@ -19,38 +19,7 @@
 			<label for="Naam">Naam evenement *</label>
 			<input type="text" class="form-control" id="NaamEvenement" placeholder='Evenement' ng-model='order.name'>
 		</div>
-		<!-- <div class="form-group">
-			<label for="">Start evenement</label>
-			<datetimepicker ng-model="order.eventstart" 
-                date-format="dd-MMM-yyyy" 
-                date-options="dateOptions">
-			</datetimepicker>
-		</div>
 		<div class="form-group">
-			<label for="">Einde evenement</label>
-			<datetimepicker ng-model="order.eventstop" 
-                date-format="dd-MMM-yyyy" 
-                date-options="dateOptions">
-			</datetimepicker>
-		</div>
-		<div class="form-group">
-			<label for="">Afhaal datum</label>
-			<datetimepicker ng-model="order.pickupdate" 
-                date-format="dd-MMM-yyyy" 
-                date-options="dateOptions" 
-                date-disabled="isDisabledDate(date, mode)">
-			</datetimepicker>
-		</div>
-		<div class="form-group">
-			<label for="">Retour datum</label>
-			<datetimepicker ng-model="order.returndate" 
-                date-format="dd-MMM-yyyy" 
-                date-options="dateOptions" 
-                date-disabled="isDisabledDate(date, mode)">
-			</datetimepicker>
-		</div> -->
-
-				<div class="form-group">
 			<label>Start Evenement: </label>
 			<a  ng-click="eventstartCollapsed = !eventstartCollapsed">{{order.eventstart | date:'EEE dd/MM/yy HH:mm'}}
 				<i class="fa fa-pencil fa" aria-hidden="true"></i>
@@ -94,7 +63,6 @@
 				</div>
 			</div>
 		</div>
-<!-- \ -->
 
 		<div class="form-group">
 			<label>Retour moment: </label>
@@ -177,9 +145,18 @@
 					<td>
 						{{productitem.received - productitem.returned}}
 					</td>
+
 				</tr>
+
+						---------------------------------------------------------------------
+						<!-- {{overlap.name}} {{overlap.product.name}} {{overlap.product.ordered}} -->
+						----------------------------------------------------------------------
 			</tbody>
 		</table>
+
+		<div ng-repeat="productitem in order.products">
+			[{{productitem.product}}] 
+		</div>
 
 		<button class="btn btn-default" ng-click="addProductCollapsed=!addProductCollapsed">+</button>
 		<div uib-collapse="addProductCollapsed">

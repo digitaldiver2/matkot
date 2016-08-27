@@ -23,6 +23,34 @@ function respondWithResult(res, statusCode) {
   };
 }
 
+
+function getOverlappingOrders(res, productid, statusCode) {
+  return function(entity) {
+    if (entity) {
+      statusCode = statusCode || 200;
+      Order.find({
+        $or: [
+        {
+            'pickupdate': {$gte: entity.pickupdate, $lt: entity.returndate}
+        }, 
+        {
+            'pickupdate': {$lt: entity.pickupdate}, 
+            'returndate': {$gt: entity.returndate}
+        } ], 
+        '_id': {$ne: entity._id},
+        'products': {
+          $elemMatch: {
+            product: productid
+          }
+        } 
+      }).exec().then(data => {
+        res.status(statusCode).json(data);
+      });
+    }
+  };
+}
+
+
 function saveUpdates(updates) {
   return function(entity) {
     entity.products = new Array();
@@ -42,20 +70,14 @@ function saveUpdates(updates) {
 //'dont remove entity if state is not draft or if an ordernumber is available
 function removeEntity(res) {
   return function(entity) {
-    console.log('a');
     if (entity && entity.state == 'DRAFT' && entity.ordernumber == undefined) {
-    console.log('b');
       return entity.remove()
         .then(() => {
-    console.log('c');
           res.status(204).end();
         });
     } else {
-    console.log('d');
       console.error('unable to remove order because state was not draft or ordernumber already assigned');
-    console.log('e');
       res.status(999).send('Aanvraag kant niet verwijderd worden omdat ze geen concept is of omdat ze al een ordernummer heeft.');
-    console.log('f');
     }
   };
 }
@@ -116,6 +138,16 @@ export function show(req, res) {
     .then(respondWithResult(res))
     .catch(handleError(res));
 }
+
+
+export function overlaps(req, res) {
+  return Order.findById(req.params.id)
+    .exec()
+    .then(handleEntityNotFound(res))
+    .then(getOverlappingOrders(res, req.params.productid))
+    .catch(handleError(res));
+}
+
 
 // Creates a new Order in the DB
 export function create(req, res) {

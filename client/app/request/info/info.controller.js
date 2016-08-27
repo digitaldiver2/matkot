@@ -32,10 +32,10 @@ class InfoComponent {
 				        this.$scope.request.eventstop = new Date(this.$scope.request.eventstop );
 				        this.$scope.request.pickupdate = new Date(this.$scope.request.pickupdate );
 				        this.$scope.request.returndate = new Date(this.$scope.request.returndate );
+
 				        this.isNoDraft();
 			      	});
-		  		} else {
-		  			//function should be called to enable controls
+		  		} else {	
 		  			this.isNoDraft();
 		  		}
 			} else {
@@ -49,6 +49,7 @@ class InfoComponent {
 		this.$scope.eventstopCollapsed = true;
 
 		this.$scope.retouroptions = {
+			minDate: this.$scope.request.pickupdate,
 			dateDisabled: this.closedDates
 		};
 		this.$scope.pickupoptions = {
@@ -56,9 +57,24 @@ class InfoComponent {
 		}
   		
     }
+
 	closedDates (data) {
 		return data.mode === 'day' && data.date.getDay() != 3;
 	};
+
+	changePickupDate() {
+		if (!this.id) {
+			this.$scope.request.pickupdate.setHours(20);
+			this.$scope.request.pickupdate.setMinutes(30);
+		}
+	}
+
+	changeReturnDate() {
+		if (!this.id) {
+			this.$scope.request.returndate.setHours(20);
+			this.$scope.request.returndate.setMinutes(0);
+		}
+	}
 
   	submit (proceed) {
   		//don't update if not in draft mode
@@ -94,7 +110,6 @@ class InfoComponent {
 	isNoDraft () {
 		var result = (this.id == undefined || this.id == '') || (this.$scope.request && this.$scope.request.state == 'DRAFT');
 		this.$scope.isDraft = result;
-		console.log(!result);
 	    return !result;
 	}
 }

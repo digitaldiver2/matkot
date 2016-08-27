@@ -17,7 +17,7 @@ class OrderComponent {
         this.$scope.order.pickupdate = new Date(this.$scope.order.pickupdate );
         this.$scope.order.returndate = new Date(this.$scope.order.returndate );
 
-
+        this.CalculateAvailability();
         //get products
         this.$http.get('/api/products').then(resp => {
           this.$scope.products = resp.data;
@@ -66,7 +66,27 @@ class OrderComponent {
           }
         }
       }
-      console.log(product.unitprice);
+    }
+  }
+
+  CalculateAvailability() {
+    console.log('calc availability');
+    for (var i=0; i<this.$scope.order.products.length; i++) {
+      var product = this.$scope.order.products[i].product;
+      this.$http.get('/api/orders/overlap/' + this.id + '/' + product._id).then(resp => {
+        product.overlaps = resp.data;
+        console.dir(product.overlaps);
+        for (var j=0; j<product.overlaps.length; j++) {
+          product.overlaps[j].product = product.overlaps[j].products.filter(this.overlapProductReduce(product));
+          console.log('ok');
+        }
+      });
+    }
+  }
+
+  overlapProductReduce(refproduct) {
+    return function (prod) {
+      return prod.product._id == refproduct._id;
     }
   }
 
