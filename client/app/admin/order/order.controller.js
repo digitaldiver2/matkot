@@ -25,6 +25,7 @@ class OrderComponent {
           this.$http.get('/api/pricecategories').then(response => {
             this.$scope.pricecategories = response.data;
             this.UpdatePriceCategory();
+            this.CalculateTotals();
           });
         });
   	});
@@ -55,6 +56,7 @@ class OrderComponent {
   }
 
   UpdatePriceCategory(category) {
+    //if category changes, the prices should also change
     for (var i=0; i<this.$scope.products.length; i++) {
       var product = this.$scope.products[i];
       product.unitprice = product.defaultprice ? product.defaultprice : 0.0;
@@ -69,29 +71,50 @@ class OrderComponent {
     }
   }
 
-  CalculateAvailability() {
-    console.log('calc availability');
+  HandleProductOverlaps(overlap_order) {
     for (var i=0; i<this.$scope.order.products.length; i++) {
-      var product = this.$scope.order.products[i].product;
-      this.$http.get('/api/orders/overlap/' + this.id + '/' + product._id).then(resp => {
-        product.overlaps = resp.data;
-        console.dir(product.overlaps);
-        for (var j=0; j<product.overlaps.length; j++) {
-          product.overlaps[j].product = product.overlaps[j].products.filter(this.overlapProductReduce(product));
-          console.log('ok');
-        }
-      });
+      var productitem = this.$scope.order.products[i];
+      var product_id = productitem.product._id;
+
+      if (!productitem.overlaps) {
+        productitem.overlaps = [];
+      }
+
+      var overlap_productitem = overlap_order.products.find(function (overlap_item) { return overlap_item.product == product_id});
+      if (overlap_productitem) {
+        var overlap = overlap_productitem;
+        overlap.order = {'name': overlap_order.name, 'code': overlap_order.code};
+        productitem.overlaps.push(overlap);
+      }
     }
   }
 
-  overlapProductReduce(refproduct) {
-    return function (prod) {
-      return prod.product._id == refproduct._id;
+  CalculateAvailability () {
+    this.$http.get('/api/orders/overlap/' + this.$scope.order._id).then(resp => {
+      console.dir(resp.data);
+      for (var i=0; i< resp.data.length; i++) {
+        var order = resp.data[i];
+        this.HandleProductOverlaps(order);
+      }
+    });
+  }
+
+  CalculateTotals () {
+    var estimatedTotal = 0.0;
+    var chargedTotal = 0.0;
+
+    for (var i=0; i<this.$scope.order.products.length; i++) {
+      var product = this.$scope.order.products[i];
+      estimatedTotal += product.ordered * product.unitprice;
+      chargedTotal += product.received * product.unitprice;
     }
+
+    console.log('estimated total: ' + estimatedTotal);
+    console.log('charged total: ' + chargedTotal);
   }
 
   Add (product) {
-    this.$scope.order.products.push({'product': product});
+    this.$scope.order.products.push({'product': product, 'unitprice': product.unitprice});
   }
 
 
@@ -115,6 +138,8 @@ class OrderComponent {
       return result;
   }
 
+
+
   setOrderNumberIfNeeded () {
     if (this.$scope.order.state != 'DRAFT' && this.$scope.order.ordernumber == undefined) {
       this.settings.ordercounter += 1;
@@ -123,6 +148,8 @@ class OrderComponent {
   }
 
   save () {
+
+
     if (this.$scope.order.state != 'DRAFT' && this.$scope.order.ordernumber == undefined) {
       this.$http.get('/api/settings').then(response => {
         this.settings = response.data;

@@ -24,7 +24,7 @@ function respondWithResult(res, statusCode) {
 }
 
 
-function getOverlappingOrders(res, productid, statusCode) {
+function getOverlappingOrders(res, statusCode) {
   return function(entity) {
     if (entity) {
       statusCode = statusCode || 200;
@@ -35,14 +35,9 @@ function getOverlappingOrders(res, productid, statusCode) {
         }, 
         {
             'pickupdate': {$lt: entity.pickupdate}, 
-            'returndate': {$gt: entity.returndate}
+            'returndate': {$gt: entity.pickupdate}
         } ], 
-        '_id': {$ne: entity._id},
-        'products': {
-          $elemMatch: {
-            product: productid
-          }
-        } 
+        '_id': {$ne: entity._id}
       }).exec().then(data => {
         res.status(statusCode).json(data);
       });
@@ -144,7 +139,7 @@ export function overlaps(req, res) {
   return Order.findById(req.params.id)
     .exec()
     .then(handleEntityNotFound(res))
-    .then(getOverlappingOrders(res, req.params.productid))
+    .then(getOverlappingOrders(res))
     .catch(handleError(res));
 }
 

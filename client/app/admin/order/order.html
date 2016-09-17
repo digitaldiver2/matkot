@@ -117,7 +117,7 @@
 					</th>
 					<th>Totaal</th>
 					<th>Beschikbaar</th>
-					<th>Prijs</th>
+					<th>Prijs (€)</th>
 					<th>Aangevraagd</th>
 					<th>Goedgekeurd</th>
 					<th>Gekregen</th>
@@ -126,12 +126,13 @@
 				</tr>
 			</thead>
 			<tbody>
-				<tr ng-repeat="productitem in order.products | orderBy:sortType:sortReverse | filter:searchProduct2 ">
+				<tr ng-repeat-start="productitem in order.products | orderBy:sortType:sortReverse | filter:searchProduct2 ">
+					
 					<td>{{productitem.product.code}}</td>
 					<td>{{productitem.product.name}}</td>
 					<td>{{productitem.product.stock}}</td>
 					<td>{{productitem.product.available}}</td>
-					<td>{{productitem.product.unitprice | currency : "€"}}
+					<td><input type="number" ng-model="productitem.unitprice" ng-disabled="order.state=='CANCELLED' || order.state == 'CLOSED'" ng-change="CalculateTotals()"></td>
 					<td>{{productitem.ordered}}</td>
 					<td>
 						<input type="number" ng-model="productitem.approved" ng-disabled="order.state!='DRAFT' && order.state != 'ORDERED'">
@@ -145,18 +146,22 @@
 					<td>
 						{{productitem.received - productitem.returned}}
 					</td>
-
+				</tr>
+				<tr ng-repeat-end ng-repeat="overlap in productitem.overlaps">
+					<td>{{overlap.order.code}}</td>
+					<td>{{overlap.order.name}}</td>
+					<td>{{productitem.product.stock}}</td>
+					<td>{{productitem.product.available}}</td>
+					<td></td>
+					<td>{{overlap.ordered}}</td>
+					<td>{{overlap.approved}}</td>
+					<td>{{overlap.received}}</td>
+					<td>{{overlap.returned}}</td>
+					<td></td>
 				</tr>
 
-						---------------------------------------------------------------------
-						<!-- {{overlap.name}} {{overlap.product.name}} {{overlap.product.ordered}} -->
-						----------------------------------------------------------------------
 			</tbody>
 		</table>
-
-		<div ng-repeat="productitem in order.products">
-			[{{productitem.product}}] 
-		</div>
 
 		<button class="btn btn-default" ng-click="addProductCollapsed=!addProductCollapsed">+</button>
 		<div uib-collapse="addProductCollapsed">

@@ -10,11 +10,11 @@ var OrderSchema = new mongoose.Schema({
   products: [
 	  	{
 	  		product: {type: mongoose.Schema.Types.ObjectId, ref: 'Product'},
-	  		ordered: Number,
-        approved: Number,
-	  		received: Number,
-	  		returned: Number,
-	  		unitprice: Number
+	  		ordered: {type: Number, default: 0},
+        approved: {type: Number, default: 0},
+	  		received: {type: Number, default: 0},
+	  		returned: {type: Number, default: 0},
+	  		unitprice: {type: Number, default: 0}
 		}
 	],
   state: {type:String, enum: ['DRAFT', 'ORDERED', 'APPROVED', 'DELIVERED','SHORTAGE', 'CLOSED', 'CANCELLED'], default: 'DRAFT'}, //Draft/Request/Order/Delivered/Returned/Closed

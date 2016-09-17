@@ -9,7 +9,7 @@ router.get('/', controller.index);
 router.get('/user/:id', controller.userindex);
 router.get('/group/:id', controller.groupindex);
 router.get('/:id', controller.show);
-router.get('/overlap/:id/:productid', controller.overlaps);
+router.get('/overlap/:id', controller.overlaps);
 router.post('/', controller.create);
 router.put('/:id', controller.update);
 router.patch('/:id', controller.update);
