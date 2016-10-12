@@ -22,7 +22,7 @@
 				<input type="number" ng-model="product.ordered" id="ordered" max="{{product.stock}}" min="0" ng-disabled="$ctrl.isNoDraft()">
 			</div>
 		</div>
-		<div id="productlijst">
+		<!-- <div id="productlijst">
 			<div ng-repeat="product in products | orderBy:'name' | filter:searchfield | filter:$ctrl.matchByGroup(categoryFilter)">
 				<div class="row">
 					{{product.name}}
@@ -33,7 +33,7 @@
 					</div>
 				</div>
 			</div>
-		</div>
+		</div> -->
 	</div>
 	<br>
 	<h2>Producten</h2>
