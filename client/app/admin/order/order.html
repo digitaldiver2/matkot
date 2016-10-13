@@ -96,6 +96,8 @@
 						<input type="text" class="form-control" placeholder="naam" ng-model="searchProduct2.product.name">
 					</div>      
 				</div>
+				<button class="btn btn-primary" ng-click="$ctrl.sameNumbers()">Aantallen overnemen</button>
+				<button class="btn btn-primary" ng-click="$ctrl.resetNumbers()">Reset</button>
 			</div>
 		</form>
 		<table class="table">
@@ -115,40 +117,41 @@
 							<span ng-show="sortType == 'product.name' && sortReverse" class="fa fa-caret-up"></span>
 						</a>
 					</th>
-					<th>Totaal</th>
 					<th>Beschikbaar</th>
-					<th>Prijs (€)</th>
 					<th>Aangevraagd</th>
 					<th>Goedgekeurd</th>
 					<th>Gekregen</th>
 					<th>Terug</th>
 					<th>Tekort</th>
+					<th>Prijs</th>
+					<th>Totaal</th>
 				</tr>
 			</thead>
 			<tbody>
-				<tr ng-repeat-start="productitem in order.products | orderBy:sortType:sortReverse | filter:searchProduct2 ">
+				<!-- <tr ng-repeat-start="productitem in order.products | orderBy:sortType:sortReverse | filter:searchProduct2 "> -->
+				<tr ng-repeat="productitem in order.products | orderBy:sortType:sortReverse | filter:searchProduct2 ">
 					
 					<td>{{productitem.product.code}}</td>
 					<td>{{productitem.product.name}}</td>
 					<!-- <td>{{productitem.product.stock | sumOfValue}}</td> -->
 					<td>{{productitem.product.stock}}</td>
-					<td>{{productitem.product.available}}</td>
-					<td><input type="number" ng-model="productitem.unitprice" ng-disabled="order.state=='CANCELLED' || order.state == 'CLOSED'" ng-change="CalculateTotals()"></td>
 					<td>{{productitem.ordered}}</td>
 					<td>
-						<input type="number" ng-model="productitem.approved" ng-disabled="order.state!='DRAFT' && order.state != 'ORDERED'">
+						<input type="number" class="qty" ng-model="productitem.approved" ng-disabled="order.state!='DRAFT' && order.state != 'ORDERED'">
 					</td>
 					<td>
-						<input type="number" ng-model="productitem.received" ng-disabled="order.state!='APPROVED' && order.state != 'CANCELLED'">
+						<input type="number" class="qty" ng-model="productitem.received" ng-disabled="order.state!='APPROVED' && order.state != 'CANCELLED'">
 					</td>
 					<td>
-						<input type="number" ng-model="productitem.returned" ng-disabled="order.state!='DELIVERED' && order.state != 'SHORTAGE'">
+						<input type="number" class="qty" ng-model="productitem.returned" ng-disabled="order.state!='DELIVERED' && order.state != 'SHORTAGE'">
 					</td>
 					<td>
 						{{productitem.received - productitem.returned}}
 					</td>
+					<td><input type="number" class="price" ng-model="productitem.unitprice" ng-disabled="order.state=='CANCELLED' || order.state == 'CLOSED'" ng-change="CalculateTotals()"></td>
+					<td>{{productitem.unitprice * productitem.received | currency:'€' }}	</td>
 				</tr>
-				<tr ng-repeat-end ng-repeat="overlap in productitem.overlaps">
+				<!-- <tr ng-repeat-end ng-repeat="overlap in productitem.overlaps">
 					<td>{{overlap.order.code}}</td>
 					<td>{{overlap.order.name}}</td>
 					<td>{{productitem.product.stock}}</td>
@@ -159,10 +162,12 @@
 					<td>{{overlap.received}}</td>
 					<td>{{overlap.returned}}</td>
 					<td></td>
-				</tr>
+				</tr> -->
+
 
 			</tbody>
 		</table>
+		<h4>Totaal te betalen: {{ order.products | totalSumPriceQty:'received':'unitprice' | currency:'€' }}</h4>
 
 		<button class="btn btn-default" ng-click="addProductCollapsed=!addProductCollapsed">+</button>
 		<div uib-collapse="addProductCollapsed">

@@ -138,6 +138,43 @@ class OrderComponent {
       return result;
   }
 
+  sameNumbers () {
+    if (this.$scope.order.state === 'ORDERED') {
+      for (var i=0; i<this.$scope.order.products.length; i++) {
+        var product = this.$scope.order.products[i];
+        product.approved = product.ordered;
+      }
+    } else  if (this.$scope.order.state === 'APPROVED') {
+      for (var i=0; i<this.$scope.order.products.length; i++) {
+        var product = this.$scope.order.products[i];
+        product.received = product.approved;
+      }
+    } else  if (this.$scope.order.state === 'DELIVERED') {
+      for (var i=0; i<this.$scope.order.products.length; i++) {
+        var product = this.$scope.order.products[i];
+        product.returned = product.approved;
+      }
+    } 
+  }
+
+  resetNumbers () {
+    if (this.$scope.order.state === 'ORDERED') {
+      for (var i=0; i<this.$scope.order.products.length; i++) {
+        var product = this.$scope.order.products[i];
+        product.approved = 0;
+      }
+    } else  if (this.$scope.order.state === 'APPROVED') {
+      for (var i=0; i<this.$scope.order.products.length; i++) {
+        var product = this.$scope.order.products[i];
+        product.received = 0;
+      }
+    } else  if (this.$scope.order.state === 'DELIVERED') {
+      for (var i=0; i<this.$scope.order.products.length; i++) {
+        var product = this.$scope.order.products[i];
+        product.returned = 0;
+      }
+    } 
+  }
 
 
   setOrderNumberIfNeeded () {
