@@ -1,7 +1,4 @@
 <div class="container">
-	<button class="btn btn-default" ng-click="$ctrl.save()" ng-disabled="$ctrl.isNoDraft()">Bewaren</button>
-	<button class="btn btn-default" ng-click="$ctrl.saveAndRequest()" ng-disabled="$ctrl.isNoDraft()">Aanvragen</button>
-
 	<div id="shop" ng-hide="$ctrl.isNoDraft()">
 
 		<div class="form-group">
@@ -13,15 +10,44 @@
 			<select ng-model="categoryFilter" ng-options="category.name for category in $ctrl.productcategories |orderBy:'name'">
 			</select>
 		</div>
-		<div id="productlijst">
+<!-- 		<div id="productlijst">
 			<div  class="list-group-item" ng-repeat="product in products | orderBy:'name' | filter:searchfield | filter:$ctrl.matchByGroup(categoryFilter)">
 				<span><strong>{{product.name}}</strong></span>
 				<span>eenheidsprijs {{product.unitprice | currency:'€'}}</span>
 				<span>Beschikbaar:{{product.stock - product.ordered}}</span>
 				<label for="ordered">Aangevraagd:</label>
-				<input type="number" ng-model="product.ordered" id="ordered" max="{{product.stock}}" min="0" ng-disabled="$ctrl.isNoDraft()">
+				<input type="number" ng-model="product.ordered" id="ordered" max="{{product.stock}}" min="0" ng-disabled="$ctrl.isNoDraft()" contenteditable>
 			</div>
+		</div> -->
+		<div id="productlijst">
+			<table class="table">
+				<thead>
+					<tr>
+						<th>
+							Product
+						</th>
+						<th>
+							Prijs/st
+						</th>
+						<th>
+							Beschikbaar
+						</th>
+						<th>
+							Aangevraagd
+						</th>
+					</tr>
+				</thead>
+				<tbody>
+					<tr ng-repeat="product in products | orderBy:'name' | filter:searchfield | filter:$ctrl.matchByGroup(categoryFilter)"	>
+						<td><strong>{{product.name}}</strong></td>
+						<td>{{product.unitprice | currency:'€'}}</td>
+						<td>{{product.stock - product.ordered}}</td>
+						<td><input class="intinput" type="number" ng-model="product.ordered" id="ordered" max="{{product.stock}}" min="0" ng-disabled="$ctrl.isNoDraft()"></td>
+					</tr>
+				</tbody>
+			</table>
 		</div>
+
 		<!-- <div id="productlijst">
 			<div ng-repeat="product in products | orderBy:'name' | filter:searchfield | filter:$ctrl.matchByGroup(categoryFilter)">
 				<div class="row">
@@ -36,12 +62,34 @@
 		</div> -->
 	</div>
 	<br>
-	<h2>Producten</h2>
+	<h2>Mijn aanvraag</h2>
 	<div id="shoppingcart">
-		<div class="list-group-item" ng-repeat="product in products | orderBy:'name' | filter:$ctrl.greaterThan('ordered', 0)">
+		<table class="table">
+			<thead>
+				<tr>
+					<td>Product</td>
+					<td>Aangevraagd</td>
+				</tr>
+			</thead>
+			<tbody>
+				<tr ng-repeat="product in products | orderBy:'name' | filter:$ctrl.greaterThan('ordered', 0)">
+					<td>{{product.name}}</td>
+					<td>
+						<input class="intinput" type="number" ng-model="product.ordered" id="ordered" max="{{product.stock}}" min="0" ng-disabled="$ctrl.isNoDraft()">
+						<a ng-hide="$ctrl.isNoDraft()"><i class="fa fa-times" aria-hidden="true" ng-click="$ctrl.clear(product)"></i></a>
+					</td>
+				</tr>
+			</tbody>
+		</table>
+
+		<!-- <div class="list-group-item" ng-repeat="product in products | orderBy:'name' | filter:$ctrl.greaterThan('ordered', 0)">
 			<p>{{product.name}}</p>
 			<input type="number" ng-model="product.ordered" id="ordered" max="{{product.stock}}" min="0" ng-disabled="$ctrl.isNoDraft()">
 			<a ng-hide="$ctrl.isNoDraft()"><i class="fa fa-times" aria-hidden="true" ng-click="$ctrl.clear(product)"></i></a>
-		</div>
+		</div> -->
 	</div>
+<br>
+<br>
+	<button class="btn btn-default" ng-click="$ctrl.save()" ng-disabled="$ctrl.isNoDraft()">Bewaren</button>
+	<button class="btn btn-default" ng-click="$ctrl.saveAndRequest()" ng-disabled="$ctrl.isNoDraft()">Aanvragen</button>
 </div>

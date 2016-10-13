@@ -130,6 +130,7 @@
 					
 					<td>{{productitem.product.code}}</td>
 					<td>{{productitem.product.name}}</td>
+					<!-- <td>{{productitem.product.stock | sumOfValue}}</td> -->
 					<td>{{productitem.product.stock | sumOfValue}}</td>
 					<td>{{productitem.product.available}}</td>
 					<td><input type="number" ng-model="productitem.unitprice" ng-disabled="order.state=='CANCELLED' || order.state == 'CLOSED'" ng-change="CalculateTotals()"></td>
