@@ -14,7 +14,8 @@ var OrderSchema = new mongoose.Schema({
         approved: {type: Number, default: 0},
 	  		received: {type: Number, default: 0},
 	  		returned: {type: Number, default: 0},
-	  		unitprice: {type: Number, default: 0}
+	  		unitprice: {type: Number, default: 0},
+        comment: {type: String}
 		}
 	],
   state: {type:String, enum: ['DRAFT', 'ORDERED', 'APPROVED', 'DELIVERED','SHORTAGE', 'CLOSED', 'CANCELLED'], default: 'DRAFT'}, //Draft/Request/Order/Delivered/Returned/Closed
@@ -31,7 +32,7 @@ var OrderSchema = new mongoose.Schema({
   pricecategory: {type: mongoose.Schema.Types.ObjectId, ref: 'Pricecategory'},
   changehistory: [String],
   ordernumber: String,
-  totalpaid: Number
+  totalpaid: {type: Number, default: 0}
 
 });
 

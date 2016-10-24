@@ -53,6 +53,43 @@ class ShopComponent {
     return !result;
   }
 
+  updateOrder (product) {
+    var index = -1;
+    var productitem = null;
+
+    for (var i=0; i<this.$scope.request.products.length; i++) {
+      productitem = this.$scope.request.products[i];
+      if (productitem.product._id == product._id) {
+        index = i;
+
+        break;
+      }
+    }
+
+    if (product.ordered != 0) {
+      if (index != -1) {
+        productitem.ordered = product.ordered;
+      } else {
+        //add item
+
+        this.$scope.request.products.push({
+          'product': product,
+          'ordered': product.ordered,
+          'unitprice': product.unitprice,
+          'approved': 0,
+          'received': 0,
+          'returned': 0  
+        });
+      }
+    } else {
+      if (index != -1) {
+        //remove item
+        this.$scope.request.products.splice(index, 1);
+      } 
+        // else impossible state, but do nothing
+    }
+  }
+
   matchByGroup = function (category) {
   	return function (product) {
   		if (category == undefined) {
@@ -103,6 +140,7 @@ class ShopComponent {
   }
 
   saveProductList () {
+    //splice -> clear array
   	this.$scope.request.products.splice(0, this.$scope.request.products.length);
   	for (var i=0; i<this.$scope.products.length; i++) {
   		var product = this.$scope.products[i];
@@ -129,8 +167,11 @@ class ShopComponent {
     this.save();
   }
 
-  clear (product) {
-    product.ordered = 0;
+  clear (index) {
+    var product_id = this.$scope.request.products[index].product._id;
+    var productindex = this.productmap.indexOf(product_id);
+    this.$scope.products[productindex].ordered = 0;
+    this.$scope.request.products.splice(index, 1);
   }
 }
 

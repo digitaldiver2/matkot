@@ -125,6 +125,7 @@
 					<th>Tekort</th>
 					<th>Prijs</th>
 					<th>Totaal</th>
+					<th>Commentaar</th>
 				</tr>
 			</thead>
 			<tbody>
@@ -150,6 +151,7 @@
 					</td>
 					<td><input type="number" class="price" ng-model="productitem.unitprice" ng-disabled="order.state=='CANCELLED' || order.state == 'CLOSED'" ng-change="CalculateTotals()"></td>
 					<td>{{productitem.unitprice * productitem.received | currency:'€' }}	</td>
+					<td><input type="text" class="item_comment_field" ng-model="productitem.comment"></td>
 				</tr>
 				<!-- <tr ng-repeat-end ng-repeat="overlap in productitem.overlaps">
 					<td>{{overlap.order.code}}</td>

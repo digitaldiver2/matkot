@@ -27,7 +27,7 @@
 							Product
 						</th>
 						<th>
-							Prijs/st
+							Prijs
 						</th>
 						<th>
 							Beschikbaar
@@ -42,7 +42,10 @@
 						<td><strong>{{product.name}}</strong></td>
 						<td>{{product.unitprice | currency:'€'}}</td>
 						<td>{{product.stock - product.ordered}}</td>
-						<td><input class="intinput" type="number" ng-model="product.ordered" id="ordered" max="{{product.stock}}" min="0" ng-disabled="$ctrl.isNoDraft()"></td>
+						<td><input class="qty" type="number" ng-model="product.ordered" 
+							id="ordered" max="{{product.stock}}" 
+							min="0" ng-disabled="$ctrl.isNoDraft()" 
+							ng-change="$ctrl.updateOrder(product)"></td>
 					</tr>
 				</tbody>
 			</table>
@@ -67,20 +70,41 @@
 		<table class="table">
 			<thead>
 				<tr>
-					<td>Product</td>
-					<td>Aangevraagd</td>
+					<th>Product</th>
+					<th>Aangevraagd</th>
+					<th>Goedgekeurd</th>
+					<th>Gekregen</th>
+					<th>Terug</th>
+					<th>Tekort</th>
+					<th>Prijs</th>
+					<th>Totaal</th>
+					<th>Commentaar</th>
 				</tr>
 			</thead>
 			<tbody>
-				<tr ng-repeat="product in products | orderBy:'name' | filter:$ctrl.greaterThan('ordered', 0)">
-					<td>{{product.name}}</td>
+				<tr ng-repeat="product in request.products | orderBy:'name'">
+					<td>{{product.product.name}}</td>
 					<td>
-						<input class="intinput" type="number" ng-model="product.ordered" id="ordered" max="{{product.stock}}" min="0" ng-disabled="$ctrl.isNoDraft()">
-						<a ng-hide="$ctrl.isNoDraft()"><i class="fa fa-times" aria-hidden="true" ng-click="$ctrl.clear(product)"></i></a>
+						<input class="qty" type="number" ng-model="product.ordered" id="ordered" max="{{product.stock}}" min="0" ng-disabled="$ctrl.isNoDraft()">
+						<a ng-hide="$ctrl.isNoDraft()"><i class="fa fa-times" aria-hidden="true" ng-click="$ctrl.clear($index)"></i></a>
 					</td>
+					<td>{{product.approved}}</td>
+					<td>{{product.received}}</td>
+					<td>{{product.returned}}</td>
+					<td>
+						{{product.received - product.returned}}
+					</td>
+					<td>{{product.unitprice | currency:'€'}}</td>
+					<td>{{product.unitprice * product.received | currency:'€' }}	</td>
+					<th>{{product.comment}}</th>
 				</tr>
 			</tbody>
 		</table>
+
+		<h4 ng-show="request.state=='DRAFT' || request.state=='ORDERED'">Totaal: {{ request.products | totalSumPriceQty:'ordered':'unitprice' | currency:'€' }}</h4>
+		<h4 ng-show="request.state=='APPROVED'">Totaal: {{ request.products | totalSumPriceQty:'approved':'unitprice' | currency:'€' }}</h4>
+		<h4 ng-show="request.state!='DRAFT' && request.state!='ORDERED' && request.state!='APPROVED'">Totaal: {{ request.products | totalSumPriceQty:'received':'unitprice' | currency:'€' }}</h4>
+		<h4 ng-show="request.state != DRAFT">Reeds betaald: {{request.totalpaid | currency:'€'}}
 
 		<!-- <div class="list-group-item" ng-repeat="product in products | orderBy:'name' | filter:$ctrl.greaterThan('ordered', 0)">
 			<p>{{product.name}}</p>
