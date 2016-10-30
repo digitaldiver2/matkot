@@ -170,7 +170,7 @@
 			</tbody>
 		</table>
 		<h4>Totaal te betalen: {{ order.products | totalSumPriceQty:'received':'unitprice' | currency:'€' }}</h4>
-
+		<h4>Reeds betaald:</h4>
 		<button class="btn btn-default" ng-click="addProductCollapsed=!addProductCollapsed">+</button>
 		<div uib-collapse="addProductCollapsed">
 			<div class="row">
