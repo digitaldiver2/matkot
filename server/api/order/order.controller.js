@@ -109,7 +109,10 @@ export function index(req, res) {
 export function userindex(req, res) {
   var userid = req.params.id;
 
-  return Order.find({creator: userid}).exec()
+  return Order.find({creator: userid})
+    .populate('group')
+    .populate('owner')
+    .exec()
     .then(respondWithResult(res))
     .catch(handleError(res));
 }
@@ -117,7 +120,10 @@ export function userindex(req, res) {
 // Gets a list of Orders for group
 export function groupindex(req, res) {
   var groupid = req.params.id;
-  return Order.find({group: groupid}).exec()
+  return Order.find({group: groupid})
+    .populate('group')
+    .populate('owner')
+    .exec()
     .then(respondWithResult(res))
     .catch(handleError(res));
 }

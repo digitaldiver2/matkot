@@ -2,13 +2,37 @@
 (function(){
 
 class OrdersComponent {
-  constructor($http, $scope, $location, Auth) {
-  	this.$scope = $scope;
+  constructor($http, $location, Auth) {
   	this.$http = $http;
   	this.$location = $location;
+    console.log('location set: ' + this.$location);
     this.Auth = Auth;
-  	this.$scope.groups = {};
-    this.$scope.errmsg = '';
+  	this.groups = {};
+    this.errmsg = '';
+
+    this.debugtxt = 'hello world';
+
+    this.listOptions = {
+      itemClickEvent: this.openOrder,
+      orderByColumn: 'ordernumber'
+      columns: [
+        {
+          title: 'Naam',
+          member: 'name',
+          sortable: true,
+        },
+        {
+          title:'Order',
+          member: 'ordernumber',
+          sortable: true
+        },
+        {
+          title:'Status',
+          member: 'state',
+          sortable: true
+        }
+      ]
+    }
   }
 
   $onInit () {
@@ -20,7 +44,7 @@ class OrdersComponent {
   handleUser (user) {
     if (user) {
       this.user = user;
-      this.$scope.groups = this.user.groups;
+      this.groups = this.user.groups;
       this.refreshOrders()
     }
   }
@@ -31,9 +55,9 @@ class OrdersComponent {
 
   refreshOrders () {
     this.$http.get('/api/orders/user/' + this.user._id).then (response => {
-        this.$scope.userorders = response.data;
+        this.userorders = response.data;
       });
-      this.$scope.groups.forEach((group) => {
+      this.groups.forEach((group) => {
         this.$http.get('/api/orders/group/' + group._id).then(response => {
           group.orders = response.data;
         });
@@ -45,8 +69,12 @@ class OrdersComponent {
   	this.$location.path('/request/terms');
   }
 
-  DeleteOrder (order) {
-    console.dir(order);
+  openOrder (order) {
+    console.log('opening order');
+    this.$location.path('/request/info/' + order._id);
+  }
+
+  deleteOrder (order) {
     this.$http.delete('/api/orders/' + order._id)
       .then (response => {
         console.log('removing..');
@@ -56,9 +84,11 @@ class OrdersComponent {
       .catch(err => {
         console.dir(err);
         console.log(err.data);
-        this.$scope.errmsg = err.data;
+        this.errmsg = err.data;
       });
   }
+
+
 }
 
 angular.module('matkotApp')

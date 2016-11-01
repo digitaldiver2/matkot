@@ -1,39 +1,36 @@
 <div class="container">
-	<div class="alert alert-danger" ng-show="errmsg !=''">
-		{{errmsg}}
+	<div class="alert alert-danger" ng-show="$ctrl.errmsg !=''">
+		{{$ctrl.errmsg}}
 	</div>
 	<button class="btn btn-default" ng-click="$ctrl.newOrder()">Nieuwe aanvraag</button>
 	<br>
 	<h3>Mijn aanvragen</h3>
-	<ul class="list-group">
-		<li class="list-group-item" ng-repeat="order in userorders | orderBy:'ordernumber':true">
-			<div class="user-info">
-				<strong>{{order.name}}</strong><br>
-				<strong>{{order.state}}</strong><br>
-				<strong>{{order.ordernumber}}</strong>
-			</div>
-			<a ng-href="/request/info/{{order._id}}" class="edit"><span class="fa fa-pencil fa-2x"></span></a>
-			<a ng-click="$ctrl.DeleteOrder(order)" class="trash" ng-hide="!$ctrl.canBeDeleted(order)"><span class="fa fa-trash fa-2x"></span></a>
-		</li>
-	</ul>
+	<order-list 
+		ng-show="$ctrl.userorders.length" 
+		list="$ctrl.userorders" 
+		list-options="$ctrl.listOptions" 
+		click-event="$ctrl.openOrder(item)" 
+		deletable=$ctrl.canBeDeleted(item) 
+		delete-item=$ctrl.deleteOrder(item)>
+	</order-list>
 
-	<div ng-repeat="group in groups | orderBy:'name'">
+	<div ng-hide="$ctrl.userorders.length">
+		U hebt geen persoonlijke aanvragen.
+	</div>
+
+	<div ng-repeat="group in $ctrl.groups | orderBy:'name'">
 		<h3>{{group.name}}</h3>
 
 		<div ng-hide="group.orders.length">
 			Geen aanvragen beschikbaar voor deze groep
 		</div>
-		<ul class="list-group">
-			<li class="list-group-item" ng-repeat="order in group.orders | orderBy:'ordernumber':true">
-				<div class="user-info">
-					<strong>{{order.name}}</strong><br>
-					<strong>{{order.state}}</strong><br>
-					<strong>{{order.ordernumber}}</strong>
-				</div>
-
-				<a ng-href="/request/info/{{order._id}}" class="edit"><span class="fa fa-pencil fa-2x"></span></a>
-				<a ng-click="$ctrl.DeleteOrder(order)" class="trash" ng-hide="!$ctrl.canBeDeleted(order)"><span class="fa fa-trash fa-2x"></span></a>
-			</li>
-		</ul>
+		<order-list 
+			ng-show="$ctrl.userorders.length" 
+			list="group.orders" 
+			list-options="$ctrl.listOptions" 
+			click-event="$ctrl.openOrder(item)" 
+			deletable=$ctrl.canBeDeleted(item) 
+			delete-item=$ctrl.deleteOrder(item)>
+		</order-list>
 	</div>
 </div>
