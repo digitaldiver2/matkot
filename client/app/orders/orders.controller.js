@@ -14,7 +14,7 @@ class OrdersComponent {
 
     this.listOptions = {
       itemClickEvent: this.openOrder,
-      orderByColumn: 'ordernumber'
+      orderByColumn: 'ordernumber',
       columns: [
         {
           title: 'Naam',
