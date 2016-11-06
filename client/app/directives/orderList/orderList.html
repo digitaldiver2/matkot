@@ -1,0 +1,24 @@
+<table class="table">
+	<thead>
+		<th ng-repeat="column in listOptions.columns">
+			<a href="#" ng-click="sort(column.member)" ng-show="column.sortable">
+				{{column.title}} 
+				<span ng-show="sortType == 'order.{{column.member}}' && !sortReversed" class="fa fa-caret-down"></span>
+				<span ng-show="sortType == 'order.{{column.member}}' && sortReversed" class="fa fa-caret-up"></span>
+			</a>
+			<div ng-show="!column.sortable">
+				{{column.title}}
+			</div>
+		</th>
+		
+	</thead>
+	<tbody>
+		<!-- <tr ng-repeat="item in list | orderBy:sortType:sortReversed" ng-click="listOptions.itemClickEvent(item)"> -->
+		<tr ng-repeat="item in list | orderBy:sortType:sortReversed" ng-click="clickEvent({item: item})">
+			<td ng-repeat="column in listOptions.columns">{{item[column.member]}}</td>
+			<td ng-show="deletable && deletable({item:item})">
+				<a ng-click="deleteItem({item:item}); $event.stopPropagation();" class="trash"><span class="fa fa-trash fa-2x"></span></a>
+			</td>
+		</tr>
+	</tbody>
+</table>

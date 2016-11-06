@@ -1,39 +1,47 @@
 <div class="container">
-	<div class="alert alert-danger" ng-show="errmsg !=''">
-		{{errmsg}}
+	<div class="alert alert-danger" ng-show="$ctrl.errmsg !=''">
+		{{$ctrl.errmsg}}
 	</div>
 	<form ng-submit="$ctrl.submit()">
 		<div class="form-group">
 			<label for="name">Titel</label>
-			<input type="text" id="name" ng-model="product.name" class="form-control">
+			<input type="text" id="name" ng-model="$ctrl.product.name" class="form-control">
 		</div>
 		<div class="form-group">
 			<label for="info">Omschrijving</label>
-			<textarea id="info" ng-model="product.info" class="form-control"></textarea>
+			<textarea id="info" ng-model="$ctrl.product.info" class="form-control"></textarea>
 		</div>
 		<div class="form-group">
 			<label for="active">
-				<input type="checkbox" id="active" ng-model="product.active">
+				<input type="checkbox" id="active" ng-model="$ctrl.product.active">
 				Actief
 			</label>
 		</div>
 		<div class="form-group">
 			<label for="code">Code</label>
-			<input id="code" ng-model="product.code" class="form-control"></input>
+			<input id="code" ng-model="$ctrl.product.code" class="form-control"></input>
 		</div>
 		<div class="form-group">
 			<label for="consumable">
-				<input type="checkbox" id="consumable" ng-model="product.isconsumable">
+				<input type="checkbox" id="consumable" ng-model="$ctrl.product.isconsumable">
 				Verbruiksgoed
 			</label>
 		</div>
-		<div class="form-group">
-			<label for="stock">Aantal</label>
-			<input type="number" id="stock" ng-model="product.stock" class="form-control">
+		<div class="form-group" ng-show="$ctrl.product._id">
+			<label for="stock">Stock</label>
+			{{$ctrl.product.stock}} stuks
+			<br>
+			aangepast op {{$ctrl.product.stock_date | date}} door {{$ctrl.product.stock_modifier.name}}. Reden: {{$ctrl.product.stock_mod_reason}}
+
+			<br>
+			Nieuw aantal: <input type="number" id="stock" ng-model="$ctrl.newStock" class="form-control">
+			Reden: <input type="text" ng-model="$ctrl.stock_mod_reason">
+			<button class="btn btn-default" type="button" ng-click="$ctrl.updateStock($ctrl.newStock, $ctrl.stock_mod_reason);">Update stock</button>
+
 		</div>
 		<h3>Product groep</h3>
 		<ul class="list-group">
-			<div ng-repeat="category in productcategories | orderBy:'name'">
+			<div ng-repeat="category in $ctrl.productcategories | orderBy:'name'">
 				<input type="checkbox" id="{{category._id}}" ng-model="category.checked">
 				{{category.name}}
 			</div>
@@ -42,7 +50,7 @@
 		<h3>Zichtbaar voor</h3>
 		<p>Indien geen groep geselecteerd, dan is het product beschikbaar voor alle groepen.</p>
 		<ul class="list-group">
-			<div ng-repeat="group in groups | orderBy:'name'">
+			<div ng-repeat="group in $ctrl.groups | orderBy:'name'">
 				<input type="checkbox" id="{{group._id}}" ng-model="group.checked">
 				{{group.name}} 
 			</div>
@@ -51,9 +59,9 @@
 		<table>
 			<tr>
 				<td>Standaard</td>
-				<td><input type="number" step="any" id="standaard" ng-model="product.defaultprice"></td>
+				<td><input type="number" step="any" id="standaard" ng-model="$ctrl.product.defaultprice"></td>
 			</tr>
-			<tr ng-repeat="pricecategory in pricecategories">
+			<tr ng-repeat="pricecategory in $ctrl.pricecategories">
 				<td>{{pricecategory.name}}</td>
 				<td><input type="number" step="any" id="standaard" ng-model="pricecategory.price" ng-disabled="!pricecategory.hasprice"></td>
 				<td><input type="checkbox" id="{{pricecategory._id}}" ng-model="pricecategory.hasprice" ng-change="$ctrl.todefaultprice(pricecategory)"></td>
@@ -61,33 +69,9 @@
 			</tr>
 			<tr>
 				<td>Verlies of kapot</td>
-				<td><input type="number" step="any" id="replacement" ng-model="product.replacementprice"></td>
+				<td><input type="number" step="any" id="replacement" ng-model="$ctrl.product.replacementprice"></td>
 			</tr>
 		</table>
-<!-- 		<ul class="list-group">
-			<li class="list-group-item">
-				<div class="form-group">
-					<label for="standaard">Standaard</label>
-					<input type="number" step="any" id="standaard" ng-model="product.defaultprice">
-				</div>
-			</li>
-			<li class="list-group-item" ng-repeat="pricecategory in pricecategories">
-				<div class="form-group">
-					<label for="standaard">{{pricecategory.name}}</label>
-					<input type="number" step="any" id="standaard" ng-model="pricecategory.price" ng-disabled="!pricecategory.hasprice">
-					<label for="{{pricecategory._id}}">
-						<input type="checkbox" id="{{pricecategory._id}}" ng-model="pricecategory.hasprice" ng-change="$ctrl.todefaultprice(pricecategory)">
-						custom
-					</label>
-				</div>
-			</li>
-			<li class="list-group-item">
-				<div class="form-group">
-					<label for="replacement">Verlies of kapot</label>
-					<input type="number" step="any" id="replacement" ng-model="product.replacementprice">
-				</div>
-			</li>
-		</ul>
- -->		<button class="btn btn-default" type="submit">Opslaan</button>
+	<button class="btn btn-default" type="submit">Opslaan</button>
 	</form>
 </div>

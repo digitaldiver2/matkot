@@ -15,6 +15,10 @@ var ProductSchema = new mongoose.Schema({
   replacementprice: Number,
   isconsumable: Boolean,
   stock: Number,
+  stock_date: Date,
+  stock_modifier: {type: Schema.Types.ObjectId, ref: 'User'}, //TODO add this as dependancy for deleting users
+  stock_mod_reason: String,
+  stock_history: [{stock: Number, stock_date: Date, stock_modifier: {type: Schema.Types.ObjectId, ref: 'User'}, stock_mod_reason: String}],
   code: String,
   visiblegroups: [{type: Schema.Types.ObjectId, ref: 'Usergroup'}],
   productfamily: [{type: Schema.Types.ObjectId, ref: 'Productfamily'}],

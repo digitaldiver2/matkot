@@ -123,7 +123,7 @@ export function create(req, res) {
 
 // Updates an existing Pricecategory in the DB
 export function update(req, res) {
-  if (req.body._id) {
+    if (req.body._id) {
     delete req.body._id;
   }
   return Pricecategory.findById(req.params.id).exec()

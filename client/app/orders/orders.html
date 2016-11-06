@@ -1,6 +1,9 @@
 <div class="container">
-	<div class="alert alert-danger" ng-show="$ctrl.errmsg !=''">
-		{{$ctrl.errmsg}}
+	<div class="alert alert-danger" ng-show="$ctrl.errMsg !=''">
+		{{$ctrl.errMsg}}
+	</div>
+	<div class="alert alert-success" ng-show="$ctrl.successMsg !=''">
+		{{$ctrl.successMsg}}
 	</div>
 	<button class="btn btn-default" ng-click="$ctrl.newOrder()">Nieuwe aanvraag</button>
 	<br>
@@ -10,7 +13,7 @@
 		list="$ctrl.userorders" 
 		list-options="$ctrl.listOptions" 
 		click-event="$ctrl.openOrder(item)" 
-		deletable=$ctrl.canBeDeleted(item) 
+		deletable=$ctrl.orderService.isDeletable(item) 
 		delete-item=$ctrl.deleteOrder(item)>
 	</order-list>
 
@@ -18,18 +21,18 @@
 		U hebt geen persoonlijke aanvragen.
 	</div>
 
-	<div ng-repeat="group in $ctrl.groups | orderBy:'name'">
+	<div ng-repeat="group in $ctrl.user.groups | orderBy:'name'">
 		<h3>{{group.name}}</h3>
 
 		<div ng-hide="group.orders.length">
 			Geen aanvragen beschikbaar voor deze groep
 		</div>
 		<order-list 
-			ng-show="$ctrl.userorders.length" 
+			ng-show="group.orders.length" 
 			list="group.orders" 
 			list-options="$ctrl.listOptions" 
 			click-event="$ctrl.openOrder(item)" 
-			deletable=$ctrl.canBeDeleted(item) 
+			deletable=$ctrl.orderService.isDeletable(item) 
 			delete-item=$ctrl.deleteOrder(item)>
 		</order-list>
 	</div>

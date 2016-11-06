@@ -2,15 +2,14 @@
 (function(){
 
 class OrdersComponent {
-  constructor($http, $location, Auth) {
+  constructor($http, $location, Auth, orderService) {
   	this.$http = $http;
   	this.$location = $location;
-    console.log('location set: ' + this.$location);
     this.Auth = Auth;
-  	this.groups = {};
-    this.errmsg = '';
+    this.errMsg = '';
+    this.successMsg = '';
 
-    this.debugtxt = 'hello world';
+    this.orderService = orderService;
 
     this.listOptions = {
       itemClickEvent: this.openOrder,
@@ -30,6 +29,11 @@ class OrdersComponent {
           title:'Status',
           member: 'state',
           sortable: true
+        },
+        {
+          title: 'Vereniging',
+          member: 'group["name"]',
+          sortable: true
         }
       ]
     }
@@ -37,31 +41,32 @@ class OrdersComponent {
 
   $onInit () {
     this.Auth.getCurrentUser(user => {
-      this.handleUser(user);
+      if (user) {
+        this.user = user;
+        this.refreshOrders()
+      }
     });  	
   }
 
-  handleUser (user) {
-    if (user) {
-      this.user = user;
-      this.groups = this.user.groups;
-      this.refreshOrders()
-    }
-  }
-
-  canBeDeleted (order) {
-    return order.state == 'DRAFT' && !order.ordernumber;
-  }
-
   refreshOrders () {
-    this.$http.get('/api/orders/user/' + this.user._id).then (response => {
-        this.userorders = response.data;
+    this.errMsg = '';
+    this.successMsg = '';
+
+    this.orderService.getUserOrders(this.user._id).then (orders => {
+      this.userorders = orders;
+    })
+    .catch(err => {
+      this.errMsg += err.data;
+    });
+
+    this.user.groups.forEach((group) => {
+      this.orderService.getGroupOrders(group._id).then(orders => {
+        group.orders = orders;
+      })
+      .catch(err => {
+        this.errMsg = err.data;
       });
-      this.groups.forEach((group) => {
-        this.$http.get('/api/orders/group/' + group._id).then(response => {
-          group.orders = response.data;
-        });
-      });
+    });
   }
 
 
@@ -70,21 +75,19 @@ class OrdersComponent {
   }
 
   openOrder (order) {
-    console.log('opening order');
     this.$location.path('/request/info/' + order._id);
   }
 
   deleteOrder (order) {
-    this.$http.delete('/api/orders/' + order._id)
+    this.orderService.deleteOrder(order)
       .then (response => {
-        console.log('removing..');
-        //to refresh
-        this.refreshOrders();
+        this.successMsg = response.data;
       })
       .catch(err => {
-        console.dir(err);
-        console.log(err.data);
-        this.errmsg = err.data;
+        this.errMsg = err.data;
+      })
+      .finally(() => {
+        this.refreshOrders();
       });
   }
 

@@ -2,41 +2,45 @@
 (function(){
 
 class ProductComponent {
-  constructor($scope, $http, $stateParams, $location) {
-    this.$scope = $scope;
-    this.$http = $http;
+  constructor($scope, $http, $stateParams, $location, productService, userService) {
     this.$location = $location;
     this.id = $stateParams.id;
-    this.$scope.product = {};
-    this.$scope.groups = undefined;
-    this.$scope.productcategories = undefined;
-    this.$scope.pricecategories = undefined;
+    this.product = {};
+    this.groups = undefined;
+    this.productcategories = undefined;
+    this.pricecategories = undefined;
     this.loaded = {};
-    this.$scope.errmsg = '';
+    this.errmsg = '';
+    this.productService = productService;
+    this.userService = userService;
   }
 
   $onInit() {
+    this.refresh();
+  }
+
+  refresh () {
     if (this.id) {
-      this.$http.get('/api/products/' + this.id).then(response => {
-        this.$scope.product = response.data;
+      this.productService.getProduct(this.id).then(product => {
+        this.product = product;
         this.loaded['product'] = true;
       });
     }
 
-  	this.$http.get('/api/productfamilies').then(response => {
-  		this.$scope.productcategories = response.data;
+    this.productService.getProductFamilies().then(productfamilies => {
+      this.productcategories = productfamilies;
       this.loaded['productfamilies'] = true;
       this.helpsync();
-  	});
+    });
 
-  	this.$http.get('/api/usergroups').then(response => {
-  		this.$scope.groups = response.data;
+    this.userService.getUserGroups().then(usergroups => {
+      this.groups = usergroups;
       this.loaded['usergroups'] = true;
       this.helpsync();
-  	});
+    });
 
-    this.$http.get('/api/pricecategories').then(response => {
-      this.$scope.pricecategories = response.data;
+    this.productService.getPriceCategories().then(categories => {
+      this.pricecategories = categories;
       this.loaded['pricecategories'] = true;
       this.helpsync();
     });
@@ -60,8 +64,19 @@ class ProductComponent {
 
   todefaultprice (category) {
     if (!category.hasprice) {
-      category.price = $scope.product.defaultprice;
+      category.price = this.product.defaultprice;
     }
+  }
+
+  updateStock(stock_cnt, reason) {
+    this.errMsg = '';
+    this.productService.changeProductStock(this.product, stock_cnt, reason)
+      .then (product => {
+        this.refresh();
+      })
+      .catch(err => {
+        this.errMsg = err;
+      });
   }
 
   submit() {
@@ -71,19 +86,30 @@ class ProductComponent {
 
   	if (this.id) {
   		//update
-  		this.$http.put('/api/products/' + this.id, this.$scope.product);
-  	} else {
-  		//new product
-		  this.$http.post('/api/products/', this.$scope.product);
-  	}
-  	this.$location.path ('/admin/products');
+  		this.productService.updateProduct(this.product)
+        .then(product => {
+          this.$location.path ('/admin/products');
+        })
+        .catch(err => {
+          this.errMsg = err;
+        });
+    } else {
+      //new product
+      this.productService.saveProduct(this.product)
+        .then(product => {
+          this.$location.path('/admin/products');
+        })
+        .catch(err => {
+          this.errMsg = err;
+        })
+    }
   }
 
   setgroups() {
-    for (var i=0; i<this.$scope.product.visiblegroups.length; i++) {
-      for (var j=0; j<this.$scope.groups.length; j++) {
-        if (this.$scope.product.visiblegroups[i] == this.$scope.groups[j]._id) {
-          this.$scope.groups[j].checked = true;
+    for (var i=0; i<this.product.visiblegroups.length; i++) {
+      for (var j=0; j<this.groups.length; j++) {
+        if (this.product.visiblegroups[i] == this.groups[j]._id) {
+          this.groups[j].checked = true;
           break;
         }
       }
@@ -91,10 +117,10 @@ class ProductComponent {
   }
 
   setproductfamilies() {
-    for (var i=0; i<this.$scope.product.productfamily.length; i++) {
-      for (var j=0; j<this.$scope.productcategories.length; j++) {
-        if (this.$scope.product.productfamily[i] == this.$scope.productcategories[j]._id) {
-          this.$scope.productcategories[j].checked = true;
+    for (var i=0; i<this.product.productfamily.length; i++) {
+      for (var j=0; j<this.productcategories.length; j++) {
+        if (this.product.productfamily[i] == this.productcategories[j]._id) {
+          this.productcategories[j].checked = true;
           break;
         }
       }
@@ -103,15 +129,15 @@ class ProductComponent {
 
   setpriceCategories() {
     //run over all pricecategories
-    for (var j=0; j<this.$scope.pricecategories.length; j++) {
+    for (var j=0; j<this.pricecategories.length; j++) {
       //find categorie in product prices
-      this.$scope.pricecategories[j].hasprice = false;
-      this.$scope.pricecategories[j].price = this.$scope.product.defaultprice;
+      this.pricecategories[j].hasprice = false;
+      this.pricecategories[j].price = this.product.defaultprice;
 
-      for (var i=0; i<this.$scope.product.prices.length; i++) {
-        if (this.$scope.product.prices[i].pricecategory == this.$scope.pricecategories[j]._id) {
-          this.$scope.pricecategories[j].price = this.$scope.product.prices[i].price;
-          this.$scope.pricecategories[j].hasprice = true;
+      for (var i=0; i<this.product.prices.length; i++) {
+        if (this.product.prices[i].pricecategory == this.pricecategories[j]._id) {
+          this.pricecategories[j].price = this.product.prices[i].price;
+          this.pricecategories[j].hasprice = true;
           break;
         }
       }
@@ -119,32 +145,31 @@ class ProductComponent {
   }
 
   updategroups() {
-    this.$scope.product.visiblegroups = [];
-    for (var j=0; j<this.$scope.groups.length; j++) {
-      console.dir(this.$scope.groups[j]);
-      if (this.$scope.groups[j].checked) {
-        this.$scope.product.visiblegroups.push(this.$scope.groups[j]._id);
+    this.product.visiblegroups = [];
+    for (var j=0; j<this.groups.length; j++) {
+      if (this.groups[j].checked) {
+        this.product.visiblegroups.push(this.groups[j]._id);
       }
     }
   }
 
   updateproductfamilies() {
-    this.$scope.product.productfamily = [];
-    for (var j=0; j<this.$scope.productcategories.length; j++) {
-      if (this.$scope.productcategories[j].checked) {
-        this.$scope.product.productfamily.push(this.$scope.productcategories[j]._id);
+    this.product.productfamily = [];
+    for (var j=0; j<this.productcategories.length; j++) {
+      if (this.productcategories[j].checked) {
+        this.product.productfamily.push(this.productcategories[j]._id);
       }
     }
   }
 
   updatepricecategories() {
-    this.$scope.product.prices = [];
-    for (var j=0; j<this.$scope.pricecategories.length; j++) {
-      if (this.$scope.pricecategories[j].hasprice) {
-        this.$scope.product.prices.push(
+    this.product.prices = [];
+    for (var j=0; j<this.pricecategories.length; j++) {
+      if (this.pricecategories[j].hasprice) {
+        this.product.prices.push(
           {
-            price: this.$scope.pricecategories[j].price,
-            pricecategory: this.$scope.pricecategories[j]._id
+            price: this.pricecategories[j].price,
+            pricecategory: this.pricecategories[j]._id
           }
         );
       }

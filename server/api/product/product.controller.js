@@ -51,6 +51,31 @@ function saveUpdates(updates) {
   };
 }
 
+function saveStockUpdate(stock_cnt, reason, user_id) {
+  return function (entity) {
+    var today = new Date();
+    entity.stock = stock_cnt;
+    entity.stock_date = today;
+    entity.stock_mod_reason = reason;
+    entity.stock_modifier = user_id;
+
+    entity.stock_history.push({
+      stock: stock_cnt, 
+      stock_date: today,
+      stock_mod_reason: reason, 
+      stock_modifier: user_id
+    });
+
+    return entity.save()
+      // .populate('stock_modifier')
+      // .populate('stock_history.stock_modifier')
+      .then(entity => {
+        return entity;
+      });
+
+  };
+}
+
 function removeEntity(res) {
   return function(entity) {
     if (entity) {
@@ -139,7 +164,10 @@ export function categoryIndex(req, res) {
 
 // Gets a single Product from the DB
 export function show(req, res) {
-  return Product.findById(req.params.id).exec()
+  return Product.findById(req.params.id)
+    .populate('stock_modifier')
+    .populate('stock_history.stock_modifier')
+    .exec()
     .then(handleEntityNotFound(res))
     .then(respondWithResult(res))
     .catch(handleError(res));
@@ -160,6 +188,21 @@ export function update(req, res) {
   return Product.findById(req.params.id).exec()
     .then(handleEntityNotFound(res))
     .then(saveUpdates(req.body))
+    .then(respondWithResult(res))
+    .catch(handleError(res));
+}
+
+//change stock
+export function stockchange(req, res) {
+  var product_id = req.params.id;
+  var stock_cnt = req.params.stock;
+  var reason = req.params.reason;
+  var user_id = req.user._id;
+
+  return Product.findById(product_id)
+    .exec()
+    .then(handleEntityNotFound(res))
+    .then(saveStockUpdate(stock_cnt, reason, user_id))
     .then(respondWithResult(res))
     .catch(handleError(res));
 }

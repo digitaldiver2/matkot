@@ -1,12 +1,18 @@
 <div class="container">
+	<div class="alert alert-danger" ng-show="$ctrl.errMsg !=''">
+		{{$ctrl.errMsg}}
+	</div>
+	<div class="alert alert-success" ng-show="$ctrl.successMsg !=''">
+		{{$ctrl.successMsg}}
+	</div>
 	<form ng-submit="$ctrl.submit()">
 		<div class="form-group">
 			<label for="name">Naam</label>
-			<input type="text" id="name" placeholder="vb Jeugdbewegingen" ng-model="category.name" class="form-control">
+			<input type="text" id="name" placeholder="vb Jeugdbewegingen" ng-model="$ctrl.category.name" class="form-control">
 		</div>
 		<div class="form-group">
 			<label for="info">Info</label>
-			<textarea id="info" ng-model="category.info" class="form-control"></textarea>
+			<textarea id="info" ng-model="$ctrl.category.info" class="form-control"></textarea>
 		</div>
 
 	<button class="btn btn-default" type="submit">Opslaan</button>

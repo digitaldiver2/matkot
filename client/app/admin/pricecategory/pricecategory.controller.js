@@ -2,29 +2,50 @@
 (function(){
 
 class PricecategoryComponent {
-  constructor($scope, $http, $location, $stateParams) {
-  	this.$scope = $scope;
+  constructor($http, $location, $stateParams, productService) {
   	this.$http = $http;
   	this.$location = $location;
   	this.$stateParams = $stateParams;
 
+    this.productService = productService;
+
   	this.id = $stateParams.id;
-  	this.$scope.category = {};
+
+    this.successMsg = '';
+    this.errMsg = '';
   }
 
   $onInit () {
   	if (this.id) {
-  		this.$http.get('/api/pricecategories/' + this.id).then (response => {
-  			this.$scope.category = response.data;
-  		});
+  		this.productService.getPriceCategory(this.id)
+      .then (category => {
+  			this.category = category;
+  		}, err => {
+        this.errMsg = err;
+      });
   	}
   }
 
   submit () {
+    this.successMsg = '';
+    this.errMsg = '';
+
   	if (this.id) {
-  		this.$http.put('/api/pricecategories/' + this.id, this.$scope.category);
+  		this.productService.updatePriceCategory(this.category)
+      .then (() => {
+        this.successMsg = 'Category opgeslagen'
+      })
+      .catch (err => {
+        this.errMsg = err;
+      });
   	} else {
-  		this.$http.post('/api/pricecategories/', this.$scope.category);
+  		this.productService.savePriceCategory(this.category)
+      .then (() => {
+        this.successMsg = 'Category opgeslagen'
+      })
+      .catch (err => {  
+        this.errMsg = err;
+      });
   	}
   	this.$location.path('/admin/pricing');
   }
