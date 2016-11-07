@@ -2,11 +2,13 @@
 (function(){
 
 class OrderComponent {
-  constructor($scope, $http, $location, $stateParams) {
+  constructor($scope, $http, $location, $stateParams, orderService) {
     this.$scope = $scope;
     this.$http = $http;
     this.$location = $location;
     this.id = $stateParams.id;
+
+    this.orderService = orderService;
   }
 
   $onInit () {
@@ -213,6 +215,17 @@ class OrderComponent {
         alert(err);
       });
     }
+  }
+
+  addComment(comment) {
+    this.errMsg = '';
+    this.orderService.addCommentToOrder(this.$scope.order, comment)
+      .then(res => {
+        //reload
+      })
+      .catch(err => {
+        this.errMsg = err;
+      })
   }
 }
 

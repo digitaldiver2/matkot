@@ -80,7 +80,6 @@
 		</div>
 
 		<h3>Product lijst</h3>
-		<form>
 			<div class="form-group row">
 				<div class="col-sm-2">
 					<div class="input-group">
@@ -99,7 +98,6 @@
 				<button class="btn btn-primary" ng-click="$ctrl.sameNumbers()">Aantallen overnemen</button>
 				<button class="btn btn-primary" ng-click="$ctrl.resetNumbers()">Reset</button>
 			</div>
-		</form>
 		<table class="table">
 			<thead>
 				<tr>
@@ -213,4 +211,14 @@
 		<button class="btn btn-default" ng-click="$ctrl.save()">Opslaan</button>
 		<button class="btn btn-danger" ng-click="$ctrl.remove()">Verwijderen</button>
 	</form>
+
+	<h2>Comments</h2>
+	{{order.comments.length}}
+	<ul>
+		<li ng-repeat="comment in order.comments">
+			{{comment.date}} {{comment.creator}} {{comment.body}}
+		</li>	
+	</ul>
+	<input type="text" ng-model="$ctrl.comment_body">
+	<button type="button" ng-click="$ctrl.orderService.addCommentToOrder(order, $ctrl.comment_body)">add comment</button>
 </div>

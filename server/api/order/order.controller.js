@@ -54,12 +54,24 @@ function saveUpdates(updates) {
     });
     delete updates.products;
     var updated = _.merge(entity, updates);
-    console.dir(updated);
     return updated.save()
       .then(updated => {
         return updated;
       });
   };
+}
+
+function addCommentToOrder (req) {
+  return function (entity) {
+    var now = new Date();
+
+    entity.comments.push({creator: req.user._id, body: req.body.body, date: now});
+    console.dir(req.body);
+    return entity.save()
+      .then(updated => {
+        return updated;
+      });
+  }
 }
 
 //'dont remove entity if state is not draft or if an ordernumber is available
@@ -165,6 +177,19 @@ export function update(req, res) {
   return Order.findById(req.params.id).exec()
     .then(handleEntityNotFound(res))
     .then(saveUpdates(req.body))
+    .then(respondWithResult(res))
+    .catch(handleError(res));
+}
+
+// Updates an existing Order in the DB
+export function addComment (req, res) {
+  if (req.body._id) {
+    delete req.body._id;
+  }
+  
+  return Order.findById(req.params.id).exec()
+    .then(handleEntityNotFound(res))
+    .then(addCommentToOrder(req))
     .then(respondWithResult(res))
     .catch(handleError(res));
 }

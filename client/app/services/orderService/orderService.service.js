@@ -88,8 +88,14 @@ angular.module('matkotApp.orderService', [])
     	//calculate prices
     }
 
-    this.addCommentToOrder = function (order, user, comment) {
-
+    this.addCommentToOrder = function (order, comment) {
+    	console.log('service: addCommentToOrder');
+    	return $http.put('/api/orders/comment/' + order._id, {body: comment})
+    		.then(res => {
+    			return res.data;	
+    		}, err => {
+    			return $q.reject(err.data);
+    		});
     }
 
     this.editOrderId = function (order_id) {
