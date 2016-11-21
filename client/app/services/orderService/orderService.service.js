@@ -12,6 +12,28 @@ angular.module('matkotApp.orderService', [])
 	this.STATE_CANCELLED = 'CANCELLED';
 	this.STATE_REOPENED = 'REOPENED';
 
+	this.saveOrder = function (order) {
+		order.products = order.products.filter(function (product) {
+	      return product.ordered > 0;
+	    });
+
+	    if (order._id) {
+		    return $http.put('/api/orders/' + order._id, order).then(res => {
+		    	return;
+		    }, err => {
+		    	return $q.reject(err.data);
+		    });
+	    } else {
+	    	return $http.post('/api/orders/', order).then(res => {
+	    		return;
+	    	}, err => {
+	    		return $q.reject(err.data);
+	    	});
+	    }
+	}
+
+
+
     this.getUserOrders = function (user_id) {
     	return $http.get('/api/orders/user/' + user_id)
     		.then(res => {
@@ -185,5 +207,42 @@ angular.module('matkotApp.orderService', [])
     	return order == undefined || order.state == this.STATE_DRAFT;
     }
 
+    //update product in order (only in draft mode)
+    this.updateOrderProduct = function (order, product) {
+	    var index = -1;
+	    var productitem = null;
+
+	    for (var i=0; i<order.products.length; i++) {
+	      productitem = order.products[i];
+	      if (productitem.product._id == product._id) {
+	        index = i;
+
+	        break;
+	      }
+	    }
+
+	    if (product.ordered != 0) {
+	      if (index != -1) {
+	        productitem.ordered = product.ordered;
+	      } else {
+	        //add item
+
+	        order.products.push({
+	          'product': product,
+	          'ordered': product.ordered,
+	          'unitprice': product.unitprice,
+	          'approved': 0,
+	          'received': 0,
+	          'returned': 0  
+	        });
+	      }
+	    } else {
+	      if (index != -1) {
+	        //remove item
+	        order.products.splice(index, 1);
+	      } 
+	        // else impossible state, but do nothing
+	    }
+	  }
 
   });

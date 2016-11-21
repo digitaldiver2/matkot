@@ -22,6 +22,35 @@ angular.module('matkotApp.productService', [])
     		});
     }
 
+    //get all products for specific group
+    this.getGroupProducts = function (group_id, price_category_id) {
+        return $http.get('/api/products/group/' + group_id)
+            .then(res => {
+                this.selectCorrectPrice(res.data, price_category_id);
+                return res.data;
+            }, err => {
+                return $q.reject(err.data);
+            });
+    }
+
+    //set correct default price of product, depending on price_category
+    this.selectCorrectPrice = function (products, price_category_id) {
+        for (var i=0; i< products.length; i++) {
+            var product = products[i];
+            product.unitprice = product.defaultprice;
+            //if product has custom prices and there is a group specified
+            if (product.prices.length > 0 && price_category_id != '') {
+                for (var j=0; j<product.prices.length; j++) {
+                    if (product.prices[j].pricecategory == price_category_id) {
+                        product.unitprice = product.prices[j].price;
+                    }
+                }
+            }
+            products[i] = product;
+        }
+      }
+
+
     this.getProduct = function (id) {
     	return $http.get('/api/products/' + id)
     		.then(res => {

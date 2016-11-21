@@ -36,7 +36,7 @@
 						<td><input class="qty" type="number" ng-model="product.ordered" 
 							id="ordered" max="{{product.stock}}" 
 							min="0" ng-disabled="!$ctrl.orderService.orderIsDraft($ctrl.order)" 
-							ng-change="$ctrl.updateOrder(product)"></td>
+							ng-change="$ctrl.orderService.updateOrderProduct($ctrl.order, product)"></td>
 					</tr>
 				</tbody>
 			</table>
