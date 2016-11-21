@@ -18,7 +18,15 @@ var OrderSchema = new mongoose.Schema({
         comment: {type: String}
 		}
 	],
-  state: {type:String, enum: ['DRAFT', 'ORDERED', 'APPROVED', 'DELIVERED','SHORTAGE', 'CLOSED', 'CANCELLED'], default: 'DRAFT'}, //Draft/Request/Order/Delivered/Returned/Closed
+  shortages: [
+    {
+      product: {type: mongoose.Schema.Types.ObjectId, ref: 'Product'},
+      qty_short: {type: Number, default: 0},
+      qty_ok: {type: Number, default: 0},
+      comment: {type: String}
+    }
+  ],
+  state: {type:String, enum: ['DRAFT', 'ORDERED', 'APPROVED', 'DELIVERED','OPEN', 'CLOSED', 'CANCELLED', 'REOPEN'], default: 'DRAFT'}, //Draft/Request/Order/Delivered/Returned/Closed
   creator: {type: mongoose.Schema.Types.ObjectId, ref: 'User'},
   modifier: {type: mongoose.Schema.Types.ObjectId, ref: 'User'},
   creationdate: Date,
@@ -33,7 +41,6 @@ var OrderSchema = new mongoose.Schema({
   changehistory: [String],
   ordernumber: String,
   totalpaid: {type: Number, default: 0}
-
 });
 
 export default mongoose.model('Order', OrderSchema);

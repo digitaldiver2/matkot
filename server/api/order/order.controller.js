@@ -53,6 +53,15 @@ function saveUpdates(updates) {
       entity.products.push(product);
     });
     delete updates.products;
+
+    if (updates.shortages != undefined) {
+      entity.shortages = new Array();
+      updates.shortages.forEach(function (product) {
+        entity.shortages.push(product);
+      });
+      delete updates.shortages;
+    }
+
     var updated = _.merge(entity, updates);
     return updated.save()
       .then(updated => {
@@ -64,7 +73,6 @@ function saveUpdates(updates) {
 function addCommentToOrder (req) {
   return function (entity) {
     var now = new Date();
-
     entity.comments.push({creator: req.user._id, body: req.body.body, date: now});
     console.dir(req.body);
     return entity.save()
@@ -145,7 +153,9 @@ export function show(req, res) {
   return Order.findById(req.params.id)
     .populate('group')
     .populate('products.product')
+    .populate('shortages.product')
     .populate('owner')
+    .populate('comments.creator', 'name')
     .exec()
     .then(handleEntityNotFound(res))
     .then(respondWithResult(res))

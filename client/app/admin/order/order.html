@@ -2,33 +2,33 @@
 	<form>
 		<h3>Info</h3>
 		<p>
-			<strong>Ordernummer:</strong> {{order.ordernumber}}</br>
-			<strong>Eigenaar:</strong> {{order.owner.name}}</br>
-			<strong>Telefoon:</strong> {{order.owner.phone}}</br>
-			<strong>Mail:</strong> {{order.owner.email}}
+			<strong>Ordernummer:</strong> {{$ctrl.order.ordernumber}}</br>
+			<strong>Eigenaar:</strong> {{$ctrl.order.owner.name}}</br>
+			<strong>Telefoon:</strong> {{$ctrl.order.owner.phone}}</br>
+			<strong>Mail:</strong> {{$ctrl.order.owner.email}}
 		</p>
 		<div class="form-group">
 			<label for="Category">Vereniging *</label>
 			<select id="Category" class="form-control" 
-				ng-model="order.group" 
+				ng-model="$ctrl.order.group" 
 				ng-options="group as group.name for group in groups track by group._id">
 				<option value="">Prive</option>
 			</select>	
 		</div>
 		<div class="form-group">
 			<label for="Naam">Naam evenement *</label>
-			<input type="text" class="form-control" id="NaamEvenement" placeholder='Evenement' ng-model='order.name'>
+			<input type="text" class="form-control" id="NaamEvenement" placeholder='Evenement' ng-model='$ctrl.order.name'>
 		</div>
 		<div class="form-group">
 			<label>Start Evenement: </label>
-			<a  ng-click="eventstartCollapsed = !eventstartCollapsed">{{order.eventstart | date:'EEE dd/MM/yy HH:mm'}}
+			<a  ng-click="eventstartCollapsed = !eventstartCollapsed">{{$ctrl.order.eventstart | date:'EEE dd/MM/yy HH:mm'}}
 				<i class="fa fa-pencil fa" aria-hidden="true"></i>
 			</a>
 			<div uib-collapse="eventstartCollapsed">
 				<div class="well">
-					<uib-datepicker ng-model="order.eventstart" datepicker-options="options" >
+					<uib-datepicker ng-model="$ctrl.order.eventstart" datepicker-options="options" >
 					</uib-datepicker>
-					<uib-timepicker ng-model="order.eventstart" ng-change="$ctrl.changedTime()" show-meridian="ismeridian" >
+					<uib-timepicker ng-model="$ctrl.order.eventstart" ng-change="$ctrl.changedTime()" show-meridian="ismeridian" >
 					</uib-timepicker>
 				</div>
 			</div>
@@ -36,14 +36,14 @@
 
 		<div class="form-group">
 			<label>Einde Evenement: </label>
-			<a ng-click="eventstopCollapsed = !eventstopCollapsed">{{order.eventstop | date:'EEE dd/MM/yy HH:mm'}}
+			<a ng-click="eventstopCollapsed = !eventstopCollapsed">{{$ctrl.order.eventstop | date:'EEE dd/MM/yy HH:mm'}}
 				<i class="fa fa-pencil fa" aria-hidden="true"></i>
 			</a>
 			<div uib-collapse="eventstopCollapsed">
 				<div class="well">
-					<uib-datepicker ng-model="order.eventstop" datepicker-options="options" >
+					<uib-datepicker ng-model="$ctrl.order.eventstop" datepicker-options="options" >
 					</uib-datepicker>
-					<uib-timepicker ng-model="order.eventstop" show-meridian="ismeridian" >
+					<uib-timepicker ng-model="$ctrl.order.eventstop" show-meridian="ismeridian" >
 					</uib-timepicker>
 				</div>
 			</div>
@@ -51,14 +51,14 @@
 
 		<div class="form-group">
 				<label>Afhaal tijdstip: </label>
-				<a ng-click="pickupCollapsed = !pickupCollapsed">{{order.pickupdate | date:'EEE dd/MM/yy HH:mm'}}
+				<a ng-click="pickupCollapsed = !pickupCollapsed">{{$ctrl.order.pickupdate | date:'EEE dd/MM/yy HH:mm'}}
 					<i class="fa fa-pencil fa" aria-hidden="true"></i>
 				</a>
 			<div uib-collapse="pickupCollapsed">
 				<div class="well">
-					<uib-datepicker ng-model="order.pickupdate" datepicker-options="pickupoptions"  >
+					<uib-datepicker ng-model="$ctrl.order.pickupdate" datepicker-options="pickupoptions"  >
 					</uib-datepicker>
-					<uib-timepicker ng-model="order.pickupdate" show-meridian="ismeridian" >
+					<uib-timepicker ng-model="$ctrl.order.pickupdate" show-meridian="ismeridian" >
 					</uib-timepicker>
 				</div>
 			</div>
@@ -66,14 +66,14 @@
 
 		<div class="form-group">
 			<label>Retour moment: </label>
-			<a ng-click="returnCollapsed = !returnCollapsed">{{order.returndate | date:'EEE dd/MM/yy HH:mm'}}
+			<a ng-click="returnCollapsed = !returnCollapsed">{{$ctrl.order.returndate | date:'EEE dd/MM/yy HH:mm'}}
 				<i class="fa fa-pencil fa" aria-hidden="true"></i>
 			</a>
 			<div uib-collapse="returnCollapsed">
 				<div class="well">
-					<uib-datepicker ng-model="order.returndate" datepicker-options="retouroptions"  >
+					<uib-datepicker ng-model="$ctrl.order.returndate" datepicker-options="retouroptions"  >
 					</uib-datepicker>
-					<uib-timepicker ng-model="order.returndate" show-meridian="ismeridian" >
+					<uib-timepicker ng-model="$ctrl.order.returndate" show-meridian="ismeridian" >
 					</uib-timepicker>
 				</div>
 			</div>
@@ -127,8 +127,8 @@
 				</tr>
 			</thead>
 			<tbody>
-				<!-- <tr ng-repeat-start="productitem in order.products | orderBy:sortType:sortReverse | filter:searchProduct2 "> -->
-				<tr ng-repeat="productitem in order.products | orderBy:sortType:sortReverse | filter:searchProduct2 ">
+				<!-- <tr ng-repeat-start="productitem in $ctrl.order.products | orderBy:sortType:sortReverse | filter:searchProduct2 "> -->
+				<tr ng-repeat="productitem in $ctrl.order.products | orderBy:sortType:sortReverse | filter:searchProduct2 ">
 					
 					<td>{{productitem.product.code}}</td>
 					<td>{{productitem.product.name}}</td>
@@ -136,18 +136,18 @@
 					<td>{{productitem.product.stock}}</td>
 					<td>{{productitem.ordered}}</td>
 					<td>
-						<input type="number" class="qty" ng-model="productitem.approved" ng-disabled="order.state!='DRAFT' && order.state != 'ORDERED'">
+						<input type="number" class="qty" ng-model="productitem.approved" ng-disabled="$ctrl.order.state!='DRAFT' && $ctrl.order.state != 'ORDERED'">
 					</td>
 					<td>
-						<input type="number" class="qty" ng-model="productitem.received" ng-disabled="order.state!='APPROVED' && order.state != 'CANCELLED'">
+						<input type="number" class="qty" ng-model="productitem.received" ng-disabled="$ctrl.order.state!='APPROVED' && $ctrl.order.state != 'CANCELLED'">
 					</td>
 					<td>
-						<input type="number" class="qty" ng-model="productitem.returned" ng-disabled="order.state!='DELIVERED' && order.state != 'SHORTAGE'">
+						<input type="number" class="qty" ng-model="productitem.returned" ng-disabled="$ctrl.order.state!='DELIVERED'">
 					</td>
 					<td>
 						{{productitem.received - productitem.returned}}
 					</td>
-					<td><input type="number" class="price" ng-model="productitem.unitprice" ng-disabled="order.state=='CANCELLED' || order.state == 'CLOSED'" ng-change="CalculateTotals()"></td>
+					<td><input type="number" class="price" ng-model="productitem.unitprice" ng-disabled="$ctrl.order.state=='CANCELLED' || $ctrl.order.state == 'CLOSED'" ng-change="CalculateTotals()"></td>
 					<td>{{productitem.unitprice * productitem.received | currency:'€' }}	</td>
 					<td><input type="text" class="item_comment_field" ng-model="productitem.comment"></td>
 				</tr>
@@ -167,7 +167,7 @@
 
 			</tbody>
 		</table>
-		<h4>Totaal te betalen: {{ order.products | totalSumPriceQty:'received':'unitprice' | currency:'€' }}</h4>
+		<h4>Totaal te betalen: {{$ctrl.order.products | totalSumPriceQty:'received':'unitprice' | currency:'€' }}</h4>
 		<h4>Reeds betaald:</h4>
 		<button class="btn btn-default" ng-click="addProductCollapsed=!addProductCollapsed">+</button>
 		<div uib-collapse="addProductCollapsed">
@@ -197,28 +197,60 @@
 
 		<div class="form-group">
 			<label for="state">Status</label>
-			<select class="form-control" id="state" ng-model="order.state">
+			<select class="form-control" id="state" ng-model="$ctrl.order.state" ng-show="!$ctrl.orderService.orderIsEvaluated($ctrl.order)">
 				<option value="DRAFT">Concept</option>
 				<option value="ORDERED">Aangevraagd</option>
 				<option value="APPROVED">Goedgekeurd</option>
 				<option value="DELIVERED">Uitgeleend</option>
-				<option value="SHORTAGE">Te korten</option>
-				<option value="CLOSED">Afgesloten</option>
 				<option value="CANCELLED">Geannuleerd</option>
 			</select>
+			<div ng-show="$ctrl.orderService.orderIsEvaluated($ctrl.order)">
+				{{$ctrl.order.state}}
+			</div>
 		</div>
-
-		<button class="btn btn-default" ng-click="$ctrl.save()">Opslaan</button>
-		<button class="btn btn-danger" ng-click="$ctrl.remove()">Verwijderen</button>
 	</form>
 
-	<h2>Comments</h2>
-	{{order.comments.length}}
-	<ul>
-		<li ng-repeat="comment in order.comments">
-			{{comment.date}} {{comment.creator}} {{comment.body}}
-		</li>	
-	</ul>
-	<input type="text" ng-model="$ctrl.comment_body">
-	<button type="button" ng-click="$ctrl.orderService.addCommentToOrder(order, $ctrl.comment_body)">add comment</button>
+	<div id="comments">
+		<h2>Berichten</h2>
+
+		<div class="panel panel-default" ng-repeat="comment in $ctrl.order.comments">
+			<div class="panel-heading">
+				<h3 class="panel-title">{{comment.creator.name}} | {{comment.date | date:'medium':'+01:00'}}</h3>
+			</div>
+			<div class="panel-body">
+				{{comment.body}}
+			</div>
+		</div>	
+	</div>
+	<h3>Nieuw bericht</h3>
+	<textarea class="form-control" ng-model="$ctrl.comment_body" class="col-sm-12"  rows="3"></textarea>
+	<button type="button" class="btn btn-default"  ng-click="$ctrl.orderService.addCommentToOrder($ctrl.order, $ctrl.comment_body)">Add comment</button>
+	<br>
+	<div id="shortages" ng-show="$ctrl.orderService.orderIsEvaluated($ctrl.order)">
+		<h2>Tekorten</h2>
+		<table class="table">
+			<thead>
+				<th>Product</th>
+				<th>Tekort</th>
+				<th>Ok</th>
+				<th>Commentaar</th>
+
+			</thead>
+			<tbody>
+				<tr ng-repeat="shortage in $ctrl.order.shortages" ng-class="{resolved: shortage.qty_short <= shortage.qty_ok, short: shortage.qty_short > shortage.qty_ok}">
+					<td>{{shortage.product.name}}</td>
+					<td>{{shortage.qty_short}}</td>
+					<td><input type="number" ng-model="shortage.qty_ok" ng-disabled="$ctrl.orderService.orderIsClosed($ctrl.order)"></td>
+					<td>
+						<input type="text" ng-model="shortage.comment" ng-disabled="$ctrl.orderService.orderIsClosed($ctrl.order)">
+					</td>
+				</tr>
+			</tbody>
+		</table>
+	</div>
+	<button type="button" class="btn btn-default" ng-click="$ctrl.orderService.evaluateOrder($ctrl.order)">Evalueer</button>
+	<button class="btn btn-default" ng-click="$ctrl.save()">Opslaan</button>
+	<button class="btn btn-danger" ng-click="$ctrl.remove()">Verwijderen</button>
+	<button type="button" class="btn btn-default" ng-click="$ctrl.orderService.reOpen($ctrl.order)" 
+		ng-show="$ctrl.orderService.orderIsEvaluated($ctrl.order)">Heropen order</button>
 </div>

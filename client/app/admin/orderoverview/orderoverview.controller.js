@@ -17,7 +17,7 @@ class OrderoverviewComponent {
       this.requested = this.orders.filter(function (order) { return order.state=='ORDERED'});
       this.approved = this.orders.filter(function (order) { return order.state=='APPROVED'});
       this.delivered = this.orders.filter(function (order) { return order.state=='DELIVERED'});
-      this.shorts = this.orders.filter(function (order) { return order.state=='SHORTAGE'});
+      this.shorts = this.orders.filter(function (order) { return order.state=='OPEN'});
       this.prevs = this.orders.filter(function (order) { return order.state=='CLOSED'});
       this.others = this.orders.filter(function(order) { 
         return 
@@ -25,7 +25,7 @@ class OrderoverviewComponent {
           order.state != 'ORDERED' &&
           order.state != 'APPROVED' &&
           order.state != 'DELIVERED' &&
-          order.state != 'SHORTAGE' &&
+          order.state != 'OPEN' &&
           order.state != 'CLOSED' })
   	});
   }

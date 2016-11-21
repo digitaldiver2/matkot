@@ -7,12 +7,23 @@ angular.module('matkotApp.orderService', [])
 	this.STATE_ORDERED = 'ORDERED';
 	this.STATE_APPROVED = 'APPROVED';
 	this.STATE_DELIVERED = 'DELIVERED';
-	this.STATE_SHORTAGE = 'SHORTAGE';
-	this.STATE_CANCELLED = 'CANCELLED';
+	this.STATE_OPEN = 'OPEN';
 	this.STATE_CLOSED = 'CLOSED';
+	this.STATE_CANCELLED = 'CANCELLED';
+	this.STATE_REOPENED = 'REOPENED';
 
     this.getUserOrders = function (user_id) {
     	return $http.get('/api/orders/user/' + user_id)
+    		.then(res => {
+    			return res.data;
+    		})
+    		.catch(err => {
+    			return $q.reject(err.data);
+    		});
+    }
+
+    this.getOrder = function (order_id) {
+    	return $http.get('/api/orders/' + order_id)
     		.then(res => {
     			return res.data;
     		})
@@ -89,7 +100,6 @@ angular.module('matkotApp.orderService', [])
     }
 
     this.addCommentToOrder = function (order, comment) {
-    	console.log('service: addCommentToOrder');
     	return $http.put('/api/orders/comment/' + order._id, {body: comment})
     		.then(res => {
     			return res.data;	
@@ -104,6 +114,75 @@ angular.module('matkotApp.orderService', [])
 
     this.viewOrderId = function (order_id) {
     	//open view page
+    }
+
+
+    this.reOpen = function (order) {
+    	order.state = this.STATE_REOPENED;
+    	order.shortages = [];
+    	//TODO log reopening
+
+    }
+
+    //calculate shortages
+    //TODO: calculate consumables
+    this.evaluateOrder = function (order) {
+    	//not in open or closed state => never evaluated before
+    	if (order.state != this.STATE_OPEN && order.state != this.STATE_CLOSED) {
+	    	order.products.forEach(productItem => {
+	    		var shortage = productItem.received - productItem.returned;
+	    		var shortage_item = undefined;
+	    		//check if product is in shortages (in case the order was reopened)
+	    		for(var i=0; i< order.shortages.length; i++) {
+	    			var item = order.shortages[i];
+    				if (item.product._id == productItem.product._id) {
+    					shortage_item = item;
+    					break;
+    				}
+	    		}
+
+	    		if (shortage_item != undefined) {
+	    			//update qty_short if already in list
+	    			shortage_item.qty_short = shortage;
+	    		} else if (shortage > 0) {
+	    			order.shortages.push({
+	    				product: productItem.product,
+	    				qty_short: shortage,
+	    				qty_ok: 0
+	    			});
+	    		}
+	    	});
+	    } 
+    	//check if shortages are fixed
+    	var can_close = true;
+    	for(var i=0; i<order.shortages.length; i++) {
+    		var item = order.shortages[i];
+    		var shortage = item.qty_short - item.qty_ok;
+    		if (shortage > 0) {
+    			can_close = false;
+    			break;
+    		}
+    	}
+
+    	if (can_close) {
+    		order.state = this.STATE_CLOSED;
+    	} else {
+    		order.state = this.STATE_OPEN;
+    	}
+    }
+
+    this.orderIsEvaluated = function (order) {
+    	return order!= undefined && (order.state == this.STATE_OPEN || order.state == this.STATE_CLOSED);
+    }
+
+    this.orderIsClosed = function (order) {
+    	return order.state == this.STATE_CLOSED;
+    }
+
+    this.orderIsDraft = function (order) {
+    	//if order is not defined, return false
+
+    	return order == undefined || order.state == this.STATE_DRAFT;
     }
 
 

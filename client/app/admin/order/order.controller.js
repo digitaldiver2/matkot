@@ -2,7 +2,7 @@
 (function(){
 
 class OrderComponent {
-  constructor($scope, $http, $location, $stateParams, orderService) {
+  constructor($scope, $http, $location, $stateParams, orderService, productService) {
     this.$scope = $scope;
     this.$http = $http;
     this.$location = $location;
@@ -12,12 +12,13 @@ class OrderComponent {
   }
 
   $onInit () {
+    //TODO: don't show page until everything is loaded
   	this.$http.get('/api/orders/' + this.id).then (resp => {
-  		this.$scope.order = resp.data;
-  		this.$scope.order.eventstart = new Date(this.$scope.order.eventstart );
-        this.$scope.order.eventstop = new Date(this.$scope.order.eventstop );
-        this.$scope.order.pickupdate = new Date(this.$scope.order.pickupdate );
-        this.$scope.order.returndate = new Date(this.$scope.order.returndate );
+  		this.order = resp.data;
+  		this.order.eventstart = new Date(this.order.eventstart );
+        this.order.eventstop = new Date(this.order.eventstop );
+        this.order.pickupdate = new Date(this.order.pickupdate );
+        this.order.returndate = new Date(this.order.returndate );
 
         this.CalculateAvailability();
         //get products
@@ -74,8 +75,8 @@ class OrderComponent {
   }
 
   HandleProductOverlaps(overlap_order) {
-    for (var i=0; i<this.$scope.order.products.length; i++) {
-      var productitem = this.$scope.order.products[i];
+    for (var i=0; i<this.order.products.length; i++) {
+      var productitem = this.order.products[i];
       var product_id = productitem.product._id;
 
       if (!productitem.overlaps) {
@@ -92,8 +93,7 @@ class OrderComponent {
   }
 
   CalculateAvailability () {
-    this.$http.get('/api/orders/overlap/' + this.$scope.order._id).then(resp => {
-      console.dir(resp.data);
+    this.$http.get('/api/orders/overlap/' + this.order._id).then(resp => {
       for (var i=0; i< resp.data.length; i++) {
         var order = resp.data[i];
         this.HandleProductOverlaps(order);
@@ -105,18 +105,15 @@ class OrderComponent {
     var estimatedTotal = 0.0;
     var chargedTotal = 0.0;
 
-    for (var i=0; i<this.$scope.order.products.length; i++) {
-      var product = this.$scope.order.products[i];
+    for (var i=0; i<this.order.products.length; i++) {
+      var product = this.order.products[i];
       estimatedTotal += product.ordered * product.unitprice;
       chargedTotal += product.received * product.unitprice;
     }
-
-    console.log('estimated total: ' + estimatedTotal);
-    console.log('charged total: ' + chargedTotal);
   }
 
   Add (product) {
-    this.$scope.order.products.push({'product': product, 'unitprice': product.unitprice});
+    this.order.products.push({'product': product, 'unitprice': product.unitprice});
   }
 
 
@@ -141,38 +138,38 @@ class OrderComponent {
   }
 
   sameNumbers () {
-    if (this.$scope.order.state === 'ORDERED') {
-      for (var i=0; i<this.$scope.order.products.length; i++) {
-        var product = this.$scope.order.products[i];
+    if (this.order.state === 'ORDERED') {
+      for (var i=0; i<this.order.products.length; i++) {
+        var product = this.order.products[i];
         product.approved = product.ordered;
       }
-    } else  if (this.$scope.order.state === 'APPROVED') {
-      for (var i=0; i<this.$scope.order.products.length; i++) {
-        var product = this.$scope.order.products[i];
+    } else  if (this.order.state === 'APPROVED') {
+      for (var i=0; i<this.order.products.length; i++) {
+        var product = this.order.products[i];
         product.received = product.approved;
       }
-    } else  if (this.$scope.order.state === 'DELIVERED') {
-      for (var i=0; i<this.$scope.order.products.length; i++) {
-        var product = this.$scope.order.products[i];
+    } else  if (this.order.state === 'DELIVERED') {
+      for (var i=0; i<this.order.products.length; i++) {
+        var product = this.order.products[i];
         product.returned = product.approved;
       }
     } 
   }
 
   resetNumbers () {
-    if (this.$scope.order.state === 'ORDERED') {
-      for (var i=0; i<this.$scope.order.products.length; i++) {
-        var product = this.$scope.order.products[i];
+    if (this.order.state === 'ORDERED') {
+      for (var i=0; i<this.order.products.length; i++) {
+        var product = this.order.products[i];
         product.approved = 0;
       }
-    } else  if (this.$scope.order.state === 'APPROVED') {
-      for (var i=0; i<this.$scope.order.products.length; i++) {
-        var product = this.$scope.order.products[i];
+    } else  if (this.order.state === 'APPROVED') {
+      for (var i=0; i<this.order.products.length; i++) {
+        var product = this.order.products[i];
         product.received = 0;
       }
-    } else  if (this.$scope.order.state === 'DELIVERED') {
-      for (var i=0; i<this.$scope.order.products.length; i++) {
-        var product = this.$scope.order.products[i];
+    } else  if (this.order.state === 'DELIVERED') {
+      for (var i=0; i<this.order.products.length; i++) {
+        var product = this.order.products[i];
         product.returned = 0;
       }
     } 
@@ -180,24 +177,24 @@ class OrderComponent {
 
 
   setOrderNumberIfNeeded () {
-    if (this.$scope.order.state != 'DRAFT' && this.$scope.order.ordernumber == undefined) {
+    if (this.order.state != 'DRAFT' && this.order.ordernumber == undefined) {
       this.settings.ordercounter += 1;
-      this.$scope.order.ordernumber = this.calculateOrderNumber(this.settings.orderprefix, this.settings.ordernumberwidth, this.settings.ordercounter); 
+      this.order.ordernumber = this.calculateOrderNumber(this.settings.orderprefix, this.settings.ordernumberwidth, this.settings.ordercounter); 
     }
   }
 
   save () {
 
 
-    if (this.$scope.order.state != 'DRAFT' && this.$scope.order.ordernumber == undefined) {
+    if (this.order.state != 'DRAFT' && this.order.ordernumber == undefined) {
       this.$http.get('/api/settings').then(response => {
         this.settings = response.data;
         //increase ordernumber
         this.settings.ordercounter += 1;
-        this.$scope.order.ordernumber = this.calculateOrderNumber(this.settings.orderprefix, this.settings.ordernumberwidth, this.settings.ordercounter); 
+        this.order.ordernumber = this.calculateOrderNumber(this.settings.orderprefix, this.settings.ordernumberwidth, this.settings.ordercounter); 
 
         //save order
-        this.$http.put('/api/orders/' + this.id, this.$scope.order).then(resp => {
+        this.$http.put('/api/orders/' + this.id, this.order).then(resp => {
           //save last ordernumber in settings after success
           this.$http.put('/api/settings/' + this.settings._id, this.settings);
           this.$location.path('/admin/orders');
@@ -208,7 +205,7 @@ class OrderComponent {
       });
     } else {
       //no ordernumber needed, just save order
-      this.$http.put('/api/orders/' + this.id, this.$scope.order).then(resp => {
+      this.$http.put('/api/orders/' + this.id, this.order).then(resp => {
         this.$location.path('/admin/orders');
       }, err => {
         console.log(err);
@@ -219,7 +216,7 @@ class OrderComponent {
 
   addComment(comment) {
     this.errMsg = '';
-    this.orderService.addCommentToOrder(this.$scope.order, comment)
+    this.orderService.addCommentToOrder(this.order, comment)
       .then(res => {
         //reload
       })

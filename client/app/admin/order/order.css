@@ -10,3 +10,11 @@
 .price {
 	width: 70px;
 }
+
+.resolved {
+    background-color: lightgreen;
+}
+
+.short {
+    background-color: tomato;
+}
