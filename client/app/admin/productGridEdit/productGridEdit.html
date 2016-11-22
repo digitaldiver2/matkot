@@ -1,0 +1,68 @@
+<div class="container">
+	<div class="form-group">
+		<label>
+			tag
+		</label>
+		<input type="text" class="form-control" placeholder="jaartelling" ng-model="$ctrl.reason">
+	</div>
+	<div class="form-group col-sm-3">
+		<div class="input-group">
+			<div class="input-group-addon"><i class="fa fa-search"></i></div>
+			
+			<input type="text" class="form-control" placeholder="naam" ng-model="search.name">
+		</div>      
+	</div>
+	<table class="table">
+		<thead>
+			<tr>	
+				<th>
+					<a href="#" ng-click="sortType = 'product.code'; sortReverse = !sortReverse">
+						SKU
+						<span ng-show="sortType == 'product.code' && !sortReverse" class="fa fa-caret-down"></span>
+						<span ng-show="sortType == 'product.code' && sortReverse" class="fa fa-caret-up"></span>
+					</a>
+				</th>
+				<th>
+					<a href="#" ng-click="sortType = 'product.name'; sortReverse = !sortReverse">
+						Naam
+						<span ng-show="sortType == 'product.name' && !sortReverse" class="fa fa-caret-down"></span>
+						<span ng-show="sortType == 'product.name' && sortReverse" class="fa fa-caret-up"></span>
+					</a>
+				</th>
+				<th ng-repeat="group in $ctrl.usergroups">{{group.name}}</th>
+				<th>std. prijs</th>
+				<th ng-repeat="category in $ctrl.priceCategories">{{category.name}}</th>
+				<th>
+					Verbruiksgoed
+				</th>
+			</tr>
+		</thead>
+		<tbody>
+			<tr>
+				<td>{{sortType}}</td>
+				<td>{{sortReverse}}</td>
+			</tr>
+			<tr ng-repeat="product in $ctrl.products | orderBy:sortType:sortReverse | filter:search">
+				<td>{{product.code}}</td>
+				<td>{{product.name}}</td>
+				<td ng-repeat="group in $ctrl.usergroups">
+					<input type="checkbox" ng-model="product.extra_groups[group._id]" ng-change="$ctrl.GroupChanged(product,group)"></td>
+				<td>
+					<input class="qty" type="number" 
+					ng-model="product.defaultprice" 
+					ng-model-options="{ updateOn: 'blur' }" 
+					ng-change="$ctrl.productService.updateProduct(product)">
+				</td>
+				<td ng-repeat="category in $ctrl.priceCategories">
+					<input class="qty" type="number" 
+					ng-model="product.extra_prices[category._id]"
+					ng-model-options="{ updateOn: 'blur' }" 
+					ng-change="$ctrl.categoryPriceChanged(product, category)">
+				</td>
+				<td>
+					<input type="checkbox" ng-model="product.isconsumable" ng-change="$ctrl.productService.updateProduct(product)">
+				</td>
+			</tr>
+		</tbody>
+	</table>
+</div>
