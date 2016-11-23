@@ -44,10 +44,20 @@ angular.module('matkotApp.orderService', [])
     		});
     }
 
+    this.convertDates = function(order) {
+    	order.eventstart = new Date(order.eventstart );
+		order.eventstop = new Date(order.eventstop );
+		order.pickupdate = new Date(order.pickupdate );
+		order.returndate = new Date(order.returndate );
+    }
+
     this.getOrder = function (order_id) {
     	return $http.get('/api/orders/' + order_id)
     		.then(res => {
-    			return res.data;
+    			var order = res.data;
+    			order.staged_comments = [];
+    			this.convertDates(order);
+    			return order;
     		})
     		.catch(err => {
     			return $q.reject(err.data);
@@ -128,6 +138,10 @@ angular.module('matkotApp.orderService', [])
     		}, err => {
     			return $q.reject(err.data);
     		});
+    }
+
+    this.stageCommentToOrder = function (order, comment) {
+    	order.staged_comments.push(comment);
     }
 
     this.editOrderId = function (order_id) {

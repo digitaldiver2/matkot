@@ -28,7 +28,7 @@ function AuthService($location, $http, $cookies, $q, appConfig, Util, User) {
         .then(res => {
           $cookies.put('token', res.data.token);
           currentUser = User.get();
-          return currentUser.$promise;
+          return currentUser.$promise;  
         })
         .then(user => {
           safeCb(callback)(null, user);

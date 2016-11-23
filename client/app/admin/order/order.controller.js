@@ -2,43 +2,39 @@
 (function(){
 
 class OrderComponent {
-  constructor($scope, $http, $location, $stateParams, orderService, productService) {
+  constructor($scope, $http, $location, $stateParams, orderService, productService, userService, socket, $q) {
     this.$scope = $scope;
     this.$http = $http;
     this.$location = $location;
     this.id = $stateParams.id;
 
     this.orderService = orderService;
+    this.userService = userService;
+    this.productService = productService;
+    this.socket = socket;
+    this.$q = $q;
   }
 
   $onInit () {
     //TODO: don't show page until everything is loaded
-  	this.$http.get('/api/orders/' + this.id).then (resp => {
-  		this.order = resp.data;
-  		this.order.eventstart = new Date(this.order.eventstart );
-        this.order.eventstop = new Date(this.order.eventstop );
-        this.order.pickupdate = new Date(this.order.pickupdate );
-        this.order.returndate = new Date(this.order.returndate );
+    var orderQ = this.orderService.getOrder(this.id);
+    var productQ = this.productService.getProducts();
+    var categoryQ = this.productService.getPriceCategories();
+    var userGroupQ = this.userService.getUserGroups();
 
-        this.CalculateAvailability();
-        //get products
-        this.$http.get('/api/products').then(resp => {
-          this.$scope.products = resp.data;
+    this.$q.all([orderQ, productQ, categoryQ]).then(answer=> {
+      this.order = answer[0];
+      this.$scope.products = answer[1];
+      this.$scope.pricecategories = answer[2];
+      this.$scope.groups = answer[3];
 
-          this.$http.get('/api/pricecategories').then(response => {
-            this.$scope.pricecategories = response.data;
-            this.UpdatePriceCategory();
-            this.CalculateTotals();
-          });
-        });
-  	});
-
-  	this.$http.get('/api/usergroups').then(response => {
-        this.$scope.groups = response.data;
+      this.UpdatePriceCategory();
+      this.CalculateTotals();
+      this.CalculateAvailability();
+    }, err => {
+      this.errMsg = err;
     });
-
     
-
     this.$scope.returnCollapsed = true;
     this.$scope.pickupCollapsed = true;
     this.$scope.eventstartCollapsed = true;
@@ -55,6 +51,9 @@ class OrderComponent {
       return mode === 'day' && calendarDate.getDay() != 3;
     };
 
+    this.socket.syncUpdates('order', (event, item, list) => {
+      console.log('order changed');
+    });
     
   }
 
@@ -92,14 +91,14 @@ class OrderComponent {
     }
   }
 
-  CalculateAvailability () {
-    this.$http.get('/api/orders/overlap/' + this.order._id).then(resp => {
-      for (var i=0; i< resp.data.length; i++) {
-        var order = resp.data[i];
-        this.HandleProductOverlaps(order);
-      }
-    });
-  }
+  // CalculateAvailability () {
+  //   this.$http.get('/api/orders/overlap/' + this.order._id).then(resp => {
+  //     for (var i=0; i< resp.data.length; i++) {
+  //       var order = resp.data[i];
+  //       this.HandleProductOverlaps(order);
+  //     }
+  //   });
+  // }
 
   CalculateTotals () {
     var estimatedTotal = 0.0;

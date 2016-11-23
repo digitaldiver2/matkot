@@ -74,7 +74,6 @@ function addCommentToOrder (req) {
   return function (entity) {
     var now = new Date();
     entity.comments.push({creator: req.user._id, body: req.body.body, date: now});
-    console.dir(req.body);
     return entity.save()
       .then(updated => {
         return updated;
