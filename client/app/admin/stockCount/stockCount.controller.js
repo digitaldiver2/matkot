@@ -11,6 +11,9 @@ class StockCountComponent {
   	this.socket = socket;
     this.reason = 'jaartelling';
 
+    this.sortType = 'code';
+    this.sortReverse = false;
+
   	$scope.$on('$destroy', function () {
   		socket.unsyncUpdates('product');
   	});

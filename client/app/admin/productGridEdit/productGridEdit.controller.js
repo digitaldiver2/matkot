@@ -12,6 +12,11 @@ class ProductGridEditComponent {
   	this.socket = socket;
     this.reason = 'jaartelling';
 
+    this.searchObject = {active: true};
+
+    this.sortType = 'code';
+    this.sortReverse = false;
+
   	$scope.$on('$destroy', function () {
   		socket.unsyncUpdates('product');
   		socket.unsyncUpdates('usergroup');
