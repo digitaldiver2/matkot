@@ -115,6 +115,9 @@
 							<span ng-show="sortType == 'product.name' && sortReverse" class="fa fa-caret-up"></span>
 						</a>
 					</th>
+					<th>Stock</th>
+					<th>Tekort</th>
+					<th>Uitgeleend</th>
 					<th>Beschikbaar</th>
 					<th>Aangevraagd</th>
 					<th>Goedgekeurd</th>
@@ -132,8 +135,10 @@
 					
 					<td>{{productitem.product.code}}</td>
 					<td>{{productitem.product.name}}</td>
-					<!-- <td>{{productitem.product.stock | sumOfValue}}</td> -->
 					<td>{{productitem.product.stock}}</td>
+					<td>{{productitem.product.short}}</td>
+					<td>{{productitem.product.away}}</td>
+					<td>{{productitem.product.available}}</td>
 					<td>{{productitem.ordered}}</td>
 					<td>
 						<input type="number" class="qty" ng-model="productitem.approved" ng-disabled="$ctrl.order.state!='DRAFT' && $ctrl.order.state != 'ORDERED'">

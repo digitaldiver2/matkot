@@ -152,12 +152,124 @@ angular.module('matkotApp.orderService', [])
     	//open view page
     }
 
-
     this.reOpen = function (order) {
     	order.state = this.STATE_REOPENED;
     	order.shortages = [];
     	//TODO log reopening
 
+    }
+
+    this.calcProductAvailability = function (order, prod) {
+    	//available = stock - shortage_nok - away - leaving
+    	//stock = product.stock
+    	//shortage_nok = all orders with shortage for this product that is not resolved yet
+    	var overlapping =	{
+			$or: [
+				{//pickupdate between order pickup and order return
+				    'pickupdate': {
+				    	$gt: order.pickupdate, 
+				    	$lt: order.returndate
+				    }
+				}, 
+				{//order pickup between pickup and return
+				    'pickupdate': {$lt: order.pickupdate}, 
+				    'returndate': {$gt: order.pickupdate}
+				},
+				{//leaving on same date
+					'pickupdate': order.pickupdate
+				} 
+			], 
+			'_id': {$ne: order._id},
+			products: { 
+				$elemMatch: {product: prod._id}
+			},
+			state: {$ne: this.STATE_DRAFT, $ne: this.STATE_CANCELLED}
+		};
+
+		var overlappingResultFields = {
+				state: true,
+				code: true,
+				name: true,
+				products: { $elemMatch: {product: prod._id}},
+				group: true,
+				owner: true,
+				eventstart: true,
+				eventstop: true,
+				pickupdate: true,
+				returndate: true
+			};
+
+		var shortages = {
+				shortages: {
+					$elemMatch: {product: prod._id, resolved: false}
+				}
+			};
+
+		var shortagesResultFields = {
+			state: true,
+			code: true,
+			name: true,
+			shortages: { $elemMatch: {product: prod._id}},
+			group: true,
+			owner: true,
+			eventstart: true,
+			eventstop: true,
+			pickupdate: true,
+			returndate: true
+		}
+
+		var shortageQ = $http.post('/api/orders/query/x', {query: shortages, fields: shortagesResultFields});
+		var overlappingQ = $http.post('/api/orders/query/x', {query: overlapping, fields: overlappingResultFields});
+
+		return $q.all([shortageQ, overlappingQ]).then(answer => {
+
+			var ordersWithShortage = answer[0].data;
+			var overlappingorders = answer[1].data;
+
+			var available = prod.stock;
+			var away = 0;
+			var short = 0;
+
+			//calc shortages
+			var shortorders = [];
+			for(var i=0; i< ordersWithShortage.length; i++) {
+				var order = ordersWithShortage[i];
+				for (var j=0; j < order.shortages.length; j++) {
+					var shortage = order.shortages[j];
+					if (shortage.product == prod._id && shortage.qty_short > shortage.qty_ok) {
+						available -= shortage.qty_short - shortage.qty_ok;
+						shortorders.push(order);
+						short += shortage.qty_short - shortage.qty_ok;
+					}
+				}
+			}
+
+			//calc overlapping
+			for (var i=0; i<overlappingorders.length; i++) {
+				var order = overlappingorders[i];
+				for(var j=0; j<order.products.length; j++) {
+					var productitem = order.products[j];
+					if (productitem.product == prod._id) {
+						if (order.state == this.STATE_APPROVED) {
+							available -= productitem.approved;
+							away += productitem.approved;
+						} else if (order.state == this.STATE_DELIVERED) {
+							available -= productitem.received;
+							away += productitem.received;
+						}
+
+					}
+				}
+			}
+			prod.available = available;
+			prod.shortOrders = shortorders;
+			prod.overlappingorders = overlappingorders;
+			prod.away = away;
+			prod.short = short;
+			return available;
+		}, err => {
+    			return $q.reject(err.data);
+		});
     }
 
     //calculate shortages

@@ -170,6 +170,14 @@ export function overlaps(req, res) {
     .catch(handleError(res));
 }
 
+export function query(req, res) {
+  console.log(req.body);
+  return Order.find(req.body.query, req.body.fields)
+  .exec()
+  .then(respondWithResult(res))
+  .catch(handleError(res));
+}
+
 
 // Creates a new Order in the DB
 export function create(req, res) {

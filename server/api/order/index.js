@@ -10,6 +10,7 @@ router.get('/', auth.isAuthenticated(), controller.index);
 router.get('/user/:id', auth.isAuthenticated(), controller.userindex);
 router.get('/group/:id', auth.isAuthenticated(), controller.groupindex);
 router.get('/:id', auth.isAuthenticated(), controller.show);
+router.post('/query/x', auth.hasRole('admin'), controller.query);
 router.get('/overlap/:id', auth.isAuthenticated(), controller.overlaps);
 router.post('/', auth.isAuthenticated(), controller.create);
 router.put('/:id', auth.isAuthenticated(), controller.update);

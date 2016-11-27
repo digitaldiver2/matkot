@@ -30,7 +30,10 @@ class OrderComponent {
 
       this.UpdatePriceCategory();
       this.CalculateTotals();
-      this.CalculateAvailability();
+      // this.CalculateAvailability();
+      for (var i=0; i<this.order.products.length; i++) {
+        this.orderService.calcProductAvailability(this.order, this.order.products[i].product);
+      }
     }, err => {
       this.errMsg = err;
     });
@@ -91,14 +94,14 @@ class OrderComponent {
     }
   }
 
-  // CalculateAvailability () {
-  //   this.$http.get('/api/orders/overlap/' + this.order._id).then(resp => {
-  //     for (var i=0; i< resp.data.length; i++) {
-  //       var order = resp.data[i];
-  //       this.HandleProductOverlaps(order);
-  //     }
-  //   });
-  // }
+  CalculateAvailability () {
+    this.$http.get('/api/orders/overlap/' + this.order._id).then(resp => {
+      for (var i=0; i< resp.data.length; i++) {
+        var order = resp.data[i];
+        this.HandleProductOverlaps(order);
+      }
+    });
+  }
 
   CalculateTotals () {
     var estimatedTotal = 0.0;

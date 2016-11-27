@@ -23,6 +23,7 @@ var OrderSchema = new mongoose.Schema({
       product: {type: mongoose.Schema.Types.ObjectId, ref: 'Product'},
       qty_short: {type: Number, default: 0},
       qty_ok: {type: Number, default: 0},
+      resolved:{type: Boolean, default: false},
       comment: {type: String}
     }
   ],
