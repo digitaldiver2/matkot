@@ -305,8 +305,7 @@ angular.module('matkotApp.orderService', [])
     	var can_close = true;
     	for(var i=0; i<order.shortages.length; i++) {
     		var item = order.shortages[i];
-    		var shortage = item.qty_short - item.qty_ok;
-    		if (shortage > 0) {
+    		if (item.resolved == false) {
     			can_close = false;
     			break;
     		}

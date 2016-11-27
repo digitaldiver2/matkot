@@ -39,7 +39,7 @@ angular.module('matkotApp.productService', [])
             var product = products[i];
             product.unitprice = product.defaultprice;
             //if product has custom prices and there is a group specified
-            if (product.prices.length > 0 && price_category_id != '') {
+            if (product.prices.length > 0 && price_category_id != '' && price_category_id != undefined) {
                 for (var j=0; j<product.prices.length; j++) {
                     if (product.prices[j].pricecategory == price_category_id) {
                         product.unitprice = product.prices[j].price;

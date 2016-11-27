@@ -13,6 +13,14 @@ class OrderComponent {
     this.productService = productService;
     this.socket = socket;
     this.$q = $q;
+
+    // only used to give an array to the socket sync, and prevent an error of array being undefined
+    this.dummyOrders = [];
+    this.comment_body = "";
+    $scope.$on('$destroy', function () {
+      socket.unsyncUpdates('order');
+    });
+
   }
 
   $onInit () {
@@ -22,18 +30,15 @@ class OrderComponent {
     var categoryQ = this.productService.getPriceCategories();
     var userGroupQ = this.userService.getUserGroups();
 
-    this.$q.all([orderQ, productQ, categoryQ]).then(answer=> {
+    this.$q.all([orderQ, productQ, categoryQ, userGroupQ]).then(answer=> {
       this.order = answer[0];
       this.$scope.products = answer[1];
       this.$scope.pricecategories = answer[2];
       this.$scope.groups = answer[3];
 
-      this.UpdatePriceCategory();
-      this.CalculateTotals();
-      // this.CalculateAvailability();
-      for (var i=0; i<this.order.products.length; i++) {
-        this.orderService.calcProductAvailability(this.order, this.order.products[i].product);
-      }
+      this.productService.selectCorrectPrice(this.$scope.products, this.order.pricecategory);
+
+      this.prepareOrder();
     }, err => {
       this.errMsg = err;
     });
@@ -54,53 +59,38 @@ class OrderComponent {
       return mode === 'day' && calendarDate.getDay() != 3;
     };
 
-    this.socket.syncUpdates('order', (event, item, list) => {
-      console.log('order changed');
-    });
-    
-  }
-
-  UpdatePriceCategory(category) {
-    //if category changes, the prices should also change
-    for (var i=0; i<this.$scope.products.length; i++) {
-      var product = this.$scope.products[i];
-      product.unitprice = product.defaultprice ? product.defaultprice : 0.0;
-      if (category != null) {
-        for (var j=0; j<product.prices.length; j++) {
-          if (product.prices[j].Pricecategory == category._id) {
-            product.unitprice = product.prices[j].price;
-            break;
-          }
-        }
+    this.socket.syncUpdates('order', this.dummyOrders, (event, item, list) => {
+      //actually only a full update is needed if products or shortages have changed
+      var fullReload = true;
+      if (item._id == this.order._id) {
+        this.ReloadOrder(this.order);
+      } else {
+        _.merge(this.order, item);
       }
-    }
+    });
   }
 
-  HandleProductOverlaps(overlap_order) {
+  changedTime() {
+    console.log('yo');
+  }
+
+  ReloadOrder (order) {
+    this.orderService.getOrder(order._id).then(order => {
+      this.order = order;
+      this.prepareOrder();
+    });
+  }
+
+  prepareOrder () {
+    this.CalculateTotals();
     for (var i=0; i<this.order.products.length; i++) {
-      var productitem = this.order.products[i];
-      var product_id = productitem.product._id;
-
-      if (!productitem.overlaps) {
-        productitem.overlaps = [];
-      }
-
-      var overlap_productitem = overlap_order.products.find(function (overlap_item) { return overlap_item.product == product_id});
-      if (overlap_productitem) {
-        var overlap = overlap_productitem;
-        overlap.order = {'name': overlap_order.name, 'code': overlap_order.code};
-        productitem.overlaps.push(overlap);
-      }
+      this.orderService.calcProductAvailability(this.order, this.order.products[i].product);
     }
   }
 
-  CalculateAvailability () {
-    this.$http.get('/api/orders/overlap/' + this.order._id).then(resp => {
-      for (var i=0; i< resp.data.length; i++) {
-        var order = resp.data[i];
-        this.HandleProductOverlaps(order);
-      }
-    });
+  evaluate () {
+    this.orderService.evaluateOrder(this.order);
+    this.save();
   }
 
   CalculateTotals () {
@@ -116,6 +106,7 @@ class OrderComponent {
 
   Add (product) {
     this.order.products.push({'product': product, 'unitprice': product.unitprice});
+    this.save();
   }
 
 
@@ -186,8 +177,6 @@ class OrderComponent {
   }
 
   save () {
-
-
     if (this.order.state != 'DRAFT' && this.order.ordernumber == undefined) {
       this.$http.get('/api/settings').then(response => {
         this.settings = response.data;
@@ -196,10 +185,10 @@ class OrderComponent {
         this.order.ordernumber = this.calculateOrderNumber(this.settings.orderprefix, this.settings.ordernumberwidth, this.settings.ordercounter); 
 
         //save order
-        this.$http.put('/api/orders/' + this.id, this.order).then(resp => {
+        this.orderService.saveOrder(this.order).then(resp => {
           //save last ordernumber in settings after success
           this.$http.put('/api/settings/' + this.settings._id, this.settings);
-          this.$location.path('/admin/orders');
+          // this.$location.path('/admin/orders');
         }, err => {
           console.log(err);
           alert(err);
@@ -207,8 +196,8 @@ class OrderComponent {
       });
     } else {
       //no ordernumber needed, just save order
-      this.$http.put('/api/orders/' + this.id, this.order).then(resp => {
-        this.$location.path('/admin/orders');
+      this.orderService.saveOrder(this.order).then(resp => {
+        // this.$location.path('/admin/orders');
       }, err => {
         console.log(err);
         alert(err);
@@ -216,11 +205,12 @@ class OrderComponent {
     }
   }
 
-  addComment(comment) {
+  addComment() {
     this.errMsg = '';
-    this.orderService.addCommentToOrder(this.order, comment)
+    this.orderService.addCommentToOrder(this.order, this.comment_body)
       .then(res => {
         //reload
+        this.comment_body = "";
       })
       .catch(err => {
         this.errMsg = err;

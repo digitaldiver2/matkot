@@ -171,7 +171,6 @@ export function overlaps(req, res) {
 }
 
 export function query(req, res) {
-  console.log(req.body);
   return Order.find(req.body.query, req.body.fields)
   .exec()
   .then(respondWithResult(res))
