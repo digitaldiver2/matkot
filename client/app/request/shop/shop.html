@@ -3,11 +3,13 @@
 
 		<div class="form-group">
 			<label for="searchfield">Filter</label>
-			<input type="text" ng-model="searchfield.name">
+			<input type="text" 
+				ng-model="searchfield.name">
 		</div>
 		<div class="form-group">
 			<label for="category">Product groep</label>
-			<select ng-model="$ctrl.categoryFilter" ng-options="category.name for category in $ctrl.productcategories |orderBy:'name'">
+			<select ng-model="$ctrl.categoryFilter" 
+				ng-options="category.name for category in $ctrl.productcategories |orderBy:'name'">
 			</select>
 		</div>
 		<div id="productlijst">
@@ -36,7 +38,8 @@
 						<td><input class="qty" type="number" ng-model="product.ordered" 
 							id="ordered" max="{{product.stock}}" 
 							min="0" ng-disabled="!$ctrl.orderService.orderIsDraft($ctrl.order)" 
-							ng-change="$ctrl.orderService.updateOrderProduct($ctrl.order, product)"></td>
+							ng-change="$ctrl.updateProductInOrder(product)"
+							ng-model-options="{ updateOn: 'blur' }"></td>
 					</tr>
 				</tbody>
 			</table>
@@ -64,8 +67,13 @@
 				<tr ng-repeat="product in $ctrl.order.products | orderBy:'name'">
 					<td>{{product.product.name}}</td>
 					<td>
-						<input class="qty" type="number" ng-model="product.ordered" id="ordered" max="{{product.stock}}" min="0" 
-						ng-disabled="!$ctrl.orderService.orderIsDraft($ctrl.order)">
+						<input class="qty" type="number" 
+							ng-model="product.ordered" 
+							id="ordered" 
+							max="{{product.stock}}" min="0" 
+							ng-change="$ctrl.instantSave()"
+							ng-model-options="{ updateOn: 'blur' }"
+							ng-disabled="!$ctrl.orderService.orderIsDraft($ctrl.order)">
 						<a ng-hide="!$ctrl.orderService.orderIsDraft($ctrl.order)"><i class="fa fa-times" aria-hidden="true" ng-click="$ctrl.clear($index)"></i></a>
 					</td>
 					<td>{{product.approved}}</td>
@@ -103,7 +111,7 @@
 	</div>
 	<h3>Nieuw bericht</h3>
 	<textarea class="form-control" ng-model="$ctrl.comment_body" class="col-sm-12"  rows="3"></textarea>
-	<button type="button" class="btn btn-default"  ng-click="$ctrl.orderService.addCommentToOrder($ctrl.order, $ctrl.comment_body)">Add comment</button>
+	<button type="button" class="btn btn-default"  ng-click="$ctrl.addComment()">Add comment</button>
 	<br>
 	<div id="shortages" ng-show="$ctrl.orderService.orderIsEvaluated($ctrl.order)">
 		<h2>Tekorten</h2>
@@ -119,14 +127,11 @@
 				<tr ng-repeat="shortage in $ctrl.order.shortages" ng-class="{resolved: shortage.qty_short <= shortage.qty_ok, short: shortage.qty_short > shortage.qty_ok}">
 					<td>{{shortage.product.name}}</td>
 					<td>{{shortage.qty_short}}</td>
-					<td><input type="number" ng-model="shortage.qty_ok" ng-disabled="$ctrl.orderService.orderIsClosed($ctrl.order)"></td>
-					<td>
-						<input type="text" ng-model="shortage.comment" ng-disabled="$ctrl.orderService.orderIsClosed($ctrl.order)">
-					</td>
+					<td>{{shortage.qty_ok}}></td>
+					<td>{{shortage.comment}}</td>
 				</tr>
 			</tbody>
 		</table>
 	</div>
-	<button class="btn btn-default" ng-click="$ctrl.save()" ng-disabled="!$ctrl.orderService.orderIsDraft($ctrl.order)">Bewaren</button>
 	<button class="btn btn-default" ng-click="$ctrl.saveAndRequest()" ng-disabled="!$ctrl.orderService.orderIsDraft($ctrl.order)">Aanvragen</button>
 </div>

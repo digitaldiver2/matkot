@@ -2,7 +2,7 @@
 (function(){
 
 class ShopComponent {
-  constructor( $http, $stateParams, $location, orderService, productService) {
+  constructor($scope, $http, $stateParams, $location, orderService, productService, socket, $q) {
     this.$http = $http;
     this.$location = $location;
     this.id = $stateParams.id;
@@ -10,42 +10,66 @@ class ShopComponent {
 
     this.orderService = orderService;
     this.productService = productService;
-  }
 
-  mapfct (x) {
-  	return x._id;
-  }
+    this.socket = socket;
+    this.$q = $q;
+
+    this.dummyOrders= [];
+
+    this.comment_body = "";
 
 
-  greaterThan (prop, val){
-    return function(item){
-      return item[prop] > val;
-    }
+    $scope.$on('$destroy', function () {
+      socket.unsyncUpdates('order');
+    });
   }
 
   $onInit () {
   	if (this.id == undefined || this.id == '') {
   		this.$location.path('/');
   		return;
+
   	} else {
-      var orderRequest = this.orderService.getOrder(this.id).then(order => {
-  			this.order = order;
-  			var group_id = this.order.group? this.order.group._id: '0';
+
+      var productFamilyQ = this.productService.getProductFamilies();
+      var orderQ = this.orderService.getOrder(this.id);
+
+      this.$q.all([productFamilyQ, orderQ]).then(answer=> {
+        //handle productcategory
+        this.productcategories = answer[0];
+        //set all as default option
+        var showAllId = this.productcategories.push({name:"Alles", _id:0}) - 1;
+        this.categoryFilter = this.productcategories[showAllId];
+
+        //handle order
+        this.order = answer[1];
+        var group_id = this.order.group? this.order.group._id: '0';
         var price_category_id = this.order.group? this.order.group.pricecategory: undefined;
+
         this.productService.getGroupProducts(group_id, price_category_id).then(products => {
-	  			this.products = products;
-	  			this.productmap = this.products.map(this.mapfct);
-	  			this.syncProductList();
-	  		});
+          this.products = products;
+          this.syncProductList();
+        });
 
-  		});
+        //register socket listener
+        this.socket.syncUpdates('order', this.dummyOrders, (event, item, list) => {
+          if (this.order._id == item._id) {
+              console.log('update order');
+            this.orderService.getOrder(this.order._id).then(order => {
+              this.order = order;
+              var group_id = this.order.group? this.order.group._id: '0';
+              var price_category_id = this.order.group? this.order.group.pricecategory: undefined;
 
-  		this.productService.getProductFamilies().then(families => {
-	  		this.productcategories = families;
-	  		//set all as default option
-	  		var showAllId = this.productcategories.push({name:"Alles", _id:0}) - 1;
-	  		this.categoryFilter = this.productcategories[showAllId];
-	  	});
+              this.productService.getGroupProducts(group_id, price_category_id).then(products => {
+                this.products = products;
+                this.syncProductList();
+              });
+
+            });
+          }
+
+        });
+      });
   	}
   }
 
@@ -64,21 +88,21 @@ class ShopComponent {
 
   syncProductList () {
   	for (var i=0; i <this.order.products.length; i++) {
-  		var product = this.order.products[i];
-  		var index = this.productmap.indexOf(product.product._id);
-  		var shopproduct = this.products[index];
-  		shopproduct.ordered = product.ordered;
+  		var productitem = this.order.products[i];
+      var shopproduct = _.find(this.products, {_id: productitem.product._id});
+      if (shopproduct) {
+    		shopproduct.ordered = productitem.ordered;
+      }
   	}
   }
 
-  saveProductList () {
-    //splice -> clear array
-    this.order.products = this.order.products.filter(function (product) {
-      return product.ordered > 0;
-    });
+  updateProductInOrder (product) {
+    this.orderService.updateOrderProduct(this.order, product);
+  }
 
-  	this.$http.put('/api/orders/' + this.order._id, this.order).then (response => {
-      this.$location.path('/orders');
+  instantSave() {
+    this.orderService.saveOrder(this.order).then(response => {
+
     });
   }
 
@@ -87,6 +111,7 @@ class ShopComponent {
       this.$location.path('/orders');
     });
   }
+
   saveAndRequest () {
   	this.order.state = 'ORDERED';
     this.save();
@@ -94,20 +119,26 @@ class ShopComponent {
 
   clear (index) {
     var product_id = this.order.products[index].product._id;
-    var productindex = this.productmap.indexOf(product_id);
-    this.products[productindex].ordered = 0;
+    var productitem = _.find(this.products, {_id: product_id});
+    productitem.ordered = 0;
     this.order.products.splice(index, 1);
+    this.instantSave();
   }
 
-  addComment(comment) {
+  addComment() {
     this.errMsg = '';
-    this.orderService.addCommentToOrder(this.order, comment)
-      .then(res => {
-        //reload
-      })
-      .catch(err => {
-        this.errMsg = err;
-      })
+    console.log('addcomment');
+    if (this.comment_body != "") {
+      console.log('we have a comment');
+      this.orderService.addCommentToOrder(this.order, this.comment_body)
+        .then(res => {
+          //reload
+          this.comment_body = "";
+        })
+        .catch(err => {
+          this.errMsg = err;
+        });
+    }
   }
 }
 

@@ -368,6 +368,8 @@ angular.module('matkotApp.orderService', [])
 	      } 
 	        // else impossible state, but do nothing
 	    }
+
+	    this.saveOrder(order);
 	  }
 
   });
