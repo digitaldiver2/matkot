@@ -1,6 +1,6 @@
 
 <div class="container">
-	<form>
+	<form name="info">
 		<div class="form-group">
 			<label for="Category">Vereniging *</label>
 			<select id="Category" class="form-control" 
@@ -12,7 +12,8 @@
 		</div>
 		<div class="form-group">
 			<label for="Naam">Naam evenement *</label>
-			<input type="text" class="form-control" id="NaamEvenement" placeholder='Evenement' ng-model='request.name' ng-disabled="!isDraft">
+			<input type="text" class="form-control" id="NaamEvenement" placeholder='Evenement' ng-model='request.name' 
+			ng-disabled="!isDraft" required="true">
 		</div>
 
 		<div class="form-group">
@@ -22,7 +23,7 @@
 			</a>
 			<div uib-collapse="eventstartCollapsed">
 				<div class="well">
-					<uib-datepicker ng-model="request.eventstart" ng-disabled="!isDraft">
+					<uib-datepicker ng-model="request.eventstart" ng-disabled="!isDraft" datepicker-options="$ctrl.eventoptions">
 					</uib-datepicker>
 					<uib-timepicker ng-model="request.eventstart" ng-change="$ctrl.changedTime()" show-meridian="ismeridian" ng-disabled="!isDraft">
 					</uib-timepicker>
@@ -37,7 +38,7 @@
 			</a>
 			<div uib-collapse="eventstopCollapsed">
 				<div class="well">
-					<uib-datepicker ng-model="request.eventstop" ng-disabled="!isDraft">
+					<uib-datepicker ng-model="request.eventstop" ng-disabled="!isDraft" datepicker-options="$ctrl.eventoptions">
 					</uib-datepicker>
 					<uib-timepicker ng-model="request.eventstop" show-meridian="ismeridian" ng-disabled="!isDraft">
 					</uib-timepicker>
@@ -52,7 +53,12 @@
 				</a>
 			<div uib-collapse="pickupCollapsed">
 				<div class="well">
-					<uib-datepicker ng-model="request.pickupdate" datepicker-options="pickupoptions" ng-disabled="!isDraft" ng-change="$ctrl.changePickupDate()">
+					<uib-datepicker 
+						ng-model="request.pickupdate" 
+						datepicker-options="$ctrl.pickupoptions" 
+						ng-disabled="!isDraft"
+						ng-change="$ctrl.changePickupDate()"
+						date-disabled="$ctrl.closedDates(date, mode)">
 					</uib-datepicker>
 					<uib-timepicker ng-model="request.pickupdate" show-meridian="ismeridian" ng-disabled="true" readonly-input="true">
 					</uib-timepicker>
@@ -68,15 +74,19 @@
 			</a>
 			<div uib-collapse="returnCollapsed">
 				<div class="well">
-					<uib-datepicker ng-model="request.returndate" datepicker-options="retouroptions" ng-disabled="!isDraft" ng-change="$ctrl.changeReturnDate()">
+					<uib-datepicker 
+					ng-model="request.returndate" 
+					datepicker-options="$ctrl.retouroptions" 
+					ng-disabled="!isDraft" 
+					ng-change="$ctrl.changeReturnDate()"
+					date-disabled="$ctrl.closedDates(date, mode)">
 					</uib-datepicker>
 					<uib-timepicker ng-model="request.returndate" show-meridian="ismeridian" ng-disabled="true" readonly-input="true">
 					</uib-timepicker>
 				</div>
 			</div>
 		</div>
-
-		<button class="btn btn-default" ng-click="$ctrl.submit()" ng-disabled="!isDraft">Opslaan</button>
-		<button class="btn btn-default" ng-click="$ctrl.submit(true)">Naar materiaallijst</button>
+		<button class="btn btn-primary btn" ng-click="$ctrl.submit()" ng-disabled="!isDraft || !info.$valid">Opslaan</button>
+		<button class="btn btn-success" ng-click="$ctrl.submit(true)" ng-disabled="!info.$valid">Naar materiaallijst</button>
 	</form>
 </div>

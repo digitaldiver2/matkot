@@ -8,7 +8,7 @@
 		</div>
 		<div class="form-group">
 			<label for="category">Product groep</label>
-			<select ng-model="$ctrl.categoryFilter" 
+			<select ng-model="$ctrl.categoryFilter" class="form-control"
 				ng-options="category.name for category in $ctrl.productcategories |orderBy:'name'">
 			</select>
 		</div>
@@ -99,7 +99,6 @@
 	<br>
 	<div id="comments">
 		<h2>Berichten</h2>
-
 		<div class="panel panel-default" ng-repeat="comment in $ctrl.order.comments">
 			<div class="panel-heading">
 				<h3 class="panel-title">{{comment.creator.name}} | {{comment.date | date:'medium':'+01:00'}}</h3>
@@ -109,10 +108,11 @@
 			</div>
 		</div>	
 	</div>
+	<br>
 	<h3>Nieuw bericht</h3>
 	<textarea class="form-control" ng-model="$ctrl.comment_body" class="col-sm-12"  rows="3"></textarea>
-	<button type="button" class="btn btn-default"  ng-click="$ctrl.addComment()">Add comment</button>
 	<br>
+	<button type="button" class="btn btn-default"  ng-click="$ctrl.addComment()">Add comment</button>
 	<div id="shortages" ng-show="$ctrl.orderService.orderIsEvaluated($ctrl.order)">
 		<h2>Tekorten</h2>
 		<table class="table">
@@ -133,5 +133,13 @@
 			</tbody>
 		</table>
 	</div>
-	<button class="btn btn-default" ng-click="$ctrl.saveAndRequest()" ng-disabled="!$ctrl.orderService.orderIsDraft($ctrl.order)">Aanvragen</button>
+	<br>
+	<br>
+	<p>Aanpassingen worden automatisch opgeslagen.</p>
+	<br>
+	<br>
+	<button 
+		class="btn btn-success" 
+		ng-click="$ctrl.saveAndRequest()" 
+		ng-disabled="!$ctrl.orderService.orderIsDraft($ctrl.order)">Order aanvragen</button>
 </div>

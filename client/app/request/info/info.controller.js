@@ -16,6 +16,23 @@ class InfoComponent {
 		this.$scope.closedDates = function (calendarDate, mode) {
 			return mode === 'day' && calendarDate.getDay() != 3;
 		};
+
+		this.retouroptions = {
+			initDate: new Date(),
+			showWeeks: false
+		};
+
+		this.pickupoptions = {
+			minDate: this.$scope.request.pickupdate,
+			initDate: new Date(),
+			showWeeks: false
+		};
+
+		this.eventoptions = {
+			initDate: new Date(),
+			showWeeks: false
+		};
+
 	}
 
 	$onInit () {
@@ -28,10 +45,14 @@ class InfoComponent {
 			  		this.$http.get('/api/orders/' + this.id).then(response => {
 				        this.$scope.request = response.data;
 				        // this.setGroupSelected(this.$scope.request.group);
-				        this.$scope.request.eventstart = new Date(this.$scope.request.eventstart );
-				        this.$scope.request.eventstop = new Date(this.$scope.request.eventstop );
-				        this.$scope.request.pickupdate = new Date(this.$scope.request.pickupdate );
-				        this.$scope.request.returndate = new Date(this.$scope.request.returndate );
+				        if (this.$scope.request.eventstart)
+				        	this.$scope.request.eventstart = new Date(this.$scope.request.eventstart );
+				        if (this.$scope.request.eventstop)
+				        	this.$scope.request.eventstop = new Date(this.$scope.request.eventstop );
+				        if (this.$scope.request.pickupdate)
+				        	this.$scope.request.pickupdate = new Date(this.$scope.request.pickupdate );
+				        if (this.$scope.request.returndate)
+				        	this.$scope.request.returndate = new Date(this.$scope.request.returndate );
 
 				        this.isNoDraft();
 			      	});
@@ -47,33 +68,22 @@ class InfoComponent {
 		this.$scope.pickupCollapsed = true;
 		this.$scope.eventstartCollapsed = true;
 		this.$scope.eventstopCollapsed = true;
-
-		this.$scope.retouroptions = {
-			minDate: this.$scope.request.pickupdate,
-			dateDisabled: this.closedDates
-		};
-		this.$scope.pickupoptions = {
-			dateDisabled: this.closedDates
-		}
-  		
     }
 
-	closedDates (data) {
-		return data.mode === 'day' && data.date.getDay() != 3;
+	closedDates (date, mode) {
+		return mode === 'day' && date.getDay() != 3;
 	};
 
 	changePickupDate() {
-		if (!this.id) {
-			this.$scope.request.pickupdate.setHours(20);
-			this.$scope.request.pickupdate.setMinutes(30);
-		}
+		this.$scope.request.pickupdate.setHours(20);
+		this.$scope.request.pickupdate.setMinutes(30);
+		this.$scope.pickupCollapsed = true;
 	}
 
 	changeReturnDate() {
-		if (!this.id) {
-			this.$scope.request.returndate.setHours(20);
-			this.$scope.request.returndate.setMinutes(0);
-		}
+		this.$scope.request.returndate.setHours(20);
+		this.$scope.request.returndate.setMinutes(0);
+		this.$scope.returnCollapsed = true;
 	}
 
   	submit (proceed) {
