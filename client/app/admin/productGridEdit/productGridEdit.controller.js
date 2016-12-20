@@ -17,6 +17,8 @@ class ProductGridEditComponent {
     this.sortType = 'code';
     this.sortReverse = false;
 
+    this.loading = true;
+
   	$scope.$on('$destroy', function () {
   		socket.unsyncUpdates('product');
   		socket.unsyncUpdates('usergroup');
@@ -53,6 +55,7 @@ class ProductGridEditComponent {
   		this.socket.syncUpdates('groups', this.usergroups);
 
   		this.state = 'ready';
+      this.loading = false;
   	}, err => {
   		this.errmsg = err;
   	});
@@ -129,6 +132,9 @@ class ProductGridEditComponent {
   	this.productService.updateProduct(product);
   }
 
+  Sort(v1, v2) {
+    return naturalSort()(v1.value, v2.value);
+  }
 }
 
 angular.module('matkotApp.admin')

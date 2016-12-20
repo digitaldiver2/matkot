@@ -12,7 +12,7 @@ var ProductSchema = new mongoose.Schema({
     type: Number,
     default: 0.0
   },
-  replacementprice: Number,
+  replacementprice: {type:Number, default: 0.0},
   isconsumable: Boolean,
   stock: Number,
   stock_date: Date,
