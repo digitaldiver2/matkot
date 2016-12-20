@@ -87,6 +87,6 @@
 			</div>
 		</div>
 		<button class="btn btn-primary btn" ng-click="$ctrl.submit()" ng-disabled="!isDraft || !info.$valid">Opslaan</button>
-		<button class="btn btn-success" ng-click="$ctrl.submit(true)" ng-disabled="!info.$valid">Naar materiaallijst</button>
+		<button class="btn btn-success" ng-click="$ctrl.submit(true)" ng-disabled="!info.$valid && isDraft">Naar materiaallijst</button>
 	</form>
 </div>

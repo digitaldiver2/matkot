@@ -124,10 +124,11 @@
 
 			</thead>
 			<tbody>
-				<tr ng-repeat="shortage in $ctrl.order.shortages" ng-class="{resolved: shortage.qty_short <= shortage.qty_ok, short: shortage.qty_short > shortage.qty_ok}">
+				<tr ng-repeat="shortage in $ctrl.order.shortages" 
+					ng-class="{resolved: shortage.qty_short <= shortage.qty_ok, short: shortage.qty_short > shortage.qty_ok}">
 					<td>{{shortage.product.name}}</td>
 					<td>{{shortage.qty_short}}</td>
-					<td>{{shortage.qty_ok}}></td>
+					<td>{{shortage.qty_ok}}</td>
 					<td>{{shortage.comment}}</td>
 				</tr>
 			</tbody>
