@@ -4,10 +4,11 @@
 	</div>
 	<ul class="list-group user-list">
 		<h3>Users</h3>
-		<li class="list-group-item " ng-class="{'list-group-item-danger': user.requested_groups.length}" ng-repeat="user in usersCtrl.users">
+		<li class="list-group-item " ng-class="{'list-group-item-danger': user.requested_groups && user.requested_groups.length > 0}" ng-repeat="user in usersCtrl.users">
 			<div class="user-info">
-		        <strong>{{user.name}}</strong>   <span class="badge" ng-show="user.requested_groups.length">Attention</span><br>
+		        <strong>{{user.name}}</strong>   <span class="badge" ng-show="user.requested_groups && user.requested_groups.length > 0">Attention</span><br>
 		        <span class="text-muted">{{user.email}}</span>
+		        [[{{user.requested_groups}}]]
 		    </div>
 
       		<a ng-href="/admin/user/{{user._id}}" class="edit"><span class="fa fa-pencil fa-2x"></span></a>

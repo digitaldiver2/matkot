@@ -1,6 +1,7 @@
 <div class="container">
 
 	id: {{userid}}
+	{{user.requested_groups}}
 
 	<form ng-submit="$ctrl.submit()">
 		<div class="form-group">
@@ -30,17 +31,6 @@
 			</li>
 		</ul>
 
-<!-- 		<h3>Groepen</h3>
-		<ul class="list-group user-list"> 
-			<li class="list-group-item" ng-repeat="group in user.groups">
-				<div class="user-info">
-			        <strong>{{group.name}}</strong><br>
-			        <span class="text-muted">{{group.info}}</span>
-			    </div>
-			    <i class="fa fa-times" aria-hidden="true"></i>
-			</li>
-		</ul>
- -->
 		<h3>Aangevraagd</h3>
 		<ul class="list-group user-list">
 			<li class="list-group-item" ng-repeat="group in user.requested_groups | orderBy:'name'">

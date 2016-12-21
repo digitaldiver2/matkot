@@ -2,7 +2,7 @@
 (function(){
 
 class UserComponent {
-  constructor($scope, $http, $stateParams, $location) {
+  constructor($scope, $http, $stateParams, $location, $q, userService) {
     this.isAdmin = false;
 
     this.$http = $http;
@@ -10,41 +10,60 @@ class UserComponent {
     this.$location = $location;
     this.$scope.user = {};
     this.$scope.userid = $stateParams.id;
+
+    this.$q = $q;
+    this.userService = userService;
   }
 
   $onInit() {
 
-    //first, get all groups loaded
-    this.$http.get('/api/usergroups').then(response => {
-      this.groups = response.data;
-      
-      //if loading with userid, check all groups that are assigned to the user
-      if (this.$scope.userid) {
-        this.$http.get('/api/users/admin/' + this.$scope.userid).then(response => {
-          this.$scope.user = response.data;
-          this.isAdmin = this.$scope.user.role == 'admin';
+    var userQ = this.$http.get('/api/users/admin/' + this.$scope.userid);
+    var usergroupQ = this.userService.getUserGroups();
 
-          //run over all groups and check if needed
-          for (var i=0; i<this.$scope.user.groups.length; i++) {
-            var usergroup = this.$scope.user.groups[i];
-            for (var j=0; j<this.groups.length; j++) {
-              if (usergroup._id == this.groups[j]._id) {
-                this.groups[j].checked = true;
-                break;
-              }
-            }
-          }
-        });       
-        
-      }
+    this.$q.all([userQ, usergroupQ]).then(answer => {
+      this.$scope.user = answer[0].data;
+      this.isAdmin = this.$scope.user.role == 'admin';
+
+      this.groups = answer[1];
+
+      this.$scope.user.groups.forEach(req => {
+        var group = _.find(this.groups, {_id: req._id});
+        if (group) {
+          group.checked = true;
+        }
+      });
+      this.$scope.user.requested_groups.forEach(req => {
+        var group = _.find(this.groups, {_id: req._id});
+        if (group) {
+          group.requested = true;
+        }
+      });
     });
+    // //first, get all groups loaded
+    // this.$http.get('/api/usergroups').then(response => {
+    //   this.groups = response.data;
+      
+    //   //if loading with userid, check all groups that are assigned to the user
+    //   if (this.$scope.userid) {
+    //     this.$http.get('/api/users/admin/' + this.$scope.userid).then(response => {
+    //       this.$scope.user = response.data;
+    //       this.isAdmin = this.$scope.user.role == 'admin';
 
-  	if (this.$scope.userid) {
-	    this.$http.get('/api/users/admin/' + this.$scope.userid).then(response => {
-	      this.$scope.user = response.data;
-	      this.isAdmin = this.$scope.user.role == 'admin';
-	    });
-    }
+    //       //run over all groups and check if needed
+    //       for (var i=0; i<this.$scope.user.groups.length; i++) {
+    //         var usergroup = this.$scope.user.groups[i];
+    //         for (var j=0; j<this.groups.length; j++) {
+    //           if (usergroup._id == this.groups[j]._id) {
+    //             this.groups[j].checked = true;
+    //             break;
+    //           }
+    //         }
+    //       }
+    //     });       
+        
+    //   }
+    // });
+
   }
 
   changerole () {	
