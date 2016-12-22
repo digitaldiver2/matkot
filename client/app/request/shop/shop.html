@@ -1,4 +1,5 @@
-<div class="container">
+<loading show="$ctrl.loading"></loading>
+<div class="container" ng-hide="$ctrl.loading">
 	<div id="shop" ng-hide="!$ctrl.orderService.orderIsDraft($ctrl.order)">
 
 		<div class="form-group">

@@ -45,13 +45,13 @@ class InfoComponent {
 			  		this.$http.get('/api/orders/' + this.id).then(response => {
 				        this.$scope.request = response.data;
 				        // this.setGroupSelected(this.$scope.request.group);
-				        if (this.$scope.request.eventstart)
+				        if (this.$scope.request.eventstart != undefined)
 				        	this.$scope.request.eventstart = new Date(this.$scope.request.eventstart );
-				        if (this.$scope.request.eventstop)
+				        if (this.$scope.request.eventstop != undefined)
 				        	this.$scope.request.eventstop = new Date(this.$scope.request.eventstop );
-				        if (this.$scope.request.pickupdate)
+				        if (this.$scope.request.pickupdate != undefined)
 				        	this.$scope.request.pickupdate = new Date(this.$scope.request.pickupdate );
-				        if (this.$scope.request.returndate)
+				        if (this.$scope.request.returndate != undefined)
 				        	this.$scope.request.returndate = new Date(this.$scope.request.returndate );
 
 				        this.isNoDraft();

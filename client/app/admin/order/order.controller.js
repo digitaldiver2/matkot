@@ -21,6 +21,8 @@ class OrderComponent {
       socket.unsyncUpdates('order');
     });
 
+    this.loading = true;
+
   }
 
   $onInit () {
@@ -39,6 +41,7 @@ class OrderComponent {
       this.productService.selectCorrectPrice(this.$scope.products, this.order.pricecategory);
 
       this.prepareOrder();
+      this.loading = false;
     }, err => {
       this.errMsg = err;
     });

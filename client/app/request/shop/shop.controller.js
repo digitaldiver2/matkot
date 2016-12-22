@@ -18,7 +18,7 @@ class ShopComponent {
 
     this.comment_body = "";
 
-
+    this.loading = true;
     $scope.$on('$destroy', function () {
       socket.unsyncUpdates('order');
     });
@@ -49,6 +49,7 @@ class ShopComponent {
         this.productService.getGroupProducts(group_id, price_category_id).then(products => {
           this.products = products;
           this.syncProductList();
+          this.loading = false;
         });
 
         //register socket listener

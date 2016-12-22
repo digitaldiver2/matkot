@@ -61,7 +61,6 @@ class SettingsController {
       this.Auth.updateSettings(this.user)
         .then(() => {
           this.message = 'Settings successfully changed.';
-          alert('wijzigingen opgeslagen');
         })
         .catch(() => {
           this.errors.other = 'error updating settings';
