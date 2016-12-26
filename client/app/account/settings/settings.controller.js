@@ -1,43 +1,37 @@
 'use strict';
 
 class SettingsController {
-  constructor(Auth, $http) {
+  constructor(Auth, $http, $q, userService) {
     this.errors = {};
     this.submitted = false;
 
-    this.Auth = Auth;
-    this.user = this.Auth.getCurrentUser();
+    this.$q = $q;
+    this.userService = userService;
 
-    $http.get('/api/usergroups').then(response => {
-      this.groups = response.data;
-      this.unused_groups = undefined;
-      this.remove_groups();
+    this.Auth = Auth;
+
+    this.error = undefined;
+
+    // get user and groups
+    var userQ = this.Auth.getCurrentUser();
+    var groupQ = this.userService.getUserGroups();
+    this.$q.all([userQ, groupQ]).then(answer => {
+      this.user = answer[0];
+      this.groups = answer[1];
+      this.updateSelectableGroups();
+
+      var usercpy = jQuery.extend(true, {}, this.user);
+    }, error => {
+      this.error = error;
     });
   }
 
-  remove_groups() {
-    for (var i=0; i<this.groups.length; i++) {
-      var current_group = this.groups[i];
-      current_group.selectable = true;
-
-      for (var j=0; j<this.user.groups.length; j++) {
-        var usergroup = this.user.groups[j];
-        if (usergroup._id == current_group._id) {
-            current_group.selectable = false;
-            break;
-        }
-      }
-
-      if (current_group.selectable) {
-        for (var j=0; j<this.user.requested_groups.length; j++) {
-          var usergroup = this.user.requested_groups[j];
-          if (usergroup._id == current_group._id) {
-              current_group.selectable = false;
-              break;
-          }
-        }
-      }
-    }
+  updateSelectableGroups () {
+    this.groups.forEach(group => {
+      var usergroup = _.find(this.user.groups, {_id: group._id});
+      var requestgroup = _.find(this.user.requested_groups, {_id: group._id});
+      group.selectable = !usergroup && !requestgroup;
+    });
   }
 
   changePassword(form) {
@@ -56,23 +50,29 @@ class SettingsController {
     }
   }
 
+  saveAndReload() {
+    this.Auth.updateSettings(this.user).then(() => {
+      this.message = "Wijzigingen succesvol opgeslagen";
+      this.Auth.getCurrentUser(user => {
+        this.user = user;
+        this.updateSelectableGroups();
+        var usercpy = jQuery.extend(true, {}, this.user);
+      });
+    }, err => {
+        this.error = err;
+    });
+  }
+
   updateSettings(form) {
     if (form.$valid) {
-      this.Auth.updateSettings(this.user)
-        .then(() => {
-          this.message = 'Settings successfully changed.';
-        })
-        .catch(() => {
-          this.errors.other = 'error updating settings';
-          this.message = 'errormessage updating settings';
-        });
+      this.saveAndReload();
     }
   }
 
   request_group() {
     if (this.group2request != undefined) {
       this.user.requested_groups.push(this.group2request);
-      this.remove_groups();
+      this.saveAndReload();
     }
   }
 
@@ -80,7 +80,7 @@ class SettingsController {
     var index = this.user.groups.indexOf(object);
     if (index > -1) {
       this.user.groups.splice(index,1);
-      this.remove_groups();
+      this.saveAndReload();
     }
   }
 
@@ -88,7 +88,7 @@ class SettingsController {
     var index = this.user.requested_groups.indexOf(object);
     if (index > -1) {
       this.user.requested_groups.splice(index,1);
-      this.remove_groups();
+      this.saveAndReload();
     }
   }
 }

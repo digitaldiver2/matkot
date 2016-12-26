@@ -99,6 +99,9 @@ function AuthService($location, $http, $cookies, $q, appConfig, Util, User) {
     updateSettings (userobject, callback) {
       return User.update({ id: currentUser._id }, userobject, 
         function() {
+          if ($cookies.get('token') && $location.path() !== '/logout') {
+            currentUser = User.get();
+          }
         return safeCb(callback)(null);
       }, function(err) {
         return safeCb(callback)(err);

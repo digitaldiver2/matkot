@@ -1,93 +1,74 @@
 <div class="container">
-  <div class="row">
-    <div class="col-sm-12">
-      <h1>Account instellingen</h1>
-    </div>
-    <div class="col-sm-12">
-      <form class="form" name="settingsform" ng-submit="vm.updateSettings(settingsform)">
+  <div class="alert alert-danger" role="alert" ng-show="vm.error">{{vm.error}}</div>
+  <form class="form" name="settingsform" ng-submit="vm.updateSettings(settingsform)">
+    <section>
+      <h3>Gegevens</h3>
+      <div class="form-group">
+        <label for="name">Naam</label>
+        <input class="form-control" name="name" type="text" ng-model="vm.user.name"\>
+      </div>
+      <div class="form-group">
+        <label for="phone">Telefoon</label>
+        <input class="form-control" name="phone" type="text" ng-model="vm.user.phone"\>
+      </div>
+      <div class="form-group">
+        <label for="mail">Email</label>
+        <input class="form-control" name="mail" type="text" ng-model="vm.user.email"\>
+      </div>
+      <button class="btn btn-default" type="submit">Wijzigingen opslaan</button>
+    </section>
+  </form>
+
+  <section>
+    <h3>Wachtwoord wijzigen</h3>
+    <form class="form" name="form" ng-submit="vm.changePassword(form)" novalidate>
         <div class="form-group">
-          <label>Telefoon</label>
-          <input type="text" class="form-control" name="phone" ng-model="vm.user.phone">
-        </div>
-        <div>
-          <h2>Mijn groepen</h2>
-          <ul class="list-group user-list">
-            <li class="list-group-item" ng-repeat="group in vm.user.groups | orderBy:'name'">
-              <div class="user-info">
-                <strong>{{group.name}}</strong>
-              </div>
-              <a ng-click="vm.delete_group(group)" class="trash"><span class="fa fa-trash fa-2x"></span></a>
-            </li>
-          </ul>
-          <div class="list-group user-list">
-            <li class="list-group-item" ng-repeat="group in vm.user.requested_groups | orderBy:'name'">
-              <div class="user-info">
-                <strong>{{group.name}}</strong>
-              </div>
-              <span class="badge">Aangevraagd</span>
-              <a ng-click="vm.delete_requested_group(group)" class="trash">
-                <span class="fa fa-trash fa-2x"></span>
-              </a>
-            </li>
-          </div>
-          <div class="form-group">
-            <label>Groep aanvragen</label>
-            <select class="form-control" 
-            ng-model="vm.group2request" 
-            ng-options="group as group.name for group in vm.groups | filter:{selectable: true}  track by group._id"></select>
-            <button class="btn btn-default" type="button" ng-click="vm.request_group()">Aanvragen</button>
-          </div>
-          <button class="btn btn-lg btn-primary" type="submit">Wijzigingen opslaan</button>
-        </form>
-      </div>
-    </div>
-    <div class="row">
-      <div class="col-sm-12">
-        <h1>Change Password</h1>
-      </div>
-      <div class="col-sm-12">
-        <form class="form" name="form" ng-submit="vm.changePassword(form)" novalidate>
-
-          <div class="form-group">
-            <label>Current Password</label>
-
-            <input type="password" name="password" class="form-control" ng-model="vm.user.oldPassword"
-            mongoose-error/>
-            <p class="help-block" ng-show="form.password.$error.mongoose">
-              {{ vm.errors.other }}
-            </p>
-          </div>
-
-          <div class="form-group">
-            <label>New Password</label>
-
-            <input type="password" name="newPassword" class="form-control" ng-model="vm.user.newPassword"
-            ng-minlength="3"
-            required/>
-            <p class="help-block"
-            ng-show="(form.newPassword.$error.minlength || form.newPassword.$error.required) && (form.newPassword.$dirty || vm.submitted)">
-            Password must be at least 3 characters.
+          <label>Huidig</label>
+          <input type="password" name="password" class="form-control" ng-model="vm.user.oldPassword" mongoose-error/>
+          <p class="help-block" ng-show="form.password.$error.mongoose">
+            {{ vm.errors.other }}
           </p>
         </div>
 
         <div class="form-group">
-          <label>Confirm New Password</label>
+          <label>Nieuw</label>
+          <input type="password" name="newPassword" class="form-control" ng-model="vm.user.newPassword" ng-minlength="3" required/>
+          <p class="help-block" ng-show="(form.newPassword.$error.minlength || form.newPassword.$error.required) && (form.newPassword.$dirty || vm.submitted)">
+            Wachtwoord moet minimum 3 tekens lang zijn
+          </p>
+        </div>
 
-          <input type="password" name="confirmPassword" class="form-control" ng-model="vm.user.confirmPassword"
-          match="vm.user.newPassword"
-          ng-minlength="3"
-          required=""/>
-          <p class="help-block"
-          ng-show="form.confirmPassword.$error.match && vm.submitted">
-          Passwords must match.
-        </p>
+        <div class="form-group">
+          <label>Nieuw wachtwoord bevestigen</label>
+          <input type="password" name="confirmPassword" class="form-control" ng-model="vm.user.confirmPassword" match="vm.user.newPassword" ng-minlength="3" required/>
+          <p class="help-block" ng-show="form.confirmPassword.$error.match && vm.submitted">
+            Passwords must match.
+          </p>
+        </div>
 
-      </div>
+        <p class="help-block"> {{ vm.message }} </p>
 
-      <p class="help-block"> {{ vm.message }} </p>
-
-      <button class="btn btn-lg btn-primary" type="submit">Save changes</button>
-    </form>
-  </div>
-</div>
+        <button class="btn btn-default" type="submit">Wijzig wachtwoord</button>
+      </form> 
+  </section>
+  <section>
+    <h3>Mijn groepen</h3>
+    <ul class="list-group">
+      <li class="list-group-item" ng-repeat="group in vm.user.groups | orderBy:'name'">
+        <strong>{{group.name}}</strong> <a class="badge" ng-click="vm.delete_group(group)" class="trash"><span class="glyphicon glyphicon-remove"></span></a>
+      </li>
+    </ul>
+    <ul class="list-group">
+      <li class="list-group-item" ng-repeat="group in vm.user.requested_groups | orderBy:'name'">
+        <strong>{{group.name}}</strong> aangevraagd <a class="badge" ng-click="vm.delete_requested_group(group)" class="trash"><span class="glyphicon glyphicon-remove"></span></a>
+      </li>
+    </ul>
+    <div class="form-group">
+      <label for="request_group">Groep aanvragen</label>
+      <select class="form-control" ng-model="vm.group2request"
+        ng-options="group as group.name for group in vm.groups | filter: {selectable: true} track by group._id">
+      </select>
+      <button class="btn btn-default" type="button" ng-click="vm.request_group()">Aanvragen</button>
+    </div>
+  </section>
 </div>
