@@ -268,3 +268,58 @@ export function me(req, res, next) {
 export function authCallback(req, res, next) {
   res.redirect('/');
 }
+
+/**
+ * Request password reset code
+ */
+export function requestReset(req, res, next) {
+  var mail = req.params.mail;
+  return User.findOne({email: mail}).exec()
+    .then(user => {
+      if (!user) {
+        return res.status(404).end('user not found');
+      }
+      user.generateResetToken((err, token, token_expire) => {
+        if (err) {
+          handleError(res);
+        } else {
+          user.reset_token = token;
+          user.token_expire = token_expire;
+          user.save()
+          .then(() => {
+            return res.json({'token': token});
+          })
+          .catch(validationError(res));
+        }
+      });
+  })
+  .catch(err => next(err));
+}
+
+/**
+ * Reset password
+ */
+export function reset(req, res, next) {
+  var token = req.params.token;
+  var password = String(req.body.password);
+
+  return User.findOne({reset_token: token})
+    .exec()
+    .then(user => {
+      if (!user) {
+        return res.status(404).end('user not found');
+      }
+      if (user.token_expire < new Date()) {
+        next('token expired');
+      } else {
+      user.password = password;
+      user.reset_token = undefined;
+      user.token_expire = undefined;
+      user.save().then(() => {
+            return res.status(204).end();
+          })
+          .catch(validationError(res));
+      }
+  })
+  .catch(err => next(err));
+}

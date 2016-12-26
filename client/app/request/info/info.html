@@ -1,4 +1,4 @@
-
+	
 <div class="container">
 	<form name="info">
 		<div class="form-group">
@@ -46,47 +46,47 @@
 			</div>
 		</div>
 
-		<div class="form-group">
-				<label>Afhaal tijdstip: </label>
-				<a ng-click="pickupCollapsed = !pickupCollapsed">{{request.pickupdate | date:'EEE dd/MM/yy HH:mm'}}
-					<i class="fa fa-pencil fa" aria-hidden="true"></i>
-				</a>
-			<div uib-collapse="pickupCollapsed">
-				<div class="well">
-					<uib-datepicker 
-						ng-model="request.pickupdate" 
-						datepicker-options="$ctrl.pickupoptions" 
-						ng-disabled="!isDraft"
-						ng-change="$ctrl.changePickupDate()"
-						date-disabled="$ctrl.closedDates(date, mode)">
-					</uib-datepicker>
-					<uib-timepicker ng-model="request.pickupdate" show-meridian="ismeridian" ng-disabled="true" readonly-input="true">
-					</uib-timepicker>
-				</div>
-			</div>
-		</div>
-
-
-		<div class="form-group">
-			<label>Retour moment: </label>
-			<a ng-click="returnCollapsed = !returnCollapsed">{{request.returndate | date:'EEE dd/MM/yy HH:mm'}}
+	</form>
+	<div class="form-group">
+			<label>Afhaal tijdstip: </label>
+			<a ng-click="pickupCollapsed = !pickupCollapsed">{{request.pickupdate | date:'EEE dd/MM/yy HH:mm'}}
 				<i class="fa fa-pencil fa" aria-hidden="true"></i>
 			</a>
-			<div uib-collapse="returnCollapsed">
-				<div class="well">
-					<uib-datepicker 
-					ng-model="request.returndate" 
-					datepicker-options="$ctrl.retouroptions" 
-					ng-disabled="!isDraft" 
-					ng-change="$ctrl.changeReturnDate()"
+		<div uib-collapse="pickupCollapsed">
+			<div class="well">
+				<uib-datepicker 
+					ng-model="request.pickupdate" 
+					datepicker-options="$ctrl.pickupoptions" 
+					ng-disabled="!isDraft"
+					ng-change="$ctrl.changePickupDate()"
 					date-disabled="$ctrl.closedDates(date, mode)">
-					</uib-datepicker>
-					<uib-timepicker ng-model="request.returndate" show-meridian="ismeridian" ng-disabled="true" readonly-input="true">
-					</uib-timepicker>
-				</div>
+				</uib-datepicker>
+				<uib-timepicker ng-model="request.pickupdate" show-meridian="ismeridian" ng-disabled="true" readonly-input="true">
+				</uib-timepicker>
 			</div>
 		</div>
-		<button class="btn btn-primary btn" ng-click="$ctrl.submit()" ng-disabled="!isDraft || !info.$valid">Opslaan</button>
-		<button class="btn btn-success" ng-click="$ctrl.submit(true)" ng-disabled="!info.$valid && isDraft">Naar materiaallijst</button>
-	</form>
+	</div>
+
+
+	<div class="form-group">
+		<label>Retour moment: </label>
+		<a ng-click="returnCollapsed = !returnCollapsed">{{request.returndate | date:'EEE dd/MM/yy HH:mm'}}
+			<i class="fa fa-pencil fa" aria-hidden="true"></i>
+		</a>
+		<div uib-collapse="returnCollapsed">
+			<div class="well">
+				<uib-datepicker 
+				ng-model="request.returndate" 
+				datepicker-options="$ctrl.retouroptions" 
+				ng-disabled="!isDraft" 
+				ng-change="$ctrl.changeReturnDate()"
+				date-disabled="$ctrl.closedDates(date, mode)">
+				</uib-datepicker>
+				<uib-timepicker ng-model="request.returndate" show-meridian="ismeridian" ng-disabled="true" readonly-input="true">
+				</uib-timepicker>
+			</div>
+		</div>
+	</div>
+	<button class="btn btn-primary btn" ng-click="$ctrl.submit()" ng-disabled="!isDraft || !info.$valid">Opslaan</button>
+	<button class="btn btn-success" ng-click="$ctrl.submit(true)" ng-disabled="!info.$valid && isDraft">Naar materiaallijst</button>
 </div>

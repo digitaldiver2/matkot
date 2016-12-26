@@ -21,6 +21,8 @@ var UserSchema = new Schema({
   password: String,
   provider: String,
   salt: String,
+  reset_token: String, //password reset token
+  token_expire: Date,
   google: {},
   github: {},
   groups: [{type: Schema.Types.ObjectId, ref: 'Usergroup'}],
@@ -223,6 +225,26 @@ UserSchema.methods = {
         callback(null, key.toString('base64'));
       }
     });
+  },
+
+  generateResetToken(callback) {
+    crypto.randomBytes(48, function(err, buffer) {
+      this.reset_token = buffer.toString('hex');
+      var today = new Date();
+      today.setHours(today.getHours() + 1);
+      this.token_expire = today;
+
+      if (!callback) {
+        return this.reset_token;
+      }
+
+      if (err) {
+        callback(err);
+      } else {
+        callback(null, this.reset_token, this.token_expire);
+      }
+    });
+
   }
 };
 

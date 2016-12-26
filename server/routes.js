@@ -18,6 +18,7 @@ export default function(app) {
   app.use('/api/usergroups', require('./api/usergroup'));
   app.use('/api/things', require('./api/thing'));
   app.use('/api/users', require('./api/user'));
+  app.use('/api/mail', require('./api/mail'));
 
   app.use('/auth', require('./auth').default);
 

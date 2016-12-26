@@ -48,7 +48,7 @@
 
         <div class="form-group" ng-class="{ 'has-success': form.password.$valid && vm.submitted,
                                             'has-error': form.password.$invalid && vm.submitted }">
-          <label>Paswoord</label>
+          <label>Wachtwoord</label>
 
           <input type="password" name="password" class="form-control" ng-model="vm.user.password"
                  ng-minlength="3"
@@ -56,7 +56,7 @@
                  mongoose-error/>
           <p class="help-block"
              ng-show="(form.password.$error.minlength || form.password.$error.required) && vm.submitted">
-            Het paswoord moet uit minimum 3 karakters bestaan.
+            Het wachtwoord moet uit minimum 3 karakters bestaan.
           </p>
           <p class="help-block" ng-show="form.password.$error.mongoose">
             {{ vm.errors.password }}
@@ -65,13 +65,13 @@
 
         <div class="form-group" ng-class="{ 'has-success': form.confirmPassword.$valid && vm.submitted,
                                             'has-error': form.confirmPassword.$invalid && vm.submitted }">
-          <label>Paswoord bevestigen</label>
+          <label>Wachtwoord bevestigen</label>
           <input type="password" name="confirmPassword" class="form-control" ng-model="vm.user.confirmPassword"
                  match="vm.user.password"
                  ng-minlength="3" required/>
           <p class="help-block"
              ng-show="form.confirmPassword.$error.match && vm.submitted">
-            Paswoord komt niet overeen.
+            Wachtwoord komt niet overeen.
           </p>
         </div>
 
