@@ -7,10 +7,13 @@
         <span class="icon-bar"></span>
         <span class="icon-bar"></span>
       </button>
-      <a href="/" class="navbar-brand">matkot</a>
+      <a href="/" class="navbar-brand">JKH</a>
     </div>
     <div uib-collapse="nav.isCollapsed" class="navbar-collapse collapse" id="navbar-main">
       <ul class="nav navbar-nav">
+        <li ng-repeat="item in nav.staticMenu" ui-sref-active="active">
+            <a ui-sref="{{item.state}}">{{item.title}}</a>
+        </li>
         <li ng-show="nav.isLoggedIn()" ng-repeat="item in nav.menu" ui-sref-active="active">
             <a ui-sref="{{item.state}}">{{item.title}}</a>
         </li>

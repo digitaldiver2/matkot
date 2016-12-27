@@ -1,12 +1,19 @@
 'use strict';
 
 class NavbarController {
+  //static menu
+  staticMenu = [
+    {
+      'title': 'Info',
+      'state': 'main-info'
+    }
+  ];
   //start-non-standard
   menu = [
-    {
-      'title': 'Home',
-      'state': 'main'
-    },
+    // {
+    //   'title': 'Home',
+    //   'state': 'main'
+    // },
     {
       'title': 'Aanvragen',
       'state': 'orders'
