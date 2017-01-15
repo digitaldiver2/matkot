@@ -1,287 +1,312 @@
 <loading show="$ctrl.loading"></loading>
-<div class="container" ng-hide="$ctrl.loading">
-	<form>
-		<h3>Info</h3>
-		<p>
-			<strong>Ordernummer:</strong> {{$ctrl.order.ordernumber}}</br>
-			<strong>Eigenaar:</strong> {{$ctrl.order.owner.name}}</br>
-			<strong>Telefoon:</strong> {{$ctrl.order.owner.phone}}</br>
-			<strong>Mail:</strong> {{$ctrl.order.owner.email}}
-		</p>
-		<div class="form-group">
-			<label for="Category">Vereniging *</label>
-			<select id="Category" class="form-control" 
-				ng-model="$ctrl.order.group" 
-				ng-options="group as group.name for group in groups track by group._id"
-				ng-change="$ctrl.save()"
-				ng-model-options="{ updateOn: 'blur' }">
-				<option value="">Prive</option>
-			</select>	
-		</div>
-		<div class="form-group">
-			<label for="Naam">Naam evenement *</label>
-			<input type="text" class="form-control" id="NaamEvenement" placeholder='Evenement' 
-				ng-model='$ctrl.order.name' 
-				ng-change="$ctrl.save()">
-		</div>
-		<div class="form-group">
-			<label>Start Evenement: </label>
-			<a ng-click="eventstartCollapsed = !eventstartCollapsed">{{$ctrl.order.eventstart | date:'EEE dd/MM/yy HH:mm'}}
-				<i class="fa fa-pencil fa" aria-hidden="true"></i>
-			</a>
-			<div uib-collapse="eventstartCollapsed">
-				<div class="well">
-					<uib-datepicker ng-model="$ctrl.order.eventstart" datepicker-options="options" >
-					</uib-datepicker>
-					<uib-timepicker ng-model="$ctrl.order.eventstart" ng-change="$ctrl.changedTime()" show-meridian="ismeridian" >
-					</uib-timepicker>
-				</div>
-			</div>
-		</div>
+<div class="container-fluid" ng-hide="$ctrl.loading">
 
-		<div class="form-group">
-			<label>Einde Evenement: </label>
-			<a ng-click="eventstopCollapsed = !eventstopCollapsed">{{$ctrl.order.eventstop | date:'EEE dd/MM/yy HH:mm'}}
-				<i class="fa fa-pencil fa" aria-hidden="true"></i>
-			</a>
-			<div uib-collapse="eventstopCollapsed">
-				<div class="well">
-					<uib-datepicker ng-model="$ctrl.order.eventstop" datepicker-options="options" >
-					</uib-datepicker>
-					<uib-timepicker ng-model="$ctrl.order.eventstop" show-meridian="ismeridian" >
-					</uib-timepicker>
-				</div>
-			</div>
+	<div class="row">
+		<div class="col-sm-3 col-md-2 sidebar">
+			<h2>Aanvraag {{order.ordernumber}}</h2>
+			<ul class="nav nav-stacked nav-pills">
+				<li role="presentation" ng-class="{active: $ctrl.isTabVisible($ctrl.TAB_INFO)}">
+					<a ng-click="$ctrl.selectTab($ctrl.TAB_INFO)">Info</a>
+				</li>
+				<li role="presentation" ng-class="{active: $ctrl.isTabVisible($ctrl.TAB_SHOP)}">
+					<a ng-click="$ctrl.selectTab($ctrl.TAB_SHOP)">Productlijst</a></li>
+				<li role="presentation" ng-class="{active: $ctrl.isTabVisible($ctrl.TAB_CART)}">
+					<a ng-click="$ctrl.selectTab($ctrl.TAB_CART)">Winkelmandje<span class="badge">{{$ctrl.order.products.length}}</span></a>
+				</li>
+				<li role="presentation" ng-class="{active: $ctrl.isTabVisible($ctrl.TAB_MESSAGES)}">
+					<a ng-click="$ctrl.selectTab($ctrl.TAB_MESSAGES)">Berichten<span class="badge">{{$ctrl.order.comments.length}}</span></a>
+				</li>
+				<li role="presentation" ng-class="{active: $ctrl.isTabVisible($ctrl.TAB_SHORTAGE)}">
+					<a ng-click="$ctrl.selectTab($ctrl.TAB_SHORTAGE)">Tekorten<span class="badge">{{$ctrl.order.unresolved_shortages}}</span></a>
+				</li>
+			</ul>
 		</div>
-
-		<div class="form-group">
-				<label>Afhaal tijdstip: </label>
-				<a ng-click="pickupCollapsed = !pickupCollapsed">{{$ctrl.order.pickupdate | date:'EEE dd/MM/yy HH:mm'}}
-					<i class="fa fa-pencil fa" aria-hidden="true"></i>
-				</a>
-			<div uib-collapse="pickupCollapsed">
-				<div class="well">
-					<uib-datepicker ng-model="$ctrl.order.pickupdate" datepicker-options="pickupoptions"  >
-					</uib-datepicker>
-					<uib-timepicker ng-model="$ctrl.order.pickupdate" show-meridian="ismeridian" >
-					</uib-timepicker>
-				</div>
-			</div>
-		</div>
-
-		<div class="form-group">
-			<label>Retour moment: </label>
-			<a ng-click="returnCollapsed = !returnCollapsed">{{$ctrl.order.returndate | date:'EEE dd/MM/yy HH:mm'}}
-				<i class="fa fa-pencil fa" aria-hidden="true"></i>
-			</a>
-			<div uib-collapse="returnCollapsed">
-				<div class="well">
-					<uib-datepicker ng-model="$ctrl.order.returndate" datepicker-options="retouroptions"  >
-					</uib-datepicker>
-					<uib-timepicker ng-model="$ctrl.order.returndate" show-meridian="ismeridian" >
-					</uib-timepicker>
-				</div>
-			</div>
-		</div>
-
-		<h3>Product lijst</h3>
-			<div class="form-group row">
-				<div class="col-sm-2">
-					<div class="input-group">
-						<div class="input-group-addon"><i class="fa fa-search"></i></div>
-						
-						<input type="text" class="form-control" placeholder="sku" ng-model="searchProduct2.product.code">
-					</div>
-				</div>
-				<div class="col-sm-2">
-					<div class="input-group">
-						<div class="input-group-addon"><i class="fa fa-search"></i></div>
-						
-						<input type="text" class="form-control" placeholder="naam" ng-model="searchProduct2.product.name">
-					</div>      
-				</div>
-				<button class="btn btn-primary" ng-click="$ctrl.sameNumbers()">Aantallen overnemen</button>
-				<button class="btn btn-primary" ng-click="$ctrl.resetNumbers()">Reset</button>
-			</div>
-		<table class="table">
-			<thead>
-				<tr>
-					<th>
-						<a href="#" ng-click="sortType = 'product.code'; sortReverse = !sortReverse">
-							SKU
-							<span ng-show="sortType == 'product.code' && !sortReverse" class="fa fa-caret-down"></span>
-							<span ng-show="sortType == 'product.code' && sortReverse" class="fa fa-caret-up"></span>
-						</a>
-					</th>
-					<th>
-						<a href="#" ng-click="sortType = 'product.name'; sortReverse = !sortReverse">
-							Naam
-							<span ng-show="sortType == 'product.name' && !sortReverse" class="fa fa-caret-down"></span>
-							<span ng-show="sortType == 'product.name' && sortReverse" class="fa fa-caret-up"></span>
-						</a>
-					</th>
-					<th>Stock</th>
-					<th>Tekort</th>
-					<th>Uitgeleend</th>
-					<th>Beschikbaar</th>
-					<th>Aangevraagd</th>
-					<th>Goedgekeurd</th>
-					<th>Gekregen</th>
-					<th>Terug</th>
-					<th>Tekort</th>
-					<th>Prijs</th>
-					<th>Totaal</th>
-					<th>Commentaar</th>
-				</tr>
-			</thead>
-			<tbody>
-				<!-- <tr ng-repeat-start="productitem in $ctrl.order.products | orderBy:sortType:sortReverse | filter:searchProduct2 "> -->
-				<tr ng-repeat="productitem in $ctrl.order.products | orderBy:sortType:sortReverse | filter:searchProduct2 ">
-					
-					<td>{{productitem.product.code}}</td>
-					<td>{{productitem.product.name}}</td>
-					<td>{{productitem.product.stock}}</td>
-					<td>{{productitem.product.short}}</td>
-					<td>{{productitem.product.away}}</td>
-					<td>{{productitem.product.available}}</td>
-					<td>{{productitem.ordered}}</td>
-					<td>
-						<input type="number" class="qty" 
-							ng-model="productitem.approved" 
-							ng-disabled="$ctrl.order.state!='DRAFT' && $ctrl.order.state != 'ORDERED'"
-							ng-change="$ctrl.save()"
-							ng-model-options="{ updateOn: 'blur' }">
-					</td>
-					<td>
-						<input type="number" class="qty" 
-							ng-model="productitem.received" 
-							ng-disabled="$ctrl.order.state!='APPROVED' && $ctrl.order.state != 'CANCELLED'"
-							ng-change="$ctrl.save()"
-							ng-model-options="{ updateOn: 'blur' }">
-					</td>
-					<td>
-						<input type="number" class="qty" 
-							ng-model="productitem.returned" 
-							ng-disabled="$ctrl.order.state!='DELIVERED'"
-							ng-change="$ctrl.save()"
-							ng-model-options="{ updateOn: 'blur' }">
-					</td>
-					<td>
-						{{productitem.received - productitem.returned}}
-					</td>
-					<td><input type="number" class="price" 
-						ng-model="productitem.unitprice" 
-						ng-disabled="$ctrl.order.state=='CANCELLED' || $ctrl.order.state == 'CLOSED'" 
+		<div class="col-sm-9 col-md-10 sidebar">
+			<form id="info" ng-show="$ctrl.isTabVisible($ctrl.TAB_INFO)">
+				<h3>Info</h3>
+				<p>
+					<strong>Ordernummer:</strong> {{$ctrl.order.ordernumber}}</br>
+					<strong>Eigenaar:</strong> {{$ctrl.order.owner.name}}</br>
+					<strong>Telefoon:</strong> {{$ctrl.order.owner.phone}}</br>
+					<strong>Mail:</strong> {{$ctrl.order.owner.email}}
+				</p>
+				<div class="form-group">
+					<label for="Category">Vereniging *</label>
+					<select id="Category" class="form-control" 
+						ng-model="$ctrl.order.group" 
+						ng-options="group as group.name for group in groups track by group._id"
 						ng-change="$ctrl.save()"
-						ng-model-options="{ updateOn: 'blur' }"></td>
-					<td>{{productitem.unitprice * productitem.received | currency:'€' }}	</td>
-					<td><input type="text" class="item_comment_field" 
-						ng-model="productitem.comment"
-						ng-change="$ctrl.save()"
-						ng-model-options="{ updateOn: 'blur' }"></td>
-				</tr>
-			</tbody>
-		</table>
-		<h4>Totaal te betalen: {{$ctrl.order.products | totalSumPriceQty:'received':'unitprice' | currency:'€' }}</h4>
-		<h4>Reeds betaald:</h4>
-		<button class="btn btn-default" ng-click="addProductCollapsed=!addProductCollapsed">+</button>
-		<div uib-collapse="addProductCollapsed">
-			<div class="row">
-				<div class="input-group">
-					<div class="col-sm-6">
-						<div class="input-group-addon"><i class="fa fa-search"></i></div>
-						
-						<input type="text" class="form-control" placeholder="naam" ng-model="AddProductSearch.name">
-					</div>
-					<select id="pricecategory" class="form-control col-sm-6" 
-						ng-model="pricecategory" 
-						ng-options="category as category.name for category in pricecategories track by category._id"
-						ng-change="$ctrl.UpdatePriceCategory(pricecategory)">
+						ng-model-options="{ updateOn: 'blur' }">
 						<option value="">Prive</option>
 					</select>	
 				</div>
-			</div>
-			<ul id="addProductList" class="list-group">	
-				<li class="list-group-item row" ng-repeat="product in products | filter:AddProductSearch | orderBy: 'name' as filtered">
-					<p class="col-sm-6">{{product.code}} {{product.name}} {{product.unitprice | currency: "€"}}</p><button class="btn btn-default col-sm-1" ng-click="$ctrl.Add(product)">Toevoegen</button>
-				</li>
-			</ul>
-			<p ng-hide="filtered.length">Geen resultaten</p>
-		</div>
+				<div class="form-group">
+					<label for="Naam">Naam evenement *</label>
+					<input type="text" class="form-control" id="NaamEvenement" placeholder='Evenement' 
+						ng-model='$ctrl.order.name' 
+						ng-change="$ctrl.save()">
+				</div>
+				<div class="form-group">
+					<label>Start Evenement: </label>
+					<a ng-click="eventstartCollapsed = !eventstartCollapsed">{{$ctrl.order.eventstart | date:'EEE dd/MM/yy HH:mm'}}
+						<i class="fa fa-pencil fa" aria-hidden="true"></i>
+					</a>
+					<div uib-collapse="eventstartCollapsed">
+						<div class="well">
+							<uib-datepicker ng-model="$ctrl.order.eventstart" datepicker-options="$ctrl.options" >
+							</uib-datepicker>
+							<uib-timepicker ng-model="$ctrl.order.eventstart" ng-change="$ctrl.changedTime()" show-meridian="ismeridian" >
+							</uib-timepicker>
+						</div>
+					</div>
+				</div>
+
+				<div class="form-group">
+					<label>Einde Evenement: </label>
+					<a ng-click="eventstopCollapsed = !eventstopCollapsed">{{$ctrl.order.eventstop | date:'EEE dd/MM/yy HH:mm'}}
+						<i class="fa fa-pencil fa" aria-hidden="true"></i>
+					</a>
+					<div uib-collapse="eventstopCollapsed">
+						<div class="well">
+							<uib-datepicker ng-model="$ctrl.order.eventstop" datepicker-options="$ctrl.options">
+							</uib-datepicker>
+							<uib-timepicker ng-model="$ctrl.order.eventstop" show-meridian="ismeridian" >
+							</uib-timepicker>
+						</div>
+					</div>
+				</div>
+
+				<div class="form-group">
+						<label>Afhaal tijdstip: </label>
+						<a ng-click="pickupCollapsed = !pickupCollapsed">{{$ctrl.order.pickupdate | date:'EEE dd/MM/yy HH:mm'}}
+							<i class="fa fa-pencil fa" aria-hidden="true"></i>
+						</a>
+					<div uib-collapse="pickupCollapsed">
+						<div class="well">
+							<uib-datepicker ng-model="$ctrl.order.pickupdate" datepicker-options="$ctrl.options">
+							</uib-datepicker>
+							<uib-timepicker ng-model="$ctrl.order.pickupdate" show-meridian="ismeridian" >
+							</uib-timepicker>
+						</div>
+					</div>
+				</div>
+
+				<div class="form-group">
+					<label>Retour moment: </label>
+					<a ng-click="returnCollapsed = !returnCollapsed">{{$ctrl.order.returndate | date:'EEE dd/MM/yy HH:mm'}}
+						<i class="fa fa-pencil fa" aria-hidden="true"></i>
+					</a>
+					<div uib-collapse="returnCollapsed">
+						<div class="well">
+							<uib-datepicker ng-model="$ctrl.order.returndate" datepicker-options="$ctrl.options">
+							</uib-datepicker>
+							<uib-timepicker ng-model="$ctrl.order.returndate" show-meridian="ismeridian" >
+							</uib-timepicker>
+						</div>
+					</div>
+				</div>
+
+				<h3>Product lijst</h3>
+					<div class="form-group row">
+						<div class="col-sm-2">
+							<div class="input-group">
+								<div class="input-group-addon"><i class="fa fa-search"></i></div>
+								
+								<input type="text" class="form-control" placeholder="sku" ng-model="searchProduct2.product.code">
+							</div>
+						</div>
+						<div class="col-sm-2">
+							<div class="input-group">
+								<div class="input-group-addon"><i class="fa fa-search"></i></div>
+								
+								<input type="text" class="form-control" placeholder="naam" ng-model="searchProduct2.product.name">
+							</div>      
+						</div>
+						<button class="btn btn-primary" ng-click="$ctrl.sameNumbers()">Aantallen overnemen</button>
+						<button class="btn btn-primary" ng-click="$ctrl.resetNumbers()">Reset</button>
+					</div>
+				<table class="table">
+					<thead>
+						<tr>
+							<th>
+								<a href="#" ng-click="sortType = 'product.code'; sortReverse = !sortReverse">
+									SKU
+									<span ng-show="sortType == 'product.code' && !sortReverse" class="fa fa-caret-down"></span>
+									<span ng-show="sortType == 'product.code' && sortReverse" class="fa fa-caret-up"></span>
+								</a>
+							</th>
+							<th>
+								<a href="#" ng-click="sortType = 'product.name'; sortReverse = !sortReverse">
+									Naam
+									<span ng-show="sortType == 'product.name' && !sortReverse" class="fa fa-caret-down"></span>
+									<span ng-show="sortType == 'product.name' && sortReverse" class="fa fa-caret-up"></span>
+								</a>
+							</th>
+							<th>Stock</th>
+							<th>Tekort</th>
+							<th>Uitgeleend</th>
+							<th>Beschikbaar</th>
+							<th>Aangevraagd</th>
+							<th>Goedgekeurd</th>
+							<th>Gekregen</th>
+							<th>Terug</th>
+							<th>Tekort</th>
+							<th>Prijs</th>
+							<th>Totaal</th>
+							<th>Commentaar</th>
+						</tr>
+					</thead>
+					<tbody>
+						<!-- <tr ng-repeat-start="productitem in $ctrl.order.products | orderBy:sortType:sortReverse | filter:searchProduct2 "> -->
+						<tr ng-repeat="productitem in $ctrl.order.products | orderBy:sortType:sortReverse | filter:searchProduct2 ">
+							
+							<td>{{productitem.product.code}}</td>
+							<td>{{productitem.product.name}}</td>
+							<td>{{productitem.product.stock}}</td>
+							<td>{{productitem.product.short}}</td>
+							<td>{{productitem.product.away}}</td>
+							<td>{{productitem.product.available}}</td>
+							<td>{{productitem.ordered}}</td>
+							<td>
+								<input type="number" class="qty" 
+									ng-model="productitem.approved" 
+									ng-disabled="$ctrl.order.state!='DRAFT' && $ctrl.order.state != 'ORDERED'"
+									ng-change="$ctrl.save()"
+									ng-model-options="{ updateOn: 'blur' }">
+							</td>
+							<td>
+								<input type="number" class="qty" 
+									ng-model="productitem.received" 
+									ng-disabled="$ctrl.order.state!='APPROVED' && $ctrl.order.state != 'CANCELLED'"
+									ng-change="$ctrl.save()"
+									ng-model-options="{ updateOn: 'blur' }">
+							</td>
+							<td>
+								<input type="number" class="qty" 
+									ng-model="productitem.returned" 
+									ng-disabled="$ctrl.order.state!='DELIVERED'"
+									ng-change="$ctrl.save()"
+									ng-model-options="{ updateOn: 'blur' }">
+							</td>
+							<td>
+								{{productitem.received - productitem.returned}}
+							</td>
+							<td><input type="number" class="price" 
+								ng-model="productitem.unitprice" 
+								ng-disabled="$ctrl.order.state=='CANCELLED' || $ctrl.order.state == 'CLOSED'" 
+								ng-change="$ctrl.save()"
+								ng-model-options="{ updateOn: 'blur' }"></td>
+							<td>{{productitem.unitprice * productitem.received | currency:'€' }}	</td>
+							<td><input type="text" class="item_comment_field" 
+								ng-model="productitem.comment"
+								ng-change="$ctrl.save()"
+								ng-model-options="{ updateOn: 'blur' }"></td>
+						</tr>
+					</tbody>
+				</table>
+				<h4>Totaal te betalen: {{$ctrl.order.products | totalSumPriceQty:'received':'unitprice' | currency:'€' }}</h4>
+				<h4>Reeds betaald:</h4>
+				<button class="btn btn-default" ng-click="addProductCollapsed=!addProductCollapsed">+</button>
+				<div uib-collapse="addProductCollapsed">
+					<div class="row">
+						<div class="input-group">
+							<div class="col-sm-6">
+								<div class="input-group-addon"><i class="fa fa-search"></i></div>
+								
+								<input type="text" class="form-control" placeholder="naam" ng-model="AddProductSearch.name">
+							</div>
+							<select id="pricecategory" class="form-control col-sm-6" 
+								ng-model="pricecategory" 
+								ng-options="category as category.name for category in pricecategories track by category._id"
+								ng-change="$ctrl.UpdatePriceCategory(pricecategory)">
+								<option value="">Prive</option>
+							</select>	
+						</div>
+					</div>
+					<ul id="addProductList" class="list-group">	
+						<li class="list-group-item row" ng-repeat="product in products | filter:AddProductSearch | orderBy: 'name' as filtered">
+							<p class="col-sm-6">{{product.code}} {{product.name}} {{product.unitprice | currency: "€"}}</p><button class="btn btn-default col-sm-1" ng-click="$ctrl.Add(product)">Toevoegen</button>
+						</li>
+					</ul>
+					<p ng-hide="filtered.length">Geen resultaten</p>
+				</div>
 
 
-		<div class="form-group">
-			<label for="state">Status</label>
-			<select class="form-control" id="state" 
-					ng-model="$ctrl.order.state" 
-					ng-show="!$ctrl.orderService.orderIsEvaluated($ctrl.order)"
-					ng-change="$ctrl.save()"
-					ng-model-options="{ updateOn: 'blur' }">
-				<option value="DRAFT">Concept</option>
-				<option value="ORDERED">Aangevraagd</option>
-				<option value="APPROVED">Goedgekeurd</option>
-				<option value="DELIVERED">Uitgeleend</option>
-				<option value="CANCELLED">Geannuleerd</option>
-			</select>
-			<div ng-show="$ctrl.orderService.orderIsEvaluated($ctrl.order)">
-				{{$ctrl.order.state}}
-			</div>
-		</div>
-	</form>
-
-	<div id="comments">
-		<h2>Berichten</h2>
-
-		<div class="panel panel-default" ng-repeat="comment in $ctrl.order.comments">
-			<div class="panel-heading">
-				<h3 class="panel-title">{{comment.creator.name}} | {{comment.date | date:'medium':'+01:00'}}</h3>
-			</div>
-			<div class="panel-body">
-				{{comment.body}}
-			</div>
-		</div>	
-	</div>
-	<h3>Nieuw bericht</h3>
-	<textarea class="form-control" ng-model="$ctrl.comment_body" class="col-sm-12"  rows="3"></textarea>
-	<button type="button" class="btn btn-default"  ng-click="$ctrl.addComment()">Add comment</button>
-	<br>
-	<div id="shortages" ng-show="$ctrl.orderService.orderIsEvaluated($ctrl.order)">
-		<h2>Tekorten</h2>
-		<table class="table">
-			<thead>
-				<th>Product</th>
-				<th>Tekort</th>
-				<th>Ok</th>
-				<th>Commentaar</th>
-				<th>Opgelost</th>
-
-			</thead>
-			<tbody>
-				<tr ng-repeat="shortage in $ctrl.order.shortages" ng-class="{resolved: shortage.qty_short <= shortage.qty_ok, short: shortage.qty_short > shortage.qty_ok}">
-					<td>{{shortage.product.name}}</td>
-					<td>{{shortage.qty_short}}</td>
-					<td><input type="number" ng-model="shortage.qty_ok" 
-							ng-disabled="$ctrl.orderService.orderIsClosed($ctrl.order)"
+				<div class="form-group">
+					<label for="state">Status</label>
+					<select class="form-control" id="state" 
+							ng-model="$ctrl.order.state" 
+							ng-show="!$ctrl.orderService.orderIsEvaluated($ctrl.order)"
 							ng-change="$ctrl.save()"
 							ng-model-options="{ updateOn: 'blur' }">
-					</td>
-					<td>
-						<input type="text" ng-model="shortage.comment" 
-							ng-disabled="$ctrl.orderService.orderIsClosed($ctrl.order)"
-							ng-change="$ctrl.save()"
-							ng-model-options="{ updateOn: 'blur' }">
-					</td>
-					<td>
-						<input type="checkbox" ng-model="shortage.resolved" 
-							ng-disabled="$ctrl.orderService.orderIsClosed($ctrl.order)"
-							ng-change="$ctrl.save()">
-					</td>
-				</tr>
-			</tbody>
-		</table>
+						<option value="DRAFT">Concept</option>
+						<option value="ORDERED">Aangevraagd</option>
+						<option value="APPROVED">Goedgekeurd</option>
+						<option value="DELIVERED">Uitgeleend</option>
+						<option value="CANCELLED">Geannuleerd</option>
+					</select>
+					<div ng-show="$ctrl.orderService.orderIsEvaluated($ctrl.order)">
+						{{$ctrl.order.state}}
+					</div>
+				</div>
+			</form>
+
+			<div id="comments" ng-show="$ctrl.isTabVisible($ctrl.TAB_COMMENTS)">
+				<h2>Berichten</h2>
+
+				<div class="panel panel-default" ng-repeat="comment in $ctrl.order.comments">
+					<div class="panel-heading">
+						<h3 class="panel-title">{{comment.creator.name}} | {{comment.date | date:'medium':'+01:00'}}</h3>
+					</div>
+					<div class="panel-body">
+						{{comment.body}}
+					</div>
+				</div>
+				<h3>Nieuw bericht</h3>
+				<textarea class="form-control" ng-model="$ctrl.comment_body" class="col-sm-12"  rows="3"></textarea>
+				<button type="button" class="btn btn-default"  ng-click="$ctrl.addComment()">Add comment</button>
+			</div>
+			
+			<br>
+			<div id="shortages" ng-show="$ctrl.orderService.orderIsEvaluated($ctrl.order)">
+				<h2>Tekorten</h2>
+				<table class="table">
+					<thead>
+						<th>Product</th>
+						<th>Tekort</th>
+						<th>Ok</th>
+						<th>Commentaar</th>
+						<th>Opgelost</th>
+
+					</thead>
+					<tbody>
+						<tr ng-repeat="shortage in $ctrl.order.shortages" ng-class="{resolved: shortage.qty_short <= shortage.qty_ok, short: shortage.qty_short > shortage.qty_ok}">
+							<td>{{shortage.product.name}}</td>
+							<td>{{shortage.qty_short}}</td>
+							<td><input type="number" ng-model="shortage.qty_ok" 
+									ng-disabled="$ctrl.orderService.orderIsClosed($ctrl.order)"
+									ng-change="$ctrl.save()"
+									ng-model-options="{ updateOn: 'blur' }">
+							</td>
+							<td>
+								<input type="text" ng-model="shortage.comment" 
+									ng-disabled="$ctrl.orderService.orderIsClosed($ctrl.order)"
+									ng-change="$ctrl.save()"
+									ng-model-options="{ updateOn: 'blur' }">
+							</td>
+							<td>
+								<input type="checkbox" ng-model="shortage.resolved" 
+									ng-disabled="$ctrl.orderService.orderIsClosed($ctrl.order)"
+									ng-change="$ctrl.save()">
+							</td>
+						</tr>
+					</tbody>
+				</table>
+			</div>
+			<button type="button" class="btn btn-default" ng-click="$ctrl.evaluate()">Evalueer</button>
+			<button class="btn btn-danger" ng-click="$ctrl.remove()">Verwijderen</button>
+			<button type="button" class="btn btn-default" ng-click="$ctrl.orderService.reOpen($ctrl.order)" 
+				ng-show="$ctrl.orderService.orderIsEvaluated($ctrl.order)">Heropen order</button>
+		</div>
 	</div>
-	<button type="button" class="btn btn-default" ng-click="$ctrl.evaluate()">Evalueer</button>
-	<button class="btn btn-danger" ng-click="$ctrl.remove()">Verwijderen</button>
-	<button type="button" class="btn btn-default" ng-click="$ctrl.orderService.reOpen($ctrl.order)" 
-		ng-show="$ctrl.orderService.orderIsEvaluated($ctrl.order)">Heropen order</button>
 </div>

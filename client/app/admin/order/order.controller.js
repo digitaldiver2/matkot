@@ -14,6 +14,11 @@ class OrderComponent {
     this.socket = socket;
     this.$q = $q;
 
+    this.options = {
+      initDate: new Date(),
+      showWeeks: false
+    };
+
     // only used to give an array to the socket sync, and prevent an error of array being undefined
     this.dummyOrders = [];
     this.comment_body = "";
@@ -22,6 +27,14 @@ class OrderComponent {
     });
 
     this.loading = true;
+
+    this.TAB_INFO = 'INFO';
+    this.TAB_SHOP = 'SHOP'
+    this.TAB_MESSAGES = 'MESSAGES';
+    this.TAB_SHORTAGE = 'SHORTAGE';
+    this.TAB_CART = 'CART';
+
+    this.currenttab = this.TAB_INFO;
 
   }
 
@@ -219,6 +232,17 @@ class OrderComponent {
         this.errMsg = err;
       })
   }
+
+  selectTab(TAB) {
+    // console.log('selectTab:' + TAB);
+    this.currenttab = TAB;
+  }
+
+  isTabVisible(Tab) {
+    // console.log('isTabVisible: ' + Tab + ', current: ' + this.currenttab);
+    return this.currenttab === Tab;
+  }
+
 }
 
 angular.module('matkotApp.admin')

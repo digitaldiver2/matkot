@@ -13,17 +13,14 @@ class InfoComponent {
 		this.$scope.isDraft = false;
 		this.test = false;
 
-		this.$scope.closedDates = function (calendarDate, mode) {
-			return mode === 'day' && calendarDate.getDay() != 3;
-		};
-
 		this.retouroptions = {
+			minDate: new Date(),
 			initDate: new Date(),
 			showWeeks: false
 		};
 
 		this.pickupoptions = {
-			minDate: this.$scope.request.pickupdate,
+			minDate: new Date(),
 			initDate: new Date(),
 			showWeeks: false
 		};
