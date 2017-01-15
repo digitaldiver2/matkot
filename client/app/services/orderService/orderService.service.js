@@ -32,8 +32,6 @@ angular.module('matkotApp.orderService', [])
 	    }
 	}
 
-
-
     this.getUserOrders = function (user_id) {
     	return $http.get('/api/orders/user/' + user_id)
     		.then(res => {
@@ -51,18 +49,26 @@ angular.module('matkotApp.orderService', [])
 		order.returndate = new Date(order.returndate );
     }
 
+    this.calcUnResolvedShortages = function (order) {
+    	var count = 0;
+    	order.unresolved_shortages = order.shortages.filter(function (obj) { return !obj.resolved}).length;
+    }
+
     this.getOrder = function (order_id) {
     	return $http.get('/api/orders/' + order_id)
     		.then(res => {
     			var order = res.data;
     			order.staged_comments = [];
     			this.convertDates(order);
+    			this.calcUnResolvedShortages(order);
     			return order;
     		})
     		.catch(err => {
     			return $q.reject(err.data);
     		});
     }
+
+
 
     this.getGroupOrders = function (group_id) {
     	return $http.get('/api/orders/group/' + group_id)

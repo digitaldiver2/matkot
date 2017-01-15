@@ -153,7 +153,7 @@ export function show(req, res) {
     .populate('group')
     .populate('products.product')
     .populate('shortages.product')
-    .populate('owner')
+    .populate('owner', {'name':true, 'email': true, 'phone': true})
     .populate('comments.creator', 'name')
     .exec()
     .then(handleEntityNotFound(res))

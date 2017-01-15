@@ -32,6 +32,7 @@ var OrderSchema = new mongoose.Schema({
   modifier: {type: mongoose.Schema.Types.ObjectId, ref: 'User'},
   creationdate: Date,
   modifieddate: Date,
+  requestdate: Date,
   group: {type: mongoose.Schema.Types.ObjectId, ref: 'Usergroup'},
   owner: {type: mongoose.Schema.Types.ObjectId, ref: 'User'},
   eventstart: Date,

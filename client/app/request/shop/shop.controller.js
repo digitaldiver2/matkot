@@ -22,6 +22,14 @@ class ShopComponent {
     $scope.$on('$destroy', function () {
       socket.unsyncUpdates('order');
     });
+
+    this.TAB_INFO = 'INFO';
+    this.TAB_SHOP = 'SHOP'
+    this.TAB_MESSAGES = 'MESSAGES';
+    this.TAB_SHORTAGE = 'SHORTAGE';
+    this.TAB_CART = 'CART';
+
+    this.currenttab = this.TAB_INFO;
   }
 
   $onInit () {
@@ -140,6 +148,16 @@ class ShopComponent {
           this.errMsg = err;
         });
     }
+  }
+
+  selectTab(TAB) {
+    // console.log('selectTab:' + TAB);
+    this.currenttab = TAB;
+  }
+
+  isTabVisible(Tab) {
+    // console.log('isTabVisible: ' + Tab + ', current: ' + this.currenttab);
+    return this.currenttab === Tab;
   }
 }
 
