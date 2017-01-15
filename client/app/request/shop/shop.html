@@ -25,7 +25,7 @@
 				<h2>Info</h2>
 				<h3>{{$ctrl.order.name}}</h3>
 				<section>
-					<h4>Verantwoordelijke</h4>
+					<h4>Verantwoordelijke:</h4>
 					<address>
 						{{$ctrl.order.owner.name}}<br>
 						Email: {{$ctrl.order.owner.email}}</br>
@@ -34,14 +34,17 @@
 				</section>
 				<section>
 					<h4>Evenement: </h4>
-					van <strong><time>{{$ctrl.order.eventstart | date:'EEE dd/MM/yy HH:mm'}}</time></strong>
-					tot <strong><time>{{$ctrl.order.eventstop  | date:'EEE dd/MM/yy HH:mm'}}</time></strong>
+					van <strong>{{$ctrl.order.eventstart | date:'EEE dd/MM/yy HH:mm'}}</strong>
+					tot <strong>{{$ctrl.order.eventstop  | date:'EEE dd/MM/yy HH:mm'}}</strong>
 				</section>
 				<section>
 					<h4>Uitlening:</h4>
-					afhalen op <strong><time>{{$ctrl.order.pickupdate | date:'EEE dd/MM/yy HH:mm'}}</time></strong><br>
-					inleveren op <strong><time> {{$ctrl.order.returndate | date:'EEE dd/MM/yy HH:mm'}}</time></strong>
+					afhalen op <strong>{{$ctrl.order.pickupdate | date:'EEE dd/MM/yy HH:mm'}}</strong><br>
+					inleveren op <strong> {{$ctrl.order.returndate | date:'EEE dd/MM/yy HH:mm'}}</strong>
 				</section>
+				<p ng-show="$ctrl.order.requestdate">Aangevraagd op {{$ctrl.order.requestdate | date: 'EEE dd/MM/yy HH:mm'}}</p>
+
+
 			</div>
 			<div id="shop" ng-show="$ctrl.isTabVisible($ctrl.TAB_SHOP) && $ctrl.orderService.orderIsDraft($ctrl.order)">
 

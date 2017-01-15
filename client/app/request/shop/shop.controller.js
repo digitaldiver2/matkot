@@ -123,6 +123,9 @@ class ShopComponent {
 
   saveAndRequest () {
   	this.order.state = 'ORDERED';
+    if (!this.order.requestdate) {
+      this.order.requestdate = new Date();
+    }
     this.save();
   }
 
