@@ -137,4 +137,37 @@ angular.module('matkotApp.productService', [])
     		});
     }
 
+    this.matchByProductCategory = function (category) {
+        return function (product) {
+            if (category == undefined) {
+                return false;
+            }
+            if (category._id == 0) {//all
+                return true;
+            } else {
+                return product.productfamily.indexOf(category._id) > -1;
+            }
+        }
+    }
+
+    //sync product.ordered with order.product.ordered
+    this.syncProductsWithOrder = function (products, order) {
+        for (var i=0; i < order.products.length; i++) {
+            var productitem = order.products[i];
+            var shopproduct = _.find(products, {_id: productitem.product._id});
+            // TODO: sync other fields too: received, approved, ..
+            if (shopproduct) {
+                shopproduct.ordered = productitem.ordered;
+                shopproduct.approved = productitem.approved;
+                shopproduct.received = productitem.received;
+                shopproduct.returned = productitem.returned;
+            } else if (shopproduct.ordered && shopproduct.ordered > 0) {
+                shopproduct.ordered = 0;
+                shopproduct.approved = 0;
+                shopproduct.received = 0;
+                shopproduct.returned = 0;
+            }
+        }
+    }
+
   });

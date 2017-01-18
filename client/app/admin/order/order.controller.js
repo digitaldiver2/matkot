@@ -36,6 +36,8 @@ class OrderComponent {
 
     this.currenttab = this.TAB_INFO;
 
+    this.isSyncing = false;
+
   }
 
   $onInit () {
@@ -44,14 +46,19 @@ class OrderComponent {
     var productQ = this.productService.getProducts();
     var categoryQ = this.productService.getPriceCategories();
     var userGroupQ = this.userService.getUserGroups();
+    var productFamilyQ = this.productService.getProductFamilies();
 
-    this.$q.all([orderQ, productQ, categoryQ, userGroupQ]).then(answer=> {
+    this.$q.all([orderQ, productQ, categoryQ, userGroupQ, productFamilyQ]).then(answer=> {
       this.order = answer[0];
-      this.$scope.products = answer[1];
+      this.products = answer[1];
       this.$scope.pricecategories = answer[2];
       this.$scope.groups = answer[3];
+      this.productcategories = answer[4];
+      //set all as default option
+      var showAllId = this.productcategories.push({name:"", _id:0}) - 1;
+      this.categoryFilter = this.productcategories[showAllId];
 
-      this.productService.selectCorrectPrice(this.$scope.products, this.order.pricecategory);
+      this.productService.selectCorrectPrice(this.products, this.order.pricecategory);
 
       this.prepareOrder();
       this.loading = false;
@@ -81,13 +88,9 @@ class OrderComponent {
       if (item._id == this.order._id) {
         this.ReloadOrder(this.order);
       } else {
-        _.merge(this.order, item);
+        // _.merge(this.order, item);
       }
     });
-  }
-
-  changedTime() {
-    console.log('yo');
   }
 
   ReloadOrder (order) {
@@ -98,6 +101,7 @@ class OrderComponent {
   }
 
   prepareOrder () {
+    this.productService.syncProductsWithOrder(this.products, this.order);
     this.CalculateTotals();
     for (var i=0; i<this.order.products.length; i++) {
       this.orderService.calcProductAvailability(this.order, this.order.products[i].product);
@@ -119,12 +123,6 @@ class OrderComponent {
       chargedTotal += product.received * product.unitprice;
     }
   }
-
-  Add (product) {
-    this.order.products.push({'product': product, 'unitprice': product.unitprice});
-    this.save();
-  }
-
 
   remove () {
   	var r = confirm("Ben je zeker dat je dit order wilt verwijderen?");
@@ -231,6 +229,22 @@ class OrderComponent {
       .catch(err => {
         this.errMsg = err;
       })
+  }
+
+  updateProductInOrder (product) {
+    this.orderService.updateOrderProduct(this.order, product);
+    this.instantSave();
+  }
+
+  instantSave() {
+    if (this.isSyncing) {
+      this.orderService.saveOrder(this.order).then(response => {
+      });
+    }
+  }
+
+  saveBtn () {
+    this.save();
   }
 
   selectTab(TAB) {

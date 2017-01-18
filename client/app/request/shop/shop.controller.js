@@ -19,6 +19,7 @@ class ShopComponent {
     this.comment_body = "";
 
     this.loading = true;
+
     $scope.$on('$destroy', function () {
       socket.unsyncUpdates('order');
     });
@@ -46,7 +47,7 @@ class ShopComponent {
         //handle productcategory
         this.productcategories = answer[0];
         //set all as default option
-        var showAllId = this.productcategories.push({name:"Alles", _id:0}) - 1;
+        var showAllId = this.productcategories.push({name:"", _id:0}) - 1;
         this.categoryFilter = this.productcategories[showAllId];
 
         //handle order
@@ -82,31 +83,13 @@ class ShopComponent {
   	}
   }
 
-  matchByGroup = function (category) {
-  	return function (product) {
-  		if (category == undefined) {
-  			return false;
-  		}
-  		if (category._id == 0) {//all
-  			return true;
-  		} else {
-  			return product.productfamily.indexOf(category._id) > -1;
-  		}
-  	}
-  }
-
   syncProductList () {
-  	for (var i=0; i <this.order.products.length; i++) {
-  		var productitem = this.order.products[i];
-      var shopproduct = _.find(this.products, {_id: productitem.product._id});
-      if (shopproduct) {
-    		shopproduct.ordered = productitem.ordered;
-      }
-  	}
+  	this.productService.syncProductsWithOrder(this.products, this.order);
   }
 
   updateProductInOrder (product) {
     this.orderService.updateOrderProduct(this.order, product);
+    this.instantSave();
   }
 
   instantSave() {

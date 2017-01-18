@@ -13,8 +13,8 @@ angular.module('matkotApp.orderService', [])
 	this.STATE_REOPENED = 'REOPENED';
 
 	this.saveOrder = function (order) {
-		order.products = order.products.filter(function (product) {
-	      return product.ordered > 0;
+		order.products = order.products.filter(product => {
+	      return this.OrderProductUsed(product);
 	    });
 
 	    if (order._id) {
@@ -51,7 +51,7 @@ angular.module('matkotApp.orderService', [])
 
     this.calcUnResolvedShortages = function (order) {
     	var count = 0;
-    	order.unresolved_shortages = order.shortages.filter(function (obj) { return !obj.resolved}).length;
+    	order.unresolved_shortages = order.shortages? order.shortages.filter(function (obj) { return !obj.resolved}).length : [];
     }
 
     this.getOrder = function (order_id) {
@@ -66,6 +66,10 @@ angular.module('matkotApp.orderService', [])
     		.catch(err => {
     			return $q.reject(err.data);
     		});
+    }
+
+    this.OrderProductUsed = function (product) {
+    	return product.ordered || product.approved || product.received || product.returned;
     }
 
 
@@ -342,42 +346,29 @@ angular.module('matkotApp.orderService', [])
 
     //update product in order (only in draft mode)
     this.updateOrderProduct = function (order, product) {
-	    var index = -1;
-	    var productitem = null;
+	    var productitem = _.find(order.products, (item) => {
+	    	return item.product._id === product._id;
+	    });
 
-	    for (var i=0; i<order.products.length; i++) {
-	      productitem = order.products[i];
-	      if (productitem.product._id == product._id) {
-	        index = i;
-
-	        break;
-	      }
-	    }
-
-	    if (product.ordered != 0) {
-	      if (index != -1) {
+	    if (productitem) {
+	    	console.log('update');
 	        productitem.ordered = product.ordered;
-	      } else {
-	        //add item
-
-	        order.products.push({
-	          'product': product,
-	          'ordered': product.ordered,
-	          'unitprice': product.unitprice,
-	          'approved': 0,
-	          'received': 0,
-	          'returned': 0  
-	        });
-	      }
+	        productitem.approved = product.approved;
+	        productitem.received = product.received;
+	        productitem.returned = product.returned;
+	        productitem.unitprice = product.unitprice;
+	        // TODO: remove item when all is zero (except unitprice)
 	    } else {
-	      if (index != -1) {
-	        //remove item
-	        order.products.splice(index, 1);
-	      } 
-	        // else impossible state, but do nothing
+	    	console.log('push');
+	    	order.products.push({	
+	          'product': product,
+	          'ordered': product.ordered ? product.ordered: 0,
+	          'unitprice': product.unitprice,
+	          'approved': product.approved ? product.approved : 0,
+	          'received': product.received ? product.received : 0,
+	          'returned': product.returned ? product.returned : 0 
+	        });
 	    }
-
-	    this.saveOrder(order);
 	  }
 
   });

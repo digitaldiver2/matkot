@@ -20,6 +20,38 @@
 					<a ng-click="$ctrl.selectTab($ctrl.TAB_SHORTAGE)">Tekorten<span class="badge">{{$ctrl.order.unresolved_shortages}}</span></a>
 				</li>
 			</ul>
+			<br>
+			<div id="state">
+				<div class="form-group">
+					<label for="state">Status</label>
+					<select class="form-control" id="state" 
+							ng-model="$ctrl.order.state" 
+							ng-show="!$ctrl.orderService.orderIsEvaluated($ctrl.order)"
+							ng-change="$ctrl.instantSave()"
+							ng-model-options="{ updateOn: 'blur' }">
+						<option value="DRAFT">Concept</option>
+						<option value="ORDERED">Aangevraagd</option>
+						<option value="APPROVED">Goedgekeurd</option>
+						<option value="DELIVERED">Uitgeleend</option>
+						<option value="CANCELLED">Geannuleerd</option>
+					</select>
+					<div ng-show="$ctrl.orderService.orderIsEvaluated($ctrl.order)">
+						{{$ctrl.order.state}}
+					</div>
+				</div>
+			</div>
+			<hr>
+			<div>
+				<button type="button" class="btn btn-default" ng-click="$ctrl.evaluate()">Evalueer</button>
+				<button class="btn btn-danger" ng-click="$ctrl.remove()">Verwijderen</button>
+				<button type="button" class="btn btn-default" ng-click="$ctrl.orderService.reOpen($ctrl.order)" 
+				ng-show="$ctrl.orderService.orderIsEvaluated($ctrl.order)">Heropen order</button>
+				<button type="button" class="btn btn-success" ng-click="$ctrl.saveBtn()" ng-show="!$ctrl.isSyncing" ng-enabled="!$ctrl.isSyncing">
+					Opslaan
+				</button>
+				<input type="checkbox" ng-model="$ctrl.isSyncing">Sync
+
+			</div>
 		</div>
 		<div class="col-sm-9 col-md-10 sidebar">
 			<form id="info" ng-show="$ctrl.isTabVisible($ctrl.TAB_INFO)">
@@ -35,7 +67,7 @@
 					<select id="Category" class="form-control" 
 						ng-model="$ctrl.order.group" 
 						ng-options="group as group.name for group in groups track by group._id"
-						ng-change="$ctrl.save()"
+						ng-change="$ctrl.instantSave()"
 						ng-model-options="{ updateOn: 'blur' }">
 						<option value="">Prive</option>
 					</select>	
@@ -44,7 +76,7 @@
 					<label for="Naam">Naam evenement *</label>
 					<input type="text" class="form-control" id="NaamEvenement" placeholder='Evenement' 
 						ng-model='$ctrl.order.name' 
-						ng-change="$ctrl.save()">
+						ng-change="$ctrl.instantSave()">
 				</div>
 				<div class="form-group">
 					<label>Start Evenement: </label>
@@ -105,26 +137,27 @@
 						</div>
 					</div>
 				</div>
-
-				<h3>Product lijst</h3>
-					<div class="form-group row">
-						<div class="col-sm-2">
-							<div class="input-group">
-								<div class="input-group-addon"><i class="fa fa-search"></i></div>
-								
-								<input type="text" class="form-control" placeholder="sku" ng-model="searchProduct2.product.code">
-							</div>
+			</form>
+			<div id="cart" ng-show="$ctrl.isTabVisible($ctrl.TAB_CART)">
+				<h3>Winkelmandje</h3>
+				<div class="form-group row">
+					<div class="col-sm-2">
+						<div class="input-group">
+							<div class="input-group-addon"><i class="fa fa-search"></i></div>
+							
+							<input type="text" class="form-control" placeholder="sku" ng-model="searchProduct2.product.code">
 						</div>
-						<div class="col-sm-2">
-							<div class="input-group">
-								<div class="input-group-addon"><i class="fa fa-search"></i></div>
-								
-								<input type="text" class="form-control" placeholder="naam" ng-model="searchProduct2.product.name">
-							</div>      
-						</div>
-						<button class="btn btn-primary" ng-click="$ctrl.sameNumbers()">Aantallen overnemen</button>
-						<button class="btn btn-primary" ng-click="$ctrl.resetNumbers()">Reset</button>
 					</div>
+					<div class="col-sm-2">
+						<div class="input-group">
+							<div class="input-group-addon"><i class="fa fa-search"></i></div>
+							
+							<input type="text" class="form-control" placeholder="naam" ng-model="searchProduct2.product.name">
+						</div>      
+					</div>
+					<button class="btn btn-primary" ng-click="$ctrl.sameNumbers()">Aantallen overnemen</button>
+					<button class="btn btn-primary" ng-click="$ctrl.resetNumbers()">Reset</button>
+				</div>
 				<table class="table">
 					<thead>
 						<tr>
@@ -159,7 +192,6 @@
 					<tbody>
 						<!-- <tr ng-repeat-start="productitem in $ctrl.order.products | orderBy:sortType:sortReverse | filter:searchProduct2 "> -->
 						<tr ng-repeat="productitem in $ctrl.order.products | orderBy:sortType:sortReverse | filter:searchProduct2 ">
-							
 							<td>{{productitem.product.code}}</td>
 							<td>{{productitem.product.name}}</td>
 							<td>{{productitem.product.stock}}</td>
@@ -171,21 +203,21 @@
 								<input type="number" class="qty" 
 									ng-model="productitem.approved" 
 									ng-disabled="$ctrl.order.state!='DRAFT' && $ctrl.order.state != 'ORDERED'"
-									ng-change="$ctrl.save()"
+									ng-change="$ctrl.instantSave()"
 									ng-model-options="{ updateOn: 'blur' }">
 							</td>
 							<td>
 								<input type="number" class="qty" 
 									ng-model="productitem.received" 
 									ng-disabled="$ctrl.order.state!='APPROVED' && $ctrl.order.state != 'CANCELLED'"
-									ng-change="$ctrl.save()"
+									ng-change="$ctrl.instantSave()"
 									ng-model-options="{ updateOn: 'blur' }">
 							</td>
 							<td>
 								<input type="number" class="qty" 
 									ng-model="productitem.returned" 
 									ng-disabled="$ctrl.order.state!='DELIVERED'"
-									ng-change="$ctrl.save()"
+									ng-change="$ctrl.instantSave()"
 									ng-model-options="{ updateOn: 'blur' }">
 							</td>
 							<td>
@@ -194,64 +226,87 @@
 							<td><input type="number" class="price" 
 								ng-model="productitem.unitprice" 
 								ng-disabled="$ctrl.order.state=='CANCELLED' || $ctrl.order.state == 'CLOSED'" 
-								ng-change="$ctrl.save()"
+								ng-change="$ctrl.instantSave()"
 								ng-model-options="{ updateOn: 'blur' }"></td>
 							<td>{{productitem.unitprice * productitem.received | currency:'€' }}	</td>
 							<td><input type="text" class="item_comment_field" 
 								ng-model="productitem.comment"
-								ng-change="$ctrl.save()"
+								ng-change="$ctrl.instantSave()"
 								ng-model-options="{ updateOn: 'blur' }"></td>
 						</tr>
 					</tbody>
 				</table>
-				<h4>Totaal te betalen: {{$ctrl.order.products | totalSumPriceQty:'received':'unitprice' | currency:'€' }}</h4>
-				<h4>Reeds betaald:</h4>
-				<button class="btn btn-default" ng-click="addProductCollapsed=!addProductCollapsed">+</button>
-				<div uib-collapse="addProductCollapsed">
-					<div class="row">
-						<div class="input-group">
-							<div class="col-sm-6">
-								<div class="input-group-addon"><i class="fa fa-search"></i></div>
-								
-								<input type="text" class="form-control" placeholder="naam" ng-model="AddProductSearch.name">
-							</div>
-							<select id="pricecategory" class="form-control col-sm-6" 
-								ng-model="pricecategory" 
-								ng-options="category as category.name for category in pricecategories track by category._id"
-								ng-change="$ctrl.UpdatePriceCategory(pricecategory)">
-								<option value="">Prive</option>
-							</select>	
-						</div>
-					</div>
-					<ul id="addProductList" class="list-group">	
-						<li class="list-group-item row" ng-repeat="product in products | filter:AddProductSearch | orderBy: 'name' as filtered">
-							<p class="col-sm-6">{{product.code}} {{product.name}} {{product.unitprice | currency: "€"}}</p><button class="btn btn-default col-sm-1" ng-click="$ctrl.Add(product)">Toevoegen</button>
-						</li>
-					</ul>
-					<p ng-hide="filtered.length">Geen resultaten</p>
-				</div>
-
+			</div>
+			<div id="shop" ng-show="$ctrl.isTabVisible($ctrl.TAB_SHOP)">
 
 				<div class="form-group">
-					<label for="state">Status</label>
-					<select class="form-control" id="state" 
-							ng-model="$ctrl.order.state" 
-							ng-show="!$ctrl.orderService.orderIsEvaluated($ctrl.order)"
-							ng-change="$ctrl.save()"
-							ng-model-options="{ updateOn: 'blur' }">
-						<option value="DRAFT">Concept</option>
-						<option value="ORDERED">Aangevraagd</option>
-						<option value="APPROVED">Goedgekeurd</option>
-						<option value="DELIVERED">Uitgeleend</option>
-						<option value="CANCELLED">Geannuleerd</option>
-					</select>
-					<div ng-show="$ctrl.orderService.orderIsEvaluated($ctrl.order)">
-						{{$ctrl.order.state}}
-					</div>
+					<label for="searchfield">Product</label>
+					<input type="text" 
+						ng-model="searchfield.name">
 				</div>
-			</form>
+				<div class="form-group">
+					<label for="searchfield">SKU</label>
+					<input type="text" 
+						ng-model="searchfield.code">
+				</div>
+				<div class="form-group">
+					<label for="category">Product groep</label>
+					<select ng-model="$ctrl.categoryFilter" class="form-control"
+						ng-options="category.name for category in $ctrl.productcategories |orderBy:'name'">
+					</select>
 
-			<div id="comments" ng-show="$ctrl.isTabVisible($ctrl.TAB_COMMENTS)">
+				</div>
+				<div id="productlijst">
+					<table class="table">
+						<thead>
+							<tr>
+								<th>
+									SKU
+								</th>
+								<th>
+									Product
+								</th>
+								<th>
+									Prijs
+								</th>
+								<th>
+									Besch.
+								</th>
+								<th>
+									Gdgkrd.
+								</th>
+								<th>
+									Ontv.
+								</th>
+							</tr>
+						</thead>
+						<tbody>
+							<tr ng-repeat="product in $ctrl.products | orderBy:'name' | filter:searchfield | filter:$ctrl.productService.matchByProductCategory($ctrl.categoryFilter)"	>
+								<td>{{product.code}}</td>
+								<td><strong>{{product.name}}</strong></td>
+								<td>{{product.unitprice | currency:'€'}}</td>
+								<td>{{product.stock - product.ordered}}</td>
+								<td>
+									<input class="qty" type="number" ng-model="product.approved" 
+									id="approved" max="{{product.stock}}" 
+									min="0"
+									ng-change="$ctrl.updateProductInOrder(product)"
+									ng-model-options="{ updateOn: 'blur' }">
+								</td>
+								<td>
+									<input class="qty" type="number" ng-model="product.received" 
+									id="received"
+									min="0"
+									ng-change="$ctrl.updateProductInOrder(product)"
+									ng-model-options="{ updateOn: 'blur' }">
+								</td>
+							</tr>
+						</tbody>
+					</table>
+				</div>
+			</div>
+
+			<div id="comments" ng-show="$ctrl.isTabVisible($ctrl.TAB_MESSAGES)">
 				<h2>Berichten</h2>
 
 				<div class="panel panel-default" ng-repeat="comment in $ctrl.order.comments">
@@ -285,28 +340,25 @@
 							<td>{{shortage.qty_short}}</td>
 							<td><input type="number" ng-model="shortage.qty_ok" 
 									ng-disabled="$ctrl.orderService.orderIsClosed($ctrl.order)"
-									ng-change="$ctrl.save()"
+									ng-change="$ctrl.instantSave()"
 									ng-model-options="{ updateOn: 'blur' }">
 							</td>
 							<td>
 								<input type="text" ng-model="shortage.comment" 
 									ng-disabled="$ctrl.orderService.orderIsClosed($ctrl.order)"
-									ng-change="$ctrl.save()"
+									ng-change="$ctrl.instantSave()"
 									ng-model-options="{ updateOn: 'blur' }">
 							</td>
 							<td>
 								<input type="checkbox" ng-model="shortage.resolved" 
 									ng-disabled="$ctrl.orderService.orderIsClosed($ctrl.order)"
-									ng-change="$ctrl.save()">
+									ng-change="$ctrl.instantSave()">
 							</td>
 						</tr>
 					</tbody>
 				</table>
 			</div>
-			<button type="button" class="btn btn-default" ng-click="$ctrl.evaluate()">Evalueer</button>
-			<button class="btn btn-danger" ng-click="$ctrl.remove()">Verwijderen</button>
-			<button type="button" class="btn btn-default" ng-click="$ctrl.orderService.reOpen($ctrl.order)" 
-				ng-show="$ctrl.orderService.orderIsEvaluated($ctrl.order)">Heropen order</button>
 		</div>
 	</div>
 </div>
+r
