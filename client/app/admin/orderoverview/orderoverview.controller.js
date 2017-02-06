@@ -90,6 +90,9 @@ class OrderoverviewComponent {
   }
 
   Sort(v1, v2) {
+    // todo: handle dates (regex)
+    console.log(v1, v2);
+    console.log(v1.value, v2.value);
     return naturalSort()(v1.value, v2.value);
   }
 }

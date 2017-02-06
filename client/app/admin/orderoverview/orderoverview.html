@@ -53,10 +53,10 @@
 							</a>
 						</th>
 						<th>
-							<a href="#" ng-click="sortType = 'order.ordernumber'; sortReverse = !sortReverse">
+							<a href="#" ng-click="sortType = 'order.group.name'; sortReverse = !sortReverse">
 									Groep
-									<span ng-show="sortType == 'order.ordernumber' && !sortReverse" class="fa fa-caret-down"></span>
-									<span ng-show="sortType == 'order.ordernumber' && sortReverse" class="fa fa-caret-up"></span>
+									<span ng-show="sortType == 'order.group.name' && !sortReverse" class="fa fa-caret-down"></span>
+									<span ng-show="sortType == 'order.group.name' && sortReverse" class="fa fa-caret-up"></span>
 							</a>
 						</th>
 						<th>
@@ -79,7 +79,7 @@
 					</tr>
 				</thead>
 				<tbody>
-					<tr ng-repeat="order in $ctrl.tabOrders | orderBy: sortType:sortReverse:$ctrl.Sort" ng-click="$ctrl.open(order._id)">
+					<tr ng-repeat="order in $ctrl.tabOrders | orderBy: sortType:sortReverse" ng-click="$ctrl.open(order._id)">
 						<td>{{order.ordernumber}}</td>
 						<td>{{order.name}}</td>
 						<td>{{order.owner.name}}</td>
