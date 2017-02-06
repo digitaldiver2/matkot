@@ -117,8 +117,8 @@ function handleError(res, statusCode) {
 // Gets a list of Orders
 export function index(req, res) {
   return Order.find()
-    .populate('group')
-    .populate('owner')
+    .populate('group', {'name': true})
+    .populate('owner', {'name': true})
     .exec()
     .then(respondWithResult(res))
     .catch(handleError(res));

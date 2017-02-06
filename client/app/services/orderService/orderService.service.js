@@ -85,7 +85,7 @@ angular.module('matkotApp.orderService', [])
     }
 
     this.getOrders = function () {
-    	return $http.get('/api/orders/user/' + this.user._id)
+    	return $http.get('/api/orders/')
     		.then(res => {
     			return res.data;
     		})
@@ -290,27 +290,25 @@ angular.module('matkotApp.orderService', [])
     	//not in open or closed state => never evaluated before
     	if (order.state != this.STATE_OPEN && order.state != this.STATE_CLOSED) {
 	    	order.products.forEach(productItem => {
-	    		var shortage = productItem.received - productItem.returned;
-	    		var shortage_item = undefined;
-	    		//check if product is in shortages (in case the order was reopened)
-	    		for(var i=0; i< order.shortages.length; i++) {
-	    			var item = order.shortages[i];
-    				if (item.product._id == productItem.product._id) {
-    					shortage_item = item;
-    					break;
-    				}
-	    		}
+	    		//skip consumables
+	    		if (!productItem.isconsumable) {
+		    		var shortage = productItem.received - productItem.returned;
+		    		//check if product is in shortages (in case the order was reopened)
+		    		var shortage_item = _.find(order.shortages, (item) => {
+		    			return item.product._id === productItem.product._id;
+		    		} );
 
-	    		if (shortage_item != undefined) {
-	    			//update qty_short if already in list
-	    			shortage_item.qty_short = shortage;
-	    		} else if (shortage > 0) {
-	    			order.shortages.push({
-	    				product: productItem.product,
-	    				qty_short: shortage,
-	    				qty_ok: 0
-	    			});
-	    		}
+		    		if (shortage_item) {
+		    			//update qty_short if already in list
+		    			shortage_item.qty_short = shortage;
+		    		} else if (shortage > 0) {
+		    			order.shortages.push({
+		    				product: productItem.product,
+		    				qty_short: shortage,
+		    				qty_ok: 0
+		    			});
+		    		}
+		    	}	
 	    	});
 	    } 
     	//check if shortages are fixed

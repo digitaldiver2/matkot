@@ -129,17 +129,29 @@ export function groupIndex(req, res) {
   var query = undefined;
   if (req.params.group_id != 0) {
     query = {
-      $or:[
-        {visiblegroups: req.params.group_id},
-        {visiblegroups: {$exists:true, $size:0}},
-        {visiblegroups: {$exists: false}}
+      $and: [
+        {
+          'active': true
+        }, {
+          $or:[
+            {visiblegroups: req.params.group_id},
+            {visiblegroups: {$exists:true, $size:0}},
+            {visiblegroups: {$exists: false}}
+          ]
+        }
       ]
     };
   } else {
       query = {
-        $or: [
-          {visiblegroups: {$exists:true, $size:0}},
-          {visiblegroups: {$exists: false}}
+        $and: [
+          {
+            'active': true
+          }, {
+            $or: [
+              {visiblegroups: {$exists:true, $size:0}},
+              {visiblegroups: {$exists: false}}
+            ]
+          }
         ]
       };
   }

@@ -1,60 +1,97 @@
-<div class="container">
-	<h3>Concepten</h3>
-	<div class="list-group" ng-show="$ctrl.drafts.length">
-		<a class="list-group-item" ng-repeat="order in $ctrl.drafts" ng-click="$ctrl.open(order._id)">
-			{{order.ordernumber}} {{order.name}} Uitlening:{{order.pickupdate | date:'dd/MM/yy'}} Retour: {{order.returndate|date: 'dd/MM/yy'}}<span class="badge">{{order.state}}</span>
-		</a>
-	</div>
-	<div ng-hide="$ctrl.drafts.length">
-		Er zijn geen concepten.
-	</div>
-	<h3>Aangevraagd</h3>
-	<div class="list-group" ng-show="$ctrl.requested.length">
-		<a class="list-group-item" ng-repeat="order in $ctrl.requested" ng-click="$ctrl.open(order._id)">
-			{{order.ordernumber}}{{order.name}} Uitlening:{{order.pickupdate| date:'dd/MM/yy'}} Retour: {{order.returndate|date: 'dd/MM/yy'}}<span class="badge">{{order.state}}</span>
-		</a>
-	</div>
-	<div ng-hide="$ctrl.requested.length">
-		Er zijn geen nieuwe aanvragen.
-	</div>
-
-	<h3>Komende ontleningen</h3>
-	<div class="list-group" ng-show="$ctrl.approved.length">
-		<a class="list-group-item" ng-repeat="order in $ctrl.approved | orderBy:'pickupdate'" ng-click="$ctrl.open(order._id)">
-			{{order.ordernumber}} {{order.name}} Uitlening:{{order.pickupdate | date:'dd/MM/yy'}} Retour: {{order.returndate|date: 'dd/MM/yy'}}<span class="badge">{{order.state}}</span>
-		</a>
-	</div>
-	<div ng-hide="$ctrl.approved.length">
-		Er zijn geen komende ontleningen.
-	</div>
-	<h3>Uitgeleend</h3>
-	<div class="list-group" ng-show="$ctrl.delivered.length">
-		<a class="list-group-item" ng-repeat="order in $ctrl.delivered | orderBy:'returndate'" ng-click="$ctrl.open(order._id)">
-			{{order.ordernumber}} {{order.name}} Uitlening:{{order.pickupdate | date:'dd/MM/yy'}} Retour: {{order.returndate|date: 'dd/MM/yy'}}<span class="badge">{{order.state}}</span>
-		</a>
-	</div>
-	<div ng-hide="$ctrl.delivered.length">
-		Er is niets uitgeleend.
-	</div>
-
-	<h3>Onvolledig</h3>
-	<div class="list-group" ng-show="$ctrl.shorts.length">
-		<a class="list-group-item" ng-repeat="order in $ctrl.shorts | orderBy:'returndate'" ng-click="$ctrl.open(order._id)">
-			{{order.ordernumber}} {{order.name}} Uitlening:{{order.pickupdate | date:'dd/MM/yy'}} Retour: {{order.returndate|date: 'dd/MM/yy'}}<span class="badge">{{order.state}}</span>
-		</a>
-	</div>
-	<div ng-hide="$ctrl.shorts.length">
-		Er zijn geen tekorten	
-	</div>
-
-	<h3>Afgewerkte ontleningen</h3>
-	<div class="list-group" ng-show="$ctrl.prevs.length">
-		<a class="list-group-item" ng-repeat="order in $ctrl.prevs | orderBy:'returndate'" ng-click="$ctrl.open(order._id)">
-			{{order.ordernumber}} {{order.name}} Uitlening:{{order.pickupdate | date:'dd/MM/yy'}} Retour: {{order.returndate|date: 'dd/MM/yy'}}<span class="badge">{{order.state}}</span>
-		</a>
-	</div>
-	<div ng-hide="$ctrl.prevs.length">
-		Er zijn geen afgewerkte ontleningen	
-	</div>
-
+<div class="container-fluid">
+	<div class="row">
+		<div class="col-sm-3 col-md-2 sidebar">
+			<h2>Aanvragen</h2>
+			<ul class="nav nav-stacked nav-pills">
+				<li role="presentation" ng-class="{active: $ctrl.isTabVisible($ctrl.TAB_APPROVED)}">
+					<a ng-click="$ctrl.selectTab($ctrl.TAB_APPROVED)">Komend<span class="badge">{{$ctrl.approved.length}}</span></a>
+				</li>
+				<li role="presentation" ng-class="{active: $ctrl.isTabVisible($ctrl.TAB_REQUESTED)}">
+					<a ng-click="$ctrl.selectTab($ctrl.TAB_REQUESTED)">Aangevraagd<span class="badge">{{$ctrl.requested.length}}</span></a>
+				</li>
+				<li role="presentation" ng-class="{active: $ctrl.isTabVisible($ctrl.TAB_DELIVERED)}">
+					<a ng-click="$ctrl.selectTab($ctrl.TAB_DELIVERED)">Uitgeleend<span class="badge">{{$ctrl.delivered.length}}</span></a>
+				</li>
+				<li role="presentation" ng-class="{active: $ctrl.isTabVisible($ctrl.TAB_SHORTS)}">
+					<a ng-click="$ctrl.selectTab($ctrl.TAB_SHORTS)">Tekorten<span class="badge">{{$ctrl.shorts.length}}</span></a>
+				</li>
+				<li role="presentation" ng-class="{active: $ctrl.isTabVisible($ctrl.TAB_DRAFTS)}">
+					<a ng-click="$ctrl.selectTab($ctrl.TAB_DRAFTS)">Concept<span class="badge">{{$ctrl.drafts.length}}</span></a>
+				</li>
+				<li role="presentation" ng-class="{active: $ctrl.isTabVisible($ctrl.TAB_PREVS)}">
+					<a ng-click="$ctrl.selectTab($ctrl.TAB_PREVS)">Volledig<span class="badge">{{$ctrl.prevs.length}}</span></a>
+				</li>
+				<li role="presentation" ng-class="{active: $ctrl.isTabVisible($ctrl.TAB_SEARCH)}">
+					<a ng-click="$ctrl.selectTab($ctrl.TAB_SEARCH)">Zoeken</a>
+				</li>
+			</ul>
+		</div>
+		<div class="col-sm-9 col-md-10 content">
+			<h3>{{$ctrl.tabTitle}}</h3>
+			<table class="table table-hover table-condensed" ng-show="$ctrl.drafts.length">
+				<thead>
+					<tr>
+						<th>
+							<a href="#" ng-click="sortType = 'order.ordernumber'; sortReverse = !sortReverse">
+									Nr.
+									<span ng-show="sortType == 'order.ordernumber' && !sortReverse" class="fa fa-caret-down"></span>
+									<span ng-show="sortType == 'order.ordernumber' && sortReverse" class="fa fa-caret-up"></span>
+							</a>
+						</th>
+						<th>
+							<a href="#" ng-click="sortType = 'order.name'; sortReverse = !sortReverse">
+									Order
+									<span ng-show="sortType == 'order.name' && !sortReverse" class="fa fa-caret-down"></span>
+									<span ng-show="sortType == 'order.name' && sortReverse" class="fa fa-caret-up"></span>
+							</a>
+						</th>
+						<th>
+							<a href="#" ng-click="sortType = 'order.owner.name'; sortReverse = !sortReverse">
+									Verantw.
+									<span ng-show="sortType == 'order.owner.name' && !sortReverse" class="fa fa-caret-down"></span>
+									<span ng-show="sortType == 'order.owner.name' && sortReverse" class="fa fa-caret-up"></span>
+							</a>
+						</th>
+						<th>
+							<a href="#" ng-click="sortType = 'order.ordernumber'; sortReverse = !sortReverse">
+									Groep
+									<span ng-show="sortType == 'order.ordernumber' && !sortReverse" class="fa fa-caret-down"></span>
+									<span ng-show="sortType == 'order.ordernumber' && sortReverse" class="fa fa-caret-up"></span>
+							</a>
+						</th>
+						<th>
+							<a href="#" ng-click="sortType = 'order.pickupdate'; sortReverse = !sortReverse">
+									Van
+									<span ng-show="sortType == 'order.pickupdate' && !sortReverse" class="fa fa-caret-down"></span>
+									<span ng-show="sortType == 'order.pickupdate' && sortReverse" class="fa fa-caret-up"></span>
+							</a>
+						</th>
+						<th>
+							<a href="#" ng-click="sortType = 'order.returndate'; sortReverse = !sortReverse">
+									Tot
+									<span ng-show="sortType == 'order.returndate' && !sortReverse" class="fa fa-caret-down"></span>
+									<span ng-show="sortType == 'order.returndate' && sortReverse" class="fa fa-caret-up"></span>
+							</a>
+						</th>
+						<th>
+							#producten
+						</th>
+					</tr>
+				</thead>
+				<tbody>
+					<tr ng-repeat="order in $ctrl.tabOrders | orderBy: sortType:sortReverse:$ctrl.Sort" ng-click="$ctrl.open(order._id)">
+						<td>{{order.ordernumber}}</td>
+						<td>{{order.name}}</td>
+						<td>{{order.owner.name}}</td>
+						<td>{{order.group.name}}</td>
+						<td>{{order.pickupdate | date:'dd/MM/yy'}}</td>
+						<td>{{order.returndate | date:'dd/MM/yy'}}</td>
+						<td>{{order.products.length}}</td>
+					</tr>
+				</tbody>
+			</table>
+			<div ng-hide="$ctrl.tabOrders.length">
+				Er zijn geen items.
+			</div>
+		</div>
 </div>

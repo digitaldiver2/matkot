@@ -270,6 +270,9 @@
 									Prijs
 								</th>
 								<th>
+									Gevr.
+								</th>
+								<th>
 									Besch.
 								</th>
 								<th>
@@ -287,8 +290,15 @@
 								<td>{{product.unitprice | currency:'€'}}</td>
 								<td>{{product.stock - product.ordered}}</td>
 								<td>
+									<input class="qty" type="number" ng-model="product.requested" 
+									id="requested" 
+									min="0"
+									ng-change="$ctrl.updateProductInOrder(product)"
+									ng-model-options="{ updateOn: 'blur' }">
+								</td>
+								<td>
 									<input class="qty" type="number" ng-model="product.approved" 
-									id="approved" max="{{product.stock}}" 
+									id="approved" 
 									min="0"
 									ng-change="$ctrl.updateProductInOrder(product)"
 									ng-model-options="{ updateOn: 'blur' }">
