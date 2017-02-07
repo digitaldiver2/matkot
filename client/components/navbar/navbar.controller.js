@@ -10,10 +10,10 @@ class NavbarController {
   ];
   //start-non-standard
   menu = [
-    // {
-    //   'title': 'Home',
-    //   'state': 'main'
-    // },
+    {
+      title: 'Ons aanbod',
+      state: 'productrange'
+    },
     {
       'title': 'Aanvragen',
       'state': 'orders'
