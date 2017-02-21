@@ -151,7 +151,7 @@ export function groupIndex(req, res) {
               {visiblegroups: {$exists:true, $size:0}},
               {visiblegroups: {$exists: false}}
             ]
-          }
+            }
         ]
       };
   }

@@ -59,6 +59,9 @@
 				<p>
 					<strong>Ordernummer:</strong> {{$ctrl.order.ordernumber}}</br>
 					<strong>Eigenaar:</strong> {{$ctrl.order.owner.name}}</br>
+					<select ng-model="$ctrl.order.owner" class="form-control"
+							ng-options="user.name for user in $ctrl.users track by user._id ">
+					</select>
 					<strong>Telefoon:</strong> {{$ctrl.order.owner.phone}}</br>
 					<strong>Mail:</strong> {{$ctrl.order.owner.email}}
 				</p>

@@ -61,6 +61,12 @@ function saveUpdates(updates) {
       });
       delete updates.shortages;
     }
+    if (typeof(updates.group) == 'object') {
+        updates.group = updates.group._id;
+    }
+    if (typeof(updates.owner) == 'object') {
+        updates.owner = updates.owner._id;
+    }
 
     var updated = _.merge(entity, updates);
     return updated.save()

@@ -47,13 +47,15 @@ class OrderComponent {
     var categoryQ = this.productService.getPriceCategories();
     var userGroupQ = this.userService.getUserGroups();
     var productFamilyQ = this.productService.getProductFamilies();
+    var userQ = this.userService.getUsers();
 
-    this.$q.all([orderQ, productQ, categoryQ, userGroupQ, productFamilyQ]).then(answer=> {
+    this.$q.all([orderQ, productQ, categoryQ, userGroupQ, productFamilyQ, userQ]).then(answer=> {
       this.order = answer[0];
       this.products = answer[1];
       this.$scope.pricecategories = answer[2];
       this.$scope.groups = answer[3];
       this.productcategories = answer[4];
+      this.users = answer[5];
       //set all as default option
       var showAllId = this.productcategories.push({name:"", _id:0}) - 1;
       this.categoryFilter = this.productcategories[showAllId];

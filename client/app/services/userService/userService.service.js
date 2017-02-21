@@ -54,4 +54,13 @@ angular.module('matkotApp.userService', ['matkotApp.mailService'])
         }
     }
 
+    this.getUsers = function() {
+        return $http.get('/api/users/')
+            .then(res => {
+                return res.data;
+            }, err => {
+                return $q.reject(err.data);
+            });
+    }
+
   });
