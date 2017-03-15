@@ -29,3 +29,6 @@ Run `grunt build` for building and `grunt serve` for preview.
 ## Testing
 
 Running `npm test` will run the unit tests with karma.
+node v0.12.7
+npm 3.5.2
+yo 1.8.5
