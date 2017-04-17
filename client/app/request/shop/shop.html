@@ -117,8 +117,6 @@
 									ng-model="product.ordered" 
 									id="ordered" 
 									max="{{product.stock}}" min="0" 
-									ng-change="$ctrl.instantSave()"
-									ng-model-options="{ updateOn: 'blur' }"
 									ng-disabled="!$ctrl.orderService.orderIsDraft($ctrl.order)">
 								<a ng-hide="!$ctrl.orderService.orderIsDraft($ctrl.order)"><i class="fa fa-times" aria-hidden="true" ng-click="$ctrl.clear($index)"></i></a>
 							</td>

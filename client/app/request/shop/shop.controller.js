@@ -89,7 +89,7 @@ class ShopComponent {
 
   updateProductInOrder (product) {
     this.orderService.updateOrderProduct(this.order, product);
-    this.instantSave();
+    // this.instantSave();
   }
 
   save () {
@@ -111,7 +111,7 @@ class ShopComponent {
     var productitem = _.find(this.products, {_id: product_id});
     productitem.ordered = 0;
     this.order.products.splice(index, 1);
-    this.instantSave();
+    // this.instantSave();
   }
 
   addComment() {
