@@ -19,6 +19,7 @@
 					<a ng-click="$ctrl.selectTab($ctrl.TAB_SHORTAGE)">Tekorten<span class="badge">{{$ctrl.order.unresolved_shortages}}</span></a>
 				</li>
 			</ul>
+			<button type="button" class="btn btn-warning" ng-click="$ctrl.save()">Opslaan</button>
 		</div>
 		<div class="col-sm-9 col-md-10">
 			<div id="info" ng-show="$ctrl.isTabVisible($ctrl.TAB_INFO)">

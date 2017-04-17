@@ -20,8 +20,8 @@
     "ui-bootstrap": "^2.3.1",
     "jquery": "2.2.4",
     "bootstrap-css": "^3.3.6",
-    "angular-animate": "^1.6.0",
-    "angular-touch": "^1.6.0",
+    "angular-animate": "~1.5.0",
+    "angular-touch": "~1.5.0",
     "natural-sort": "^1.0.0"
   },
   "devDependencies": {

@@ -62,23 +62,23 @@ class ShopComponent {
         });
 
         //register socket listener
-        this.socket.syncUpdates('order', this.dummyOrders, (event, item, list) => {
-          if (this.order._id == item._id) {
-              console.log('update order');
-            this.orderService.getOrder(this.order._id).then(order => {
-              this.order = order;
-              var group_id = this.order.group? this.order.group._id: '0';
-              var price_category_id = this.order.group? this.order.group.pricecategory: undefined;
+        // this.socket.syncUpdates('order', this.dummyOrders, (event, item, list) => {
+        //   if (this.order._id == item._id) {
+        //       console.log('update order');
+        //     this.orderService.getOrder(this.order._id).then(order => {
+        //       this.order = order;
+        //       var group_id = this.order.group? this.order.group._id: '0';
+        //       var price_category_id = this.order.group? this.order.group.pricecategory: undefined;
 
-              this.productService.getGroupProducts(group_id, price_category_id).then(products => {
-                this.products = products;
-                this.syncProductList();
-              });
+        //       this.productService.getGroupProducts(group_id, price_category_id).then(products => {
+        //         this.products = products;
+        //         this.syncProductList();
+        //       });
 
-            });
-          }
+        //     });
+        //   }
 
-        });
+        // });
       });
   	}
   }
@@ -90,12 +90,6 @@ class ShopComponent {
   updateProductInOrder (product) {
     this.orderService.updateOrderProduct(this.order, product);
     this.instantSave();
-  }
-
-  instantSave() {
-    this.orderService.saveOrder(this.order).then(response => {
-
-    });
   }
 
   save () {
