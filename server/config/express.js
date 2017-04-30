@@ -10,10 +10,11 @@ import morgan from 'morgan';
 import compression from 'compression';
 import bodyParser from 'body-parser';
 import methodOverride from 'method-override';
-import cookieParser from 'cookie-parser';
+// import cookieParser from 'cookie-parser';
 import errorHandler from 'errorhandler';
 import path from 'path';
 import lusca from 'lusca';
+import cors from 'cors';
 import config from './environment';
 import passport from 'passport';
 import session from 'express-session';
@@ -23,7 +24,6 @@ var MongoStore = connectMongo(session);
 
 export default function(app) {
   var env = app.get('env');
-
   app.set('views', config.root + '/server/views');
   app.engine('html', require('ejs').renderFile);
   app.set('view engine', 'html');
@@ -31,7 +31,7 @@ export default function(app) {
   app.use(bodyParser.urlencoded({ extended: false }));
   app.use(bodyParser.json());
   app.use(methodOverride());
-  app.use(cookieParser());
+  // app.use(cookieParser());
   app.use(passport.initialize());
 
   // Persist sessions with MongoStore / sequelizeStore
@@ -53,9 +53,9 @@ export default function(app) {
    */
   if ('test' !== env) {
     app.use(lusca({
-      csrf: {
-        angular: true
-      },
+      // csrf: {
+      //   angular: true
+      // },
       xframe: 'SAMEORIGIN',
       hsts: {
         maxAge: 31536000, //1 year, in seconds
@@ -64,6 +64,8 @@ export default function(app) {
       },
       xssProtection: true
     }));
+    app.use(cors());
+    // https://www.npmjs.com/package/cors
   }
 
   app.set('appPath', path.join(config.root, 'client'));

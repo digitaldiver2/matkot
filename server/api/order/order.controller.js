@@ -124,7 +124,7 @@ function handleError(res, statusCode) {
 export function index(req, res) {
   return Order.find()
     .populate('group', {'name': true})
-    .populate('owner', {'name': true})
+    .populate('owner', {'name': true, 'email': true, 'phone': true})
     .exec()
     .then(respondWithResult(res))
     .catch(handleError(res));
