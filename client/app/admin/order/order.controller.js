@@ -204,6 +204,8 @@ class OrderComponent {
         this.orderService.saveOrder(this.order).then(resp => {
           //save last ordernumber in settings after success
           this.$http.put('/api/settings/' + this.settings._id, this.settings);
+          this.ReloadOrder(this.order);
+          alert('saved');
           // this.$location.path('/admin/orders');
         }, err => {
           console.log(err);
@@ -214,6 +216,8 @@ class OrderComponent {
       //no ordernumber needed, just save order
       this.orderService.saveOrder(this.order).then(resp => {
         // this.$location.path('/admin/orders');
+          this.ReloadOrder(this.order);
+          alert('saved');
       }, err => {
         console.log(err);
         alert(err);
@@ -241,6 +245,7 @@ class OrderComponent {
   instantSave() {
     if (this.isSyncing) {
       this.orderService.saveOrder(this.order).then(response => {
+        this.ReloadOrder(this.order);
       });
     }
   }

@@ -61,6 +61,7 @@ angular.module('matkotApp.orderService', [])
     			order.staged_comments = [];
     			this.convertDates(order);
     			this.calcUnResolvedShortages(order);
+				console.dir(order);
     			return order;
     		})
     		.catch(err => {

@@ -28,8 +28,8 @@ export default function(app) {
   app.engine('html', require('ejs').renderFile);
   app.set('view engine', 'html');
   app.use(compression());
-  app.use(bodyParser.urlencoded({ extended: false }));
-  app.use(bodyParser.json());
+  app.use(bodyParser.json({limit: '50mb'}));
+  app.use(bodyParser.urlencoded({limit: '50mb', extended: false }));
   app.use(methodOverride());
   // app.use(cookieParser());
   app.use(passport.initialize());
@@ -65,6 +65,7 @@ export default function(app) {
       xssProtection: true
     }));
     app.use(cors());
+    app.options('*', cors());
     // https://www.npmjs.com/package/cors
   }
 
