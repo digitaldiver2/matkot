@@ -31,7 +31,7 @@ angular.module('matkotApp.userService', ['matkotApp.mailService'])
             return $http.get('/api/users/requestreset/' + email)
                 .then(res => {
                     //send email
-                    var baseurl = 'http://141.134.134.21:9080';
+                    var baseurl = 'http://' + location.host;
                     var token = res.data['token']; 
                     var mail = {
                         to: email,
