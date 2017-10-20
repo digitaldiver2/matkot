@@ -5,7 +5,7 @@
 module.exports = {
   // MongoDB connection options
   mongo: {
-    uri: 'mongodb://localhost/matkot-test'
+    uri: 'mongodb://localhost/matkot-dev'
   },
   sequelize: {
     uri: 'sqlite://',

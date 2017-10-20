@@ -10,4 +10,9 @@ angular.module('matkotApp.mailService', [])
 			 $q.reject(err.data);	
 	  	});
     }
+
+    // notify materiaal meesters there is a new order
+    // this.notifyNewOrder = function(order) {
+    //   return $http.post('/api/mail/')
+    // }
   });

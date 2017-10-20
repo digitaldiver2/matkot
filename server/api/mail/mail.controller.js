@@ -63,6 +63,34 @@ function sendMailAndRespond(res, statusCode) {
   }
 }
 
+export function sendMail(mailData) {
+  mailData['created'] = new Date();
+  return Mail.create(mailData).then(_sendMail)
+  .catch(err => console.log(err));
+}
+
+function _sendMail(mailEntity) {
+  mailEntity.executed = new Date();
+  transporter.sendMail({
+    from: mail_user,
+    to: mailEntity.to,
+    subject: mailEntity.subject,
+    text: mailEntity.body
+  }, function (err, data) {
+    if (err) {
+      mailEntity.error = err;
+      console.log(mailEntity.error);
+      mailEntity.success = false;
+    } else {
+      mailEntity.success = true;
+    }
+    mailEntity.save().then(savedMail => {
+      console.dir(savedMail);
+    })
+    .catch(err => console.log(err));
+  });
+}
+
 
 function respondWithResult(res, statusCode) {
   statusCode = statusCode || 200;

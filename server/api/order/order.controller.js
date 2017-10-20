@@ -13,6 +13,10 @@ import _ from 'lodash';
 import Order from './order.model';
 import Usergroup from '../usergroup/usergroup.model';
 
+// for handling mail notifications
+import Mail from '../mail/mail.model';
+var mailController = require('../mail/mail.controller') ;
+
 
 function respondWithResult(res, statusCode) {
   statusCode = statusCode || 200;
@@ -82,6 +86,14 @@ function addCommentToOrder (req) {
     entity.comments.push({creator: req.user._id, body: req.body.body, date: now});
     return entity.save()
       .then(updated => {
+        var mail = {
+          to: 'stijn.haers@gmail.com',
+          subject: 'my test mail',
+          body: 'new comment'
+        }
+        mailController.sendMail(mail).then(() => {
+          console.log('mail send');
+        });
         return updated;
       });
   }
