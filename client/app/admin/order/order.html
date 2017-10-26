@@ -3,7 +3,7 @@
 
 	<div class="row">
 		<div class="col-sm-3 col-md-2 sidebar">
-			<h2>Aanvraag {{order.ordernumber}}</h2>
+			<h2>{{$ctrl.order.ordernumber}} {{$ctrl.order.name}}</h2>
 			<ul class="nav nav-stacked nav-pills">
 				<li role="presentation" ng-class="{active: $ctrl.isTabVisible($ctrl.TAB_INFO)}">
 					<a ng-click="$ctrl.selectTab($ctrl.TAB_INFO)">Info</a>
@@ -160,6 +160,12 @@
 					</div>
 					<button class="btn btn-primary" ng-click="$ctrl.sameNumbers()">Aantallen overnemen</button>
 					<button class="btn btn-primary" ng-click="$ctrl.resetNumbers()">Reset</button>
+					<div class="checkbox col-sm-2">
+						<label for=""><input type="checkbox" ng-model="$ctrl.showAvailability">Beschikbaarheid</label>
+					</div>
+					<div class="checkbox col-sm-2">
+						<label for=""><input type="checkbox" ng-model="$ctrl.showPrices">Prijzen</label>
+					</div>
 				</div>
 				<table class="table">
 					<thead>
@@ -178,17 +184,17 @@
 									<span ng-show="sortType == 'product.name' && sortReverse" class="fa fa-caret-up"></span>
 								</a>
 							</th>
-							<th>Stock</th>
-							<th>Tekort</th>
-							<th>Uitgeleend</th>
-							<th>Beschikbaar</th>
+							<th ng-if="$ctrl.showAvailability">Stock</th>
+							<th ng-if="$ctrl.showAvailability">Tekort</th>
+							<th ng-if="$ctrl.showAvailability">Uitgeleend</th>
+							<th ng-if="$ctrl.showAvailability">Beschikbaar</th>
 							<th>Aangevraagd</th>
 							<th>Goedgekeurd</th>
 							<th>Gekregen</th>
 							<th>Terug</th>
 							<th>Tekort</th>
-							<th>Prijs</th>
-							<th>Totaal</th>
+							<th ng-if="$ctrl.showPrices">Prijs</th>
+							<th ng-if="$ctrl.showPrices">Totaal</th>
 							<th>Commentaar</th>
 						</tr>
 					</thead>
@@ -197,10 +203,10 @@
 						<tr ng-repeat="productitem in $ctrl.order.products | orderBy:sortType:sortReverse | filter:searchProduct2 ">
 							<td>{{productitem.product.code}}</td>
 							<td>{{productitem.product.name}}</td>
-							<td>{{productitem.product.stock}}</td>
-							<td>{{productitem.product.short}}</td>
-							<td>{{productitem.product.away}}</td>
-							<td>{{productitem.product.available}}</td>
+							<td ng-if="$ctrl.showAvailability">{{productitem.product.stock}}</td>
+							<td ng-if="$ctrl.showAvailability">{{productitem.product.short}}</td>
+							<td ng-if="$ctrl.showAvailability">{{productitem.product.away}}</td>
+							<td ng-if="$ctrl.showAvailability">{{productitem.product.available}}</td>
 							<td>{{productitem.ordered}}</td>
 							<td>
 								<input type="number" class="qty" 
@@ -226,12 +232,12 @@
 							<td>
 								{{productitem.received - productitem.returned}}
 							</td>
-							<td><input type="number" class="price" 
+							<td ng-if="$ctrl.showPrices"><input type="number" class="price" 
 								ng-model="productitem.unitprice" 
 								ng-disabled="$ctrl.order.state=='CANCELLED' || $ctrl.order.state == 'CLOSED'" 
 								ng-change="$ctrl.instantSave()"
 								ng-model-options="{ updateOn: 'blur' }"></td>
-							<td>{{productitem.unitprice * productitem.received | currency:'€' }}	</td>
+							<td ng-if="$ctrl.showPrices">{{productitem.unitprice * productitem.received | currency:'€' }}	</td>
 							<td><input type="text" class="item_comment_field" 
 								ng-model="productitem.comment"
 								ng-change="$ctrl.instantSave()"

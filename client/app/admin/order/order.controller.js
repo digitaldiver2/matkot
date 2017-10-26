@@ -38,6 +38,9 @@ class OrderComponent {
 
     this.isSyncing = false;
 
+    this.showAvailability = false;
+    this.showPrices = false;
+
   }
 
   $onInit () {

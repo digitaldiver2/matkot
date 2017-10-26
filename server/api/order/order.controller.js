@@ -12,6 +12,7 @@
 import _ from 'lodash';
 import Order from './order.model';
 import Usergroup from '../usergroup/usergroup.model';
+import config from '../../config/environment';
 
 // for handling mail notifications
 import Mail from '../mail/mail.model';
@@ -50,8 +51,15 @@ function getOverlappingOrders(res, statusCode) {
 }
 
 
-function saveUpdates(updates) {
+function saveUpdates(updates, req) {
   return function(entity) {
+    // send mail when order was requested
+    // check if last state was draft and new state is ordered
+    const isRequested = entity.state === 'DRAFT' && updates.state === 'ORDERED';
+    if (isRequested) {
+      console.log('new order requested');
+    }
+
     entity.products = new Array();
     updates.products.forEach(function (product) {
       entity.products.push(product);
@@ -75,6 +83,16 @@ function saveUpdates(updates) {
     var updated = _.merge(entity, updates);
     return updated.save()
       .then(updated => {
+        if (isRequested) {
+          var mail = {
+            to: config.adminEmail,
+            subject: `Nieuwe aanvraag: ${entity.name}`,
+            body: newOrderMailBody(entity, req.user)
+          }
+          mailController.sendMail(mail).then(() => {
+            console.log('mail send');
+          });
+        }
         return updated;
       });
   };
@@ -86,10 +104,11 @@ function addCommentToOrder (req) {
     entity.comments.push({creator: req.user._id, body: req.body.body, date: now});
     return entity.save()
       .then(updated => {
+        //notify admins of new message
         var mail = {
-          to: 'stijn.haers@gmail.com',
-          subject: 'my test mail',
-          body: 'new comment'
+          to: config.adminEmail,
+          subject: `Nieuw bericht voor ${entity.ordernumber} ${entity.name}`,
+          body: newCommentMailBody(entity, req.user)
         }
         mailController.sendMail(mail).then(() => {
           console.log('mail send');
@@ -97,6 +116,27 @@ function addCommentToOrder (req) {
         return updated;
       });
   }
+}
+
+function newCommentMailBody (order, user) {
+  let url = 'http://';
+  let last_comment = order.comments[order.comments.length-1].body;
+  let body = `${user.name} heeft een nieuw bericht toegevoegd aan ${order.name}:
+  """
+    ${last_comment}
+  """
+  
+${config.host}/admin/order/${order._id}`;
+  console.log(body);
+  return body;
+}
+
+function newOrderMailBody (order, user) {
+  let body = `${user.name} heeft een nieuwe aanvraag gedaan ${order.name}:
+  
+  ${config.host}/admin/order/${order._id}`;
+  console.log(body);
+  return body;
 }
 
 //'dont remove entity if state is not draft or if an ordernumber is available
@@ -210,7 +250,7 @@ export function update(req, res) {
   }
   return Order.findById(req.params.id).exec()
     .then(handleEntityNotFound(res))
-    .then(saveUpdates(req.body))
+    .then(saveUpdates(req.body, req))
     .then(respondWithResult(res))
     .catch(handleError(res));
 }

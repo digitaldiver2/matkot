@@ -11,6 +11,9 @@ module.exports = {
   },
 
   // Seed database on startup
-  seedDB: false 
+  seedDB: false,
+
+  host: 'http://localhost:9000',
+  adminEmail: 'stijn.haers@gmail.com'
 
 };
