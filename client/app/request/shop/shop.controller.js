@@ -103,7 +103,10 @@ class ShopComponent {
     if (!this.order.requestdate) {
       this.order.requestdate = new Date();
     }
-    this.save();
+    // this.save();
+  	this.orderService.requestOrder(this.order).then (response => {
+      this.$location.path('/orders');
+    });
   }
 
   clear (index) {

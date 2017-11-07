@@ -195,6 +195,10 @@ class OrderComponent {
     }
   }
 
+  /*
+  Save the order.
+  - assign an ordernumber if needed, and save the settings
+  */
   save () {
     if (this.order.state != 'DRAFT' && this.order.ordernumber == undefined) {
       this.$http.get('/api/settings').then(response => {
@@ -204,23 +208,38 @@ class OrderComponent {
         this.order.ordernumber = this.calculateOrderNumber(this.settings.orderprefix, this.settings.ordernumberwidth, this.settings.ordercounter); 
 
         //save order
-        this.orderService.saveOrder(this.order).then(resp => {
-          //save last ordernumber in settings after success
+        this._save(this.order, () => {
           this.$http.put('/api/settings/' + this.settings._id, this.settings);
-          this.ReloadOrder(this.order);
-          alert('saved');
-          // this.$location.path('/admin/orders');
-        }, err => {
-          console.log(err);
-          alert(err);
         });
       });
     } else {
       //no ordernumber needed, just save order
+      this._save(this.order);
+    }
+  }
+
+  /* actual save order
+  If state is approved, ask if an email must be sent
+  */
+  _save (order, postSave) {
+    if (this.order.state == 'APPROVED' && confirm('Goedkeurings mail sturen?')) {
+      this.orderService.approveOrder(this.order).then(resp => {
+        if (postSave != null) {
+          postSave(order);
+        }
+        this.ReloadOrder(this.order);
+        alert('saved');
+      }, err => {
+        console.log(err);
+        alert(err);
+      });
+    } else {
       this.orderService.saveOrder(this.order).then(resp => {
-        // this.$location.path('/admin/orders');
-          this.ReloadOrder(this.order);
-          alert('saved');
+        if (postSave != null) {
+          postSave(order);
+        }
+        this.ReloadOrder(this.order);
+        alert('saved');
       }, err => {
         console.log(err);
         alert(err);

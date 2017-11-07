@@ -14,6 +14,8 @@ router.post('/query/x', auth.hasRole('admin'), controller.query);
 router.get('/overlap/:id', auth.isAuthenticated(), controller.overlaps);
 router.post('/', auth.isAuthenticated(), controller.create);
 router.put('/:id', auth.isAuthenticated(), controller.update);
+router.put('/request/:id', auth.isAuthenticated(), controller.request);
+router.put('/approve/:id', auth.hasRole('admin'), controller.approve);
 router.put('/comment/:id', auth.isAuthenticated(), controller.addComment);
 router.patch('/:id', auth.isAuthenticated(), controller.update);
 router.delete('/:id', auth.isAuthenticated(), controller.destroy);

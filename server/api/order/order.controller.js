@@ -16,33 +16,101 @@ import config from '../../config/environment';
 
 // for handling mail notifications
 import Mail from '../mail/mail.model';
-var mailController = require('../mail/mail.controller') ;
+var mailController = require('../mail/mail.controller');
 
 
 function respondWithResult(res, statusCode) {
   statusCode = statusCode || 200;
-  return function(entity) {
+  return function (entity) {
     if (entity) {
       res.status(statusCode).json(entity);
     }
   };
 }
 
+/* mails to be send on new request/order
+1 mail to the administrators to notify there is a new mail
+1 mail to the owner of the order
+*/
+function sendNewRequestMails(order) {
+  order.populate('group').populate('owner', { 'name': true, 'email': true, 'phone': true }, function (err) {
+    if (err) {
+      console.error(err);
+    }
+    // mail to administrators
+    let groupname = order.group ? order.group.name : 'prive';
+    let subject = `Nieuwe aanvraag: ${order.name} - ${order.owner.name} (${groupname})`;
+    var mail = {
+      to: config.adminEmail,
+      subject: subject,
+      body: `${config.host}/admin/order/${order._id}`
+    }
+    mailController.sendMail(mail).then(() => {
+      console.log('mail send to administrators');
+    });
 
+    // mail to requester
+    let subjectClient = `Aanvraag ${order.name} ontvangen`;
+    var mail = {
+      to: order.owner.email,
+      subject: subjectClient,
+      body: 
+`Beste ${order.owner.name},
+
+wij hebben uw aanvraag goed ontvangen. We zullen u zo snel mogelijk een antwoord sturen.
+
+mvg,
+De uitleendienst van de Jeugdraad van Knokke-Heist.
+
+Uw aanvraag: ${config.host}/request/info/${order._id}`
+    }
+    mailController.sendMail(mail).then(() => {
+      console.log('mail send to client');
+    });
+  });
+}
+
+/* mail to be sent on approved request/order
+1 mail to the owner of the order
+*/
+function sendRequestApprovedMails(order) {
+  order.populate('group').populate('owner', { 'name': true, 'email': true, 'phone': true }, function (err) {
+    if (err) {
+      console.error(err);
+    }
+    // mail to requester
+    var mail = {
+      to: order.owner.email,
+      subject: `Aanvraag ${order.name}-${order.ordernumber} goedgekeurd`,
+      body: 
+`Beste ${order.owner.name},
+
+uw aanvraag werd goedgekeurd. U kan op onderstaande link terugvinden welke materialen werden goedgekeurd.
+Uw aanvraag: ${config.host}/request/info/${order._id}
+
+mvg,
+De uitleendienst van de Jeugdraad van Knokke-Heist.
+`
+  }
+    mailController.sendMail(mail).then(() => {
+      console.log('mail send to client');
+    });
+  });
+}
 function getOverlappingOrders(res, statusCode) {
-  return function(entity) {
+  return function (entity) {
     if (entity) {
       statusCode = statusCode || 200;
       Order.find({
         $or: [
-        {
-            'pickupdate': {$gte: entity.pickupdate, $lt: entity.returndate}
-        }, 
-        {
-            'pickupdate': {$lt: entity.pickupdate}, 
-            'returndate': {$gt: entity.pickupdate}
-        } ], 
-        '_id': {$ne: entity._id}
+          {
+            'pickupdate': { $gte: entity.pickupdate, $lt: entity.returndate }
+          },
+          {
+            'pickupdate': { $lt: entity.pickupdate },
+            'returndate': { $gt: entity.pickupdate }
+          }],
+        '_id': { $ne: entity._id }
       }).exec().then(data => {
         res.status(statusCode).json(data);
       });
@@ -51,15 +119,10 @@ function getOverlappingOrders(res, statusCode) {
 }
 
 
-function saveUpdates(updates, req) {
-  return function(entity) {
-    // send mail when order was requested
-    // check if last state was draft and new state is ordered
-    const isRequested = entity.state === 'DRAFT' && updates.state === 'ORDERED';
-    if (isRequested) {
-      console.log('new order requested');
-    }
+function saveUpdates(updates, postSave) {
+  console.log('saving updates');
 
+  return function (entity) {
     entity.products = new Array();
     updates.products.forEach(function (product) {
       entity.products.push(product);
@@ -73,35 +136,28 @@ function saveUpdates(updates, req) {
       });
       delete updates.shortages;
     }
-    if (typeof(updates.group) == 'object') {
-        updates.group = updates.group._id;
+    if (typeof (updates.group) == 'object') {
+      updates.group = updates.group._id;
     }
-    if (typeof(updates.owner) == 'object') {
-        updates.owner = updates.owner._id;
+    if (typeof (updates.owner) == 'object') {
+      updates.owner = updates.owner._id;
     }
 
     var updated = _.merge(entity, updates);
     return updated.save()
       .then(updated => {
-        if (isRequested) {
-          var mail = {
-            to: config.adminEmail,
-            subject: `Nieuwe aanvraag: ${entity.name}`,
-            body: newOrderMailBody(entity, req.user)
-          }
-          mailController.sendMail(mail).then(() => {
-            console.log('mail send');
-          });
+        if (postSave != null) {
+          postSave(updated);
         }
         return updated;
       });
   };
 }
 
-function addCommentToOrder (req) {
+function addCommentToOrder(req) {
   return function (entity) {
     var now = new Date();
-    entity.comments.push({creator: req.user._id, body: req.body.body, date: now});
+    entity.comments.push({ creator: req.user._id, body: req.body.body, date: now });
     return entity.save()
       .then(updated => {
         //notify admins of new message
@@ -118,9 +174,9 @@ function addCommentToOrder (req) {
   }
 }
 
-function newCommentMailBody (order, user) {
+function newCommentMailBody(order, user) {
   let url = 'http://';
-  let last_comment = order.comments[order.comments.length-1].body;
+  let last_comment = order.comments[order.comments.length - 1].body;
   let body = `${user.name} heeft een nieuw bericht toegevoegd aan ${order.name}:
   """
     ${last_comment}
@@ -131,7 +187,7 @@ ${config.host}/admin/order/${order._id}`;
   return body;
 }
 
-function newOrderMailBody (order, user) {
+function newOrderMailBody(order, user) {
   let body = `${user.name} heeft een nieuwe aanvraag gedaan ${order.name}:
   
   ${config.host}/admin/order/${order._id}`;
@@ -141,7 +197,7 @@ function newOrderMailBody (order, user) {
 
 //'dont remove entity if state is not draft or if an ordernumber is available
 function removeEntity(res) {
-  return function(entity) {
+  return function (entity) {
     if (entity && entity.state == 'DRAFT' && entity.ordernumber == undefined) {
       return entity.remove()
         .then(() => {
@@ -155,7 +211,7 @@ function removeEntity(res) {
 }
 
 function handleEntityNotFound(res) {
-  return function(entity) {
+  return function (entity) {
     if (!entity) {
       res.status(404).end();
       return null;
@@ -166,7 +222,7 @@ function handleEntityNotFound(res) {
 
 function handleError(res, statusCode) {
   statusCode = statusCode || 500;
-  return function(err) {
+  return function (err) {
     console.log(err);
     res.status(statusCode).send(err);
   };
@@ -175,8 +231,8 @@ function handleError(res, statusCode) {
 // Gets a list of Orders
 export function index(req, res) {
   return Order.find()
-    .populate('group', {'name': true})
-    .populate('owner', {'name': true, 'email': true, 'phone': true})
+    .populate('group', { 'name': true })
+    .populate('owner', { 'name': true, 'email': true, 'phone': true })
     .exec()
     .then(respondWithResult(res))
     .catch(handleError(res));
@@ -186,7 +242,7 @@ export function index(req, res) {
 export function userindex(req, res) {
   var userid = req.params.id;
 
-  return Order.find({creator: userid})
+  return Order.find({ creator: userid })
     .populate('group')
     .populate('owner')
     .exec()
@@ -197,7 +253,7 @@ export function userindex(req, res) {
 // Gets a list of Orders for group
 export function groupindex(req, res) {
   var groupid = req.params.id;
-  return Order.find({group: groupid})
+  return Order.find({ group: groupid })
     .populate('group')
     .populate('owner')
     .exec()
@@ -211,7 +267,7 @@ export function show(req, res) {
     .populate('group')
     .populate('products.product')
     .populate('shortages.product')
-    .populate('owner', {'name':true, 'email': true, 'phone': true})
+    .populate('owner', { 'name': true, 'email': true, 'phone': true })
     .populate('comments.creator', 'name')
     .exec()
     .then(handleEntityNotFound(res))
@@ -230,9 +286,9 @@ export function overlaps(req, res) {
 
 export function query(req, res) {
   return Order.find(req.body.query, req.body.fields)
-  .exec()
-  .then(respondWithResult(res))
-  .catch(handleError(res));
+    .exec()
+    .then(respondWithResult(res))
+    .catch(handleError(res));
 }
 
 
@@ -250,17 +306,44 @@ export function update(req, res) {
   }
   return Order.findById(req.params.id).exec()
     .then(handleEntityNotFound(res))
-    .then(saveUpdates(req.body, req))
+    .then(saveUpdates(req.body))
     .then(respondWithResult(res))
     .catch(handleError(res));
 }
 
-// Updates an existing Order in the DB
-export function addComment (req, res) {
+// Specific function for requesting order
+// same as updating but also sending specific mail
+export function request(req, res) {
   if (req.body._id) {
     delete req.body._id;
   }
-  
+  return Order.findById(req.params.id).exec()
+    .then(handleEntityNotFound(res))
+    .then(saveUpdates(req.body, sendNewRequestMails))
+    .then(respondWithResult(res))
+    .catch(handleError(res));
+
+}
+
+// Specific function for approving order
+// same as updating but also sending specific mail
+export function approve(req, res) {
+  if (req.body._id) {
+    delete req.body._id;
+  }
+  return Order.findById(req.params.id).exec()
+    .then(handleEntityNotFound(res))
+    .then(saveUpdates(req.body, sendRequestApprovedMails))
+    .then(respondWithResult(res))
+    .catch(handleError(res));
+
+}
+// Updates an existing Order in the DB
+export function addComment(req, res) {
+  if (req.body._id) {
+    delete req.body._id;
+  }
+
   return Order.findById(req.params.id).exec()
     .then(handleEntityNotFound(res))
     .then(addCommentToOrder(req))
