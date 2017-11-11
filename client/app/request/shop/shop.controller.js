@@ -94,6 +94,7 @@ class ShopComponent {
 
   save () {
   	this.orderService.saveOrder(this.order).then (response => {
+      alert('Saved');
       this.$location.path('/orders');
     });
   }
@@ -105,7 +106,11 @@ class ShopComponent {
     }
     // this.save();
   	this.orderService.requestOrder(this.order).then (response => {
+      alert('Aangevraagd');
       this.$location.path('/orders');
+    })
+    .catch(err => {
+      this.errMsg = err;
     });
   }
 
@@ -126,6 +131,7 @@ class ShopComponent {
         .then(res => {
           //reload
           this.comment_body = "";
+          alert('Bericht opgeslaan, gelieve de pagina te herladen');
         })
         .catch(err => {
           this.errMsg = err;

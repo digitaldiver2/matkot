@@ -32,6 +32,35 @@ angular.module('matkotApp.orderService', [])
 	    }
 	}
 
+	this.requestOrder = function (order) {
+		order.products = order.products.filter(product => {
+	      return this.OrderProductUsed(product);
+	    });
+		if (order._id) {
+			return $http.put('/api/orders/request/' + order._id, order).then(res => {
+			}, err => {
+				return $q.reject(err.data);
+			});
+		} else {
+			// save first and get id
+			alert('Gelieve eerst uw aanvraag op te slaan');
+			return $q.reject(err.data);
+		}
+	}
+
+	this.approveOrder = function (order) {
+		if (order._id) {
+			return $http.put('/api/orders/approve/' + order._id, order).then(res => {
+			}, err => {
+				return $q.reject(err.data);
+			});
+		} else {
+			// save first and get id
+			alert('Gelieve eerst uw aanvraag op te slaan');
+			return $q.reject(err.data);
+		}
+	}
+
     this.getUserOrders = function (user_id) {
     	return $http.get('/api/orders/user/' + user_id)
     		.then(res => {

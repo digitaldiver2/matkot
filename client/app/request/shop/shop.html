@@ -2,7 +2,7 @@
 <div class="container-fluid" ng-hide="$ctrl.loading">
 	<div class="row">
 		<div class="col-sm-3 col-md-2 sidebar">
-			<h2>Aanvraag {{order.ordernumber}}</h2>
+			<h2>{{order.fulltitle}}</h2>
 			<ul class="nav nav-stacked nav-pills">
 				<li role="presentation" ng-class="{active: $ctrl.isTabVisible($ctrl.TAB_INFO)}">
 					<a ng-click="$ctrl.selectTab($ctrl.TAB_INFO)">Info</a>
@@ -20,6 +20,10 @@
 				</li>
 			</ul>
 			<button type="button" class="btn btn-warning" ng-click="$ctrl.save()">Opslaan</button>
+			<button 
+				class="btn btn-success" 
+				ng-click="$ctrl.saveAndRequest()" 
+				ng-disabled="!$ctrl.orderService.orderIsDraft($ctrl.order)">Order aanvragen</button>
 		</div>
 		<div class="col-sm-9 col-md-10">
 			<div id="info" ng-show="$ctrl.isTabVisible($ctrl.TAB_INFO)">
@@ -138,10 +142,6 @@
 				<h4 ng-show="$ctrl.order.state!='DRAFT' && $ctrl.order.state!='ORDERED' && $ctrl.order.state!='APPROVED'">Totaal: {{ $ctrl.order.products | totalSumPriceQty:'received':'unitprice' | currency:'€' }}</h4>
 				<!-- <h4 ng-show="$ctrl.order.state != DRAFT">Reeds betaald: {{order.totalpaid | currency:'€'}} -->
 
-				<button 
-				class="btn btn-success" 
-				ng-click="$ctrl.saveAndRequest()" 
-				ng-disabled="!$ctrl.orderService.orderIsDraft($ctrl.order)">Order aanvragen</button>
 			</div>
 			<div id="comments" ng-show="$ctrl.isTabVisible($ctrl.TAB_MESSAGES)">
 				<h2>Berichten</h2>

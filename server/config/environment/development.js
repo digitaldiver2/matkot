@@ -14,6 +14,6 @@ module.exports = {
   seedDB: false,
 
   host: 'http://localhost:9000',
-  adminEmail: 'stijn.haers@gmail.com'
+  adminEmail: 'stijn.haers+admin@gmail.com'
 
 };

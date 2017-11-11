@@ -2,6 +2,7 @@
 
 import mongoose from 'mongoose';
 
+
 var OrderSchema = new mongoose.Schema({
   name: String,
   info: String,
@@ -44,5 +45,15 @@ var OrderSchema = new mongoose.Schema({
   ordernumber: String,
   totalpaid: {type: Number, default: 0}
 });
+
+function fulltitle () {
+  if (this.ordernumber) {
+    return `${this.name} - ${this.ordernumber}`
+  } else {
+    return this.name
+  }
+}
+
+OrderSchema.virtual('fulltitle').get(fulltitle);
 
 export default mongoose.model('Order', OrderSchema);

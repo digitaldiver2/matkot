@@ -39,14 +39,14 @@ function sendNewRequestMails(order) {
     }
     // mail to administrators
     let groupname = order.group ? order.group.name : 'prive';
-    let subject = `Nieuwe aanvraag: ${order.name} - ${order.owner.name} (${groupname})`;
+    let subject = `Nieuwe aanvraag: ${order.name} van ${order.owner.name} (${groupname})`;
     var mail = {
       to: config.adminEmail,
       subject: subject,
       body: `${config.host}/admin/order/${order._id}`
     }
     mailController.sendMail(mail).then(() => {
-      console.log('mail send to administrators');
+      console.log('mail sent to administrators');
     });
 
     // mail to requester
@@ -54,8 +54,8 @@ function sendNewRequestMails(order) {
     var mail = {
       to: order.owner.email,
       subject: subjectClient,
-      body: 
-`Beste ${order.owner.name},
+      body:
+      `Beste ${order.owner.name},
 
 wij hebben uw aanvraag goed ontvangen. We zullen u zo snel mogelijk een antwoord sturen.
 
@@ -65,7 +65,7 @@ De uitleendienst van de Jeugdraad van Knokke-Heist.
 Uw aanvraag: ${config.host}/request/info/${order._id}`
     }
     mailController.sendMail(mail).then(() => {
-      console.log('mail send to client');
+      console.log('mail sent to client');
     });
   });
 }
@@ -81,9 +81,9 @@ function sendRequestApprovedMails(order) {
     // mail to requester
     var mail = {
       to: order.owner.email,
-      subject: `Aanvraag ${order.name}-${order.ordernumber} goedgekeurd`,
-      body: 
-`Beste ${order.owner.name},
+      subject: `Aanvraag ${order.fulltitle} goedgekeurd`,
+      body:
+      `Beste ${order.owner.name},
 
 uw aanvraag werd goedgekeurd. U kan op onderstaande link terugvinden welke materialen werden goedgekeurd.
 Uw aanvraag: ${config.host}/request/info/${order._id}
@@ -91,12 +91,58 @@ Uw aanvraag: ${config.host}/request/info/${order._id}
 mvg,
 De uitleendienst van de Jeugdraad van Knokke-Heist.
 `
-  }
+    }
     mailController.sendMail(mail).then(() => {
       console.log('mail send to client');
     });
   });
 }
+
+/* mail to be sent on new comment
+1 mail to admins and 1 mail to owner
+*/
+function sendNewCommentMails(order) {
+  order
+    .populate('comments.creator', 'name')
+    .populate('owner', { 'name': true, 'email': true, 'phone': true }, function (err) {
+      if (err) {
+        console.error(err);
+      }
+
+      const lastComment = order.comments[order.comments.length - 1];
+      const subject = `Nieuw bericht van ${lastComment.creator.name} in ${order.fulltitle}`
+      const body = `"""
+  ${lastComment.body}
+"""
+ - ${lastComment.creator.name}
+ `
+      let admin_url = `${config.host}/admin/order/${order._id}`;
+      let client_url = `${config.host}/request/info/${order._id}`;
+
+      // mail to client 
+      var mail = {
+        to: order.owner.email,
+        subject: subject,
+        body: body + client_url
+      };
+
+      mailController.sendMail(mail).then(() => {
+        console.log('mail send to client');
+      });
+      // mail to admin 
+      var mail = {
+        to: config.adminEmail,
+        subject: subject,
+        body: body + admin_url 
+      };
+
+      mailController.sendMail(mail).then(() => {
+        console.log('mail send to client');
+      });
+    });
+}
+
+
 function getOverlappingOrders(res, statusCode) {
   return function (entity) {
     if (entity) {
@@ -117,7 +163,6 @@ function getOverlappingOrders(res, statusCode) {
     }
   };
 }
-
 
 function saveUpdates(updates, postSave) {
   console.log('saving updates');
@@ -154,45 +199,18 @@ function saveUpdates(updates, postSave) {
   };
 }
 
-function addCommentToOrder(req) {
+function addCommentToOrder(req, postSave) {
   return function (entity) {
     var now = new Date();
     entity.comments.push({ creator: req.user._id, body: req.body.body, date: now });
     return entity.save()
       .then(updated => {
-        //notify admins of new message
-        var mail = {
-          to: config.adminEmail,
-          subject: `Nieuw bericht voor ${entity.ordernumber} ${entity.name}`,
-          body: newCommentMailBody(entity, req.user)
+        if (postSave!= null) {
+          postSave(updated);
         }
-        mailController.sendMail(mail).then(() => {
-          console.log('mail send');
-        });
         return updated;
       });
   }
-}
-
-function newCommentMailBody(order, user) {
-  let url = 'http://';
-  let last_comment = order.comments[order.comments.length - 1].body;
-  let body = `${user.name} heeft een nieuw bericht toegevoegd aan ${order.name}:
-  """
-    ${last_comment}
-  """
-  
-${config.host}/admin/order/${order._id}`;
-  console.log(body);
-  return body;
-}
-
-function newOrderMailBody(order, user) {
-  let body = `${user.name} heeft een nieuwe aanvraag gedaan ${order.name}:
-  
-  ${config.host}/admin/order/${order._id}`;
-  console.log(body);
-  return body;
 }
 
 //'dont remove entity if state is not draft or if an ordernumber is available
@@ -346,7 +364,7 @@ export function addComment(req, res) {
 
   return Order.findById(req.params.id).exec()
     .then(handleEntityNotFound(res))
-    .then(addCommentToOrder(req))
+    .then(addCommentToOrder(req, sendNewCommentMails))
     .then(respondWithResult(res))
     .catch(handleError(res));
 }
