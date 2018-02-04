@@ -19,21 +19,21 @@ var mail_user =  'noreply.materiaalkot@jkh.be'
 //note: the user on jkh.be needs a mailbox, otherwise you can't login
 
 var transporter = nodemailer.createTransport(smtpTransport({
-    host: 'mail.jkh.be',
+    host: 'send.one.com',
     port: 465,
     secureConnection: false,
     debug: true,
     auth: {
         user: mail_user,
-        pass: 'Veelteweinigbakfrigos!'
+        pass: 'Edward16'
     },
     tls: {
-        //ciphers: 'SSLv3'
+        ciphers: 'SSLv3',
         rejectUnauthorized: false
     },
-    debug: true,
+    debug: false,
     secure: true,
-    ignoreTLS: true
+    ignoreTLS: false
 }));
 
 function sendMailAndRespond(res, statusCode) {
