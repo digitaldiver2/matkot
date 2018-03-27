@@ -38,15 +38,17 @@
 				</div>
 			</div>
 			<hr>
-			<div>
-				<button type="button" class="btn btn-default" ng-click="$ctrl.evaluate()">Evalueer</button>
-				<button class="btn btn-danger" ng-click="$ctrl.remove()">Verwijderen</button>
-				<button type="button" class="btn btn-default" ng-click="$ctrl.orderService.reOpen($ctrl.order)" ng-show="$ctrl.orderService.orderIsEvaluated($ctrl.order)">Heropen order</button>
-				<button type="button" class="btn btn-success" ng-click="$ctrl.saveBtn()" ng-show="!$ctrl.isSyncing" ng-enabled="!$ctrl.isSyncing">
-					Opslaan
-				</button>
-				<input type="checkbox" ng-model="$ctrl.isSyncing">Sync
-
+			<div class="container-fluid">
+				<div class="row">
+					<button type="button" class="btn btn-default col-md-4" ng-click="$ctrl.evaluate()">Evalueer</button>
+					<button class="btn btn-danger col-md-4" ng-click="$ctrl.remove()">Verwijderen</button>
+					<button type="button" class="btn btn-default col-md-4" ng-click="$ctrl.orderService.reOpen($ctrl.order)" ng-show="$ctrl.orderService.orderIsEvaluated($ctrl.order)">Heropen order</button>
+					<button type="button" class="btn btn-success col-md-4" ng-click="$ctrl.saveBtn()" ng-show="!$ctrl.isSyncing" ng-enabled="!$ctrl.isSyncing">Opslaan</button>
+				</div>
+				<div class="row">
+					<input class="col-md-6" type="checkbox" ng-model="$ctrl.isSyncing">Sync
+					<button type="button" class="btn btn-error col-md-6" ng-click="$ctrl.orderService.orderToPDF($ctrl.order, true)">TEST PDF</button>
+				</div>
 			</div>
 		</div>
 		<div class="col-sm-9 col-md-10 sidebar">

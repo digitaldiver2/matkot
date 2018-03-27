@@ -164,7 +164,7 @@
       } else if (this.order.state === 'DELIVERED') {
         for (var i = 0; i < this.order.products.length; i++) {
           var product = this.order.products[i];
-          product.returned = product.approved;
+          product.returned = product.received;
         }
       }
     }
@@ -300,7 +300,6 @@
       }
       return !retval;
     }
-
   }
 
   angular.module('matkotApp.admin')
