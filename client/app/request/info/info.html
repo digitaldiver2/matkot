@@ -1,92 +1,106 @@
-	
 <div class="container">
-	<form name="info">
+	<form class="form-horizontal">
+		<!-- test form -->
 		<div class="form-group">
-			<label for="Category">Vereniging *</label>
-			<select id="Category" class="form-control" 
-			ng-model="request.group" 
-			ng-options="group as group.name for group in user.groups track by group._id"
-			ng-disabled="!isDraft">
-			<option value="">Prive</option>
-			</select>	
+			<label for="category" class="col-md-2">Vereniging *</label>
+			<div class="col-md-4">
+				<select id="Category" class="form-control" ng-model="request.group" ng-options="group as group.name for group in user.groups | orderBy: 'name' track by group._id"
+				 ng-disabled="!isDraft">
+					<option value="">Prive</option>
+				</select>
+			</div>
 		</div>
 		<div class="form-group">
-			<label for="Naam">Naam evenement *</label>
-			<input type="text" class="form-control" id="NaamEvenement" placeholder='Evenement' ng-model='request.name' 
-			ng-disabled="!isDraft" required="true">
-		</div>
-
-		<div class="form-group">
-			<label>Start Evenement: </label>
-			<a  ng-click="eventstartCollapsed = !eventstartCollapsed">{{request.eventstart | date:'EEE dd/MM/yy HH:mm'}}
-				<i class="fa fa-pencil fa" aria-hidden="true"></i>
-			</a>
-			<div uib-collapse="eventstartCollapsed">
-				<div class="well">
-					<uib-datepicker ng-model="request.eventstart" ng-disabled="!isDraft" datepicker-options="$ctrl.eventoptions">
-					</uib-datepicker>
-					<uib-timepicker ng-model="request.eventstart" ng-change="$ctrl.changedTime()" show-meridian="ismeridian" ng-disabled="!isDraft">
-					</uib-timepicker>
-				</div>
+			<label for="Naam" class="col-md-2">Naam evenement *</label>
+			<div class="col-md-4">
+				<input type="text" class="form-control" id="NaamEvenement" placeholder='Evenement' ng-model='request.name' ng-disabled="!isDraft"
+				 required="true">
 			</div>
 		</div>
 
+		<!-- Start evenement -->
 		<div class="form-group">
-			<label>Einde Evenement: </label>
-			<a ng-click="eventstopCollapsed = !eventstopCollapsed">{{request.eventstop | date:'EEE dd/MM/yy HH:mm'}}
-				<i class="fa fa-pencil fa" aria-hidden="true"></i>
-			</a>
-			<div uib-collapse="eventstopCollapsed">
-				<div class="well">
-					<uib-datepicker ng-model="request.eventstop" ng-disabled="!isDraft" datepicker-options="$ctrl.eventoptions">
-					</uib-datepicker>
-					<uib-timepicker ng-model="request.eventstop" show-meridian="ismeridian" ng-disabled="!isDraft">
-					</uib-timepicker>
-				</div>
+			<label class="col-md-2">Start evenement: </label>
+			<div class="col-md-4">
+				<p class="input-group">
+					<input type="text" class="form-control" uib-datepicker-popup="{{format}}" ng-model="request.eventstart" is-open="popups.eventstart"
+					 datepicker-options="$ctrl.eventstartoptions" ng-required="true" close-text="Close" readonly/>
+					<span class="input-group-btn">
+						<button type="button" class="btn btn-default" ng-click="$ctrl.openEventStart()">
+							<i class="glyphicon glyphicon-calendar"></i>
+						</button>
+					</span>
+				</p>
+			</div>
+			<div class="col-md-2">
+				<uib-timepicker ng-model="request.eventstart" ng-change="$ctrl.changedTime()" show-meridian="ismeridian" show-spinners="false"
+				 ng-disabled="!isDraft">
+				</uib-timepicker>
 			</div>
 		</div>
-
+		<!-- Einde evenement -->
+		<div class="form-group">
+			<label class="col-md-2">Einde evenement: </label>
+			<div class="col-md-4">
+				<p class="input-group">
+					<input type="text" class="form-control" uib-datepicker-popup="{{format}}" ng-model="request.eventstop" is-open="popups.eventstop"
+					 datepicker-options="$ctrl.eventstopoptions" ng-required="true" close-text="Close" readonly/>
+					<span class="input-group-btn">
+						<button type="button" class="btn btn-default" ng-click="$ctrl.openEventStop()">
+							<i class="glyphicon glyphicon-calendar"></i>
+						</button>
+					</span>
+				</p>
+			</div>
+			<div class="col-md-2">
+				<uib-timepicker ng-model="request.eventstop" ng-change="$ctrl.changedTime()" show-meridian="ismeridian" show-spinners="false"
+				 ng-disabled="!isDraft">
+				</uib-timepicker>
+			</div>
+		</div>
+		<!-- Afhalen -->
+		<div class="form-group">
+			<label class="col-md-2">Afhaal tijdstip: </label>
+			<div class="col-md-4">
+				<p class="input-group">
+					<input type="text" class="form-control" uib-datepicker-popup="{{format}}" ng-model="request.pickupdate" is-open="popups.pickupdate"
+					 date-disabled="$ctrl.closedDates(date, mode)" ng-disabled="!$ctrl.isEventDefined()" ng-change="$ctrl.changePickupDate()"
+					 datepicker-options="$ctrl.pickupoptions" ng-required="true" close-text="Close" readonly/>
+					<span class="input-group-btn">
+						<button type="button" class="btn btn-default" ng-click="$ctrl.openPickup()" ng-disabled="!$ctrl.isEventDefined()">
+							<i class="glyphicon glyphicon-calendar"></i>
+						</button>
+					</span>
+				</p>
+			</div>
+			<div class="col-md-2">
+				<uib-timepicker ng-model="request.pickupdate" ng-change="$ctrl.changedTime()" show-meridian="ismeridian" show-spinners="false"
+				 readonly-input="true">
+				</uib-timepicker>
+			</div>
+		</div>
+		<!-- Terug brengen -->
+		<div class="form-group">
+			<label class="col-md-2">Retour tijdstip: </label>
+			<div class="col-md-4">
+				<p class="input-group">
+					<input type="text" class="form-control" uib-datepicker-popup="{{format}}" ng-model="request.returndate" is-open="popups.returndate"
+					 date-disabled="$ctrl.closedDates(date, mode)" ng-disabled="!$ctrl.isEventDefined()" ng-change="$ctrl.changeReturnDate()"
+					 datepicker-options="$ctrl.returnoptions" ng-required="true" close-text="Close" readonly/>
+					<span class="input-group-btn">
+						<button type="button" class="btn btn-default" ng-click="$ctrl.openReturn()" ng-disabled="!$ctrl.isEventDefined()">
+							<i class="glyphicon glyphicon-calendar"></i>
+						</button>
+					</span>
+				</p>
+			</div>
+			<div class="col-md-2">
+				<uib-timepicker ng-model="request.returndate" ng-change="$ctrl.changedTime()" show-meridian="ismeridian" show-spinners="false"
+				 readonly-input="true">
+				</uib-timepicker>
+			</div>
+		</div>
+		<button class="btn btn-primary btn" ng-click="$ctrl.submit()" ng-disabled="!isDraft || !info.$valid">Opslaan</button>
+		<button class="btn btn-success" ng-click="$ctrl.submit(true)" ng-disabled="!info.$valid && isDraft">Naar materiaallijst</button>
 	</form>
-	<div class="form-group">
-			<label>Afhaal tijdstip: </label>
-			<a ng-click="pickupCollapsed = !pickupCollapsed">{{request.pickupdate | date:'EEE dd/MM/yy HH:mm'}}
-				<i class="fa fa-pencil fa" aria-hidden="true"></i>
-			</a>
-		<div uib-collapse="pickupCollapsed">
-			<div class="well">
-				<uib-datepicker 
-					ng-model="request.pickupdate" 
-					datepicker-options="$ctrl.pickupoptions" 
-					ng-disabled="!isDraft"
-					ng-change="$ctrl.changePickupDate()"
-					date-disabled="$ctrl.closedDates(date, mode)">
-				</uib-datepicker>
-				<uib-timepicker ng-model="request.pickupdate" show-meridian="ismeridian" ng-disabled="true" readonly-input="true">
-				</uib-timepicker>
-			</div>
-		</div>
-	</div>
-
-
-	<div class="form-group">
-		<label>Retour moment: </label>
-		<a ng-click="returnCollapsed = !returnCollapsed">{{request.returndate | date:'EEE dd/MM/yy HH:mm'}}
-			<i class="fa fa-pencil fa" aria-hidden="true"></i>
-		</a>
-		<div uib-collapse="returnCollapsed">
-			<div class="well">
-				<uib-datepicker 
-				ng-model="request.returndate" 
-				datepicker-options="$ctrl.retouroptions" 
-				ng-disabled="!isDraft" 
-				ng-change="$ctrl.changeReturnDate()"
-				date-disabled="$ctrl.closedDates(date, mode)">
-				</uib-datepicker>
-				<uib-timepicker ng-model="request.returndate" show-meridian="ismeridian" ng-disabled="true" readonly-input="true">
-				</uib-timepicker>
-			</div>
-		</div>
-	</div>
-	<button class="btn btn-primary btn" ng-click="$ctrl.submit()" ng-disabled="!isDraft || !info.$valid">Opslaan</button>
-	<button class="btn btn-success" ng-click="$ctrl.submit(true)" ng-disabled="!info.$valid && isDraft">Naar materiaallijst</button>
 </div>
