@@ -12,20 +12,59 @@
     <div uib-collapse="nav.isCollapsed" class="navbar-collapse collapse" id="navbar-main">
       <ul class="nav navbar-nav">
         <li ng-repeat="item in nav.staticMenu" ui-sref-active="active">
-            <a ui-sref="{{item.state}}">{{item.title}}</a>
+          <a ui-sref="{{item.state}}">{{item.title}}</a>
         </li>
         <li ng-show="nav.isLoggedIn()" ng-repeat="item in nav.menu" ui-sref-active="active">
-            <a ui-sref="{{item.state}}">{{item.title}}</a>
+          <a ui-sref="{{item.state}}">{{item.title}}</a>
         </li>
-        <li ng-show="nav.isAdmin()" ui-sref-active="active"><a ui-sref="admin">Admin</a></li>
+        <li class="dropdown" ng-show="nav.isAdmin()" ui-sref-active="active">
+          <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Admin<span class="caret"></span>
+          </a>
+          <ul class="dropdown-menu">
+            <li>
+              <a ui-sref="orderoverview">Orderbeheer</a>
+            </li>
+            <li role="separator" class="divider"></li>
+            <li>
+              <a ui-sref="users">Gebruikersbeheer</a>
+            </li>
+            <li>
+              <a ui-sref="products">Productbeheer</a>
+            </li>
+            <li>
+              <a ui-sref="productGridEdit">Product Grid</a>
+            </li>
+            <li>
+              <a ui-sref="stockCount">Stocktelling</a>
+            </li>
+            <li>
+              <a ui-sref="pricing">Prijsbeheer</a>
+            </li>
+            <li>
+              <a ui-sref="adminsettings">Instellingen</a>
+            </li>
+          </ul>
+        </li>
       </ul>
 
       <ul class="nav navbar-nav navbar-right">
-        <li ng-hide="nav.isLoggedIn()" ui-sref-active="active"><a ui-sref="signup">Registreren</a></li>
-        <li ng-hide="nav.isLoggedIn()" ui-sref-active="active"><a ui-sref="login">Aanmelden</a></li>
-        <li ng-show="nav.isLoggedIn()"><p class="navbar-text">Dag {{ nav.getCurrentUser().name }}</p> </li>
-        <li ng-show="nav.isLoggedIn()" ui-sref-active="active"><a ui-sref="settings"><span class="glyphicon glyphicon-cog"></span></a></li>
-        <li ng-show="nav.isLoggedIn()"><a ui-sref="logout">Afmelden</a></li>
+        <li ng-hide="nav.isLoggedIn()" ui-sref-active="active">
+          <a ui-sref="signup">Registreren</a>
+        </li>
+        <li ng-hide="nav.isLoggedIn()" ui-sref-active="active">
+          <a ui-sref="login">Aanmelden</a>
+        </li>
+        <li ng-show="nav.isLoggedIn()">
+          <p class="navbar-text">Dag {{ nav.getCurrentUser().name }}</p>
+        </li>
+        <li ng-show="nav.isLoggedIn()" ui-sref-active="active">
+          <a ui-sref="settings">
+            <span class="glyphicon glyphicon-cog"></span>
+          </a>
+        </li>
+        <li ng-show="nav.isLoggedIn()">
+          <a ui-sref="logout">Afmelden</a>
+        </li>
       </ul>
     </div>
   </div>
