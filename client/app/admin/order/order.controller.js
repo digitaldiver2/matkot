@@ -42,6 +42,65 @@
       this.showPrices = false;
       this.hideDoneItems = true;
 
+      // begin calendar management
+      this.getDayClass = function (date, mode) {
+        const classes = [];
+        if (mode === 'day') {
+          if (moment(date).isBetween(this.order.eventstart, this.order.eventstop, 'day', '[]')) {
+            classes.push('event');
+          }
+          if (moment(date).isSame(this.order.pickupdate, 'day')) {
+            classes.push('pickup');
+          }
+          if (moment(date).isSame(this.order.returndate, 'day')) {
+            classes.push('return');
+          }
+        }
+        return classes.join(' ');
+      }
+
+      this.$scope.popups = {
+        'eventstart': false,
+        'eventstop': false,
+        'pickupdate': false,
+        'returndate': false,
+      }
+      this.retouroptions = {
+        customClass: this.getDayClass,
+        minDate: null,
+        maxDate: null,
+        initDate: null,
+        showWeeks: false
+      };
+
+      this.pickupoptions = {
+        minDate: null,
+        maxDate: null,
+        initDate: null,
+        showWeeks: false
+      };
+
+      this.eventstartoptions = {
+        minDate: null,
+        initDate: new Date(),
+        showWeeks: false,
+        maxDate: null
+      };
+
+      this.eventstopoptions = {
+        minDate: null,
+        initDate: new Date(),
+        showWeeks: false,
+        maxDate: null
+      };
+
+      this.isEventDefined = function () {
+        const result = this.order && this.order.eventstart !== null && this.order.eventstart !== undefined 
+        && this.order.eventstart !== null && this.order.eventstart !== undefined;
+        return result;
+      }
+      // end calendar management
+
     }
 
     $onInit() {
@@ -78,6 +137,8 @@
       this.$scope.eventstopCollapsed = true;
       this.$scope.addProductCollapsed = true;
 
+      this.infoEditMode = false;
+
       this.$scope.retouroptions = {
         dateDisabled: this.closedDates
       };
@@ -106,6 +167,15 @@
       });
     }
 
+    OrderDuration() {
+      // return order duration in days
+      if (this.order && this.order.pickupdate != undefined && this.order.returndate != undefined) {
+        const a = moment(this.order.returndate).hours(0).minutes(0);
+        const b = moment(this.order.pickupdate).hours(0).minutes(0);
+        return `${a.diff(b, 'd')} dagen`;
+      }
+    }
+
     prepareOrder() {
       this.productService.syncProductsWithOrder(this.products, this.order);
       this.CalculateTotals();
@@ -117,6 +187,48 @@
     evaluate() {
       this.orderService.evaluateOrder(this.order);
       this.save();
+    }
+
+    openEventStart() {
+      if (this.order.eventstop !== null && this.order.eventstop !== undefined) {
+        this.eventstartoptions.maxDate = this.order.eventstop;
+      } else {
+        this.eventstartoptions.maxDate = undefined
+      }
+      this.open('eventstart');
+    }
+
+    openEventStop() {
+      if (this.order.eventstart !== null && this.order.eventstart !== undefined) {
+        this.eventstopoptions.minDate = this.order.eventstart;
+      } else {
+        this.eventstopoptions.minDate = undefined
+      }
+      this.open('eventstop');
+    }
+
+    openPickup() {
+      if (this.order.eventstart !== null && this.order.eventstart !== undefined) {
+        this.pickupoptions.maxDate = this.order.eventstart;
+        this.pickupoptions.initDate = this.order.eventstart;
+      } else {
+        this.pickupoptions.maxDate = undefined
+      }
+      this.open('pickupdate');
+    }
+
+    openReturn() {
+      if (this.order.eventstop !== null && this.order.eventstop !== undefined) {
+        this.retouroptions.minDate = this.order.eventstop;
+        this.pickupoptions.initDate = this.order.eventstop;
+      } else {
+        this.eventstopoptions.minDate = undefined
+      }
+      this.open('returndate');
+    }
+
+    open(popupname) {
+      this.$scope.popups[popupname] = true;
     }
 
     CalculateTotals() {

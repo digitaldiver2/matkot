@@ -9,15 +9,22 @@
 					<a ng-click="$ctrl.selectTab($ctrl.TAB_INFO)">Info</a>
 				</li>
 				<li role="presentation" ng-class="{active: $ctrl.isTabVisible($ctrl.TAB_SHOP)}">
-					<a ng-click="$ctrl.selectTab($ctrl.TAB_SHOP)">Productlijst</a></li>
+					<a ng-click="$ctrl.selectTab($ctrl.TAB_SHOP)">Productlijst</a>
+				</li>
 				<li role="presentation" ng-class="{active: $ctrl.isTabVisible($ctrl.TAB_CART)}">
-					<a ng-click="$ctrl.selectTab($ctrl.TAB_CART)">Winkelmandje<span class="badge">{{$ctrl.order.products.length}}</span></a>
+					<a ng-click="$ctrl.selectTab($ctrl.TAB_CART)">Winkelmandje
+						<span class="badge">{{$ctrl.order.products.length}}</span>
+					</a>
 				</li>
 				<li role="presentation" ng-class="{active: $ctrl.isTabVisible($ctrl.TAB_MESSAGES)}">
-					<a ng-click="$ctrl.selectTab($ctrl.TAB_MESSAGES)">Berichten<span class="badge">{{$ctrl.order.comments.length}}</span></a>
+					<a ng-click="$ctrl.selectTab($ctrl.TAB_MESSAGES)">Berichten
+						<span class="badge">{{$ctrl.order.comments.length}}</span>
+					</a>
 				</li>
 				<li role="presentation" ng-class="{active: $ctrl.isTabVisible($ctrl.TAB_SHORTAGE)}">
-					<a ng-click="$ctrl.selectTab($ctrl.TAB_SHORTAGE)">Tekorten<span class="badge">{{$ctrl.order.unresolved_shortages}}</span></a>
+					<a ng-click="$ctrl.selectTab($ctrl.TAB_SHORTAGE)">Tekorten
+						<span class="badge">{{$ctrl.order.unresolved_shortages}}</span>
+					</a>
 				</li>
 			</ul>
 			<br>
@@ -52,99 +59,206 @@
 			</div>
 		</div>
 		<div class="col-sm-9 col-md-10 sidebar">
-			<form id="info" ng-show="$ctrl.isTabVisible($ctrl.TAB_INFO)">
-				<h3>Info</h3>
-				<p>
-					<strong>Ordernummer:</strong> {{$ctrl.order.ordernumber}}</br>
-					<strong>Eigenaar:</strong> {{$ctrl.order.owner.name}}</br>
-					<select ng-model="$ctrl.order.owner" class="form-control" ng-options="user.name for user in $ctrl.users track by user._id ">
-					</select>
-					<strong>Telefoon:</strong> {{$ctrl.order.owner.phone}}</br>
-					<strong>Mail:</strong> {{$ctrl.order.owner.email}}
-				</p>
-				<div class="form-group">
-					<label for="Category">Vereniging *</label>
-					<select id="Category" class="form-control" ng-model="$ctrl.order.group" ng-options="group as group.name for group in groups track by group._id"
-					 ng-change="$ctrl.instantSave()" ng-model-options="{ updateOn: 'blur' }">
-						<option value="">Prive</option>
-					</select>
-				</div>
-				<div class="form-group">
-					<label for="Naam">Naam evenement *</label>
-					<input type="text" class="form-control" id="NaamEvenement" placeholder='Evenement' ng-model='$ctrl.order.name' ng-change="$ctrl.instantSave()">
-				</div>
-				<div class="form-group">
-					<label>Start Evenement: </label>
-					<a ng-click="eventstartCollapsed = !eventstartCollapsed">{{$ctrl.order.eventstart | date:'EEE dd/MM/yy HH:mm'}}
-						<i class="fa fa-pencil fa" aria-hidden="true"></i>
-					</a>
-					<div uib-collapse="eventstartCollapsed">
-						<div class="well">
-							<uib-datepicker ng-model="$ctrl.order.eventstart" datepicker-options="$ctrl.options">
-							</uib-datepicker>
-							<uib-timepicker ng-model="$ctrl.order.eventstart" ng-change="$ctrl.changedTime()" show-meridian="ismeridian">
-							</uib-timepicker>
+			<div ng-show="!$ctrl.infoEditMode && $ctrl.isTabVisible($ctrl.TAB_INFO)" class="container-fluid">
+				<div class="row">
+					<div class="col-md-4">
+						<div class="panel panel-default">
+							<div class="panel-heading">Evenement</div>
+							<div class="panel-body">
+								<dl class="dl-horizontal info">
+									<dt>Naam:</dt>
+									<dd>{{$ctrl.order.name}}</dd>
+									<dt>Start:</dt>
+									<dd>{{$ctrl.order.eventstart | date:'EEE dd/MM/yy HH:mm'}}</dd>
+									<dt>Einde:</dt>
+									<dd>{{$ctrl.order.eventstop | date:'EEE dd/MM/yy HH:mm'}}</dd>
+								</dl>
+							</div>
+						</div>
+					</div>
+					<div class="col-md-4">
+						<div class="panel panel-default">
+							<div class="panel-heading">Eigenaar</div>
+							<div class="panel-body">
+								<dl class="dl-horizontal info">
+									<dt>Naam:</dt>
+									<dd>{{$ctrl.order.owner.name}}</dd>
+									<dt>Email:</dt>
+									<dd>{{$ctrl.order.owner.email}}</dd>
+									<dt>Telefoon:</dt>
+									<dd>{{$ctrl.order.owner.phone}}</dd>
+								</dl>
+							</div>
 						</div>
 					</div>
 				</div>
-
-				<div class="form-group">
-					<label>Einde Evenement: </label>
-					<a ng-click="eventstopCollapsed = !eventstopCollapsed">{{$ctrl.order.eventstop | date:'EEE dd/MM/yy HH:mm'}}
-						<i class="fa fa-pencil fa" aria-hidden="true"></i>
-					</a>
-					<div uib-collapse="eventstopCollapsed">
-						<div class="well">
-							<uib-datepicker ng-model="$ctrl.order.eventstop" datepicker-options="$ctrl.options">
-							</uib-datepicker>
-							<uib-timepicker ng-model="$ctrl.order.eventstop" show-meridian="ismeridian">
-							</uib-timepicker>
+				<div class="row">
+					<div class="col-md-4">
+						<div class="panel panel-primary">
+							<div class="panel-heading">Uitlening</div>
+							<div class="panel-body">
+								<dl class="dl-horizontal info">
+									<dt>Ordernummer</dt>
+									<dd>{{$ctrl.order.ordernumber}}</dd>
+									<dt>Afhalen:</dt>
+									<dd>
+										<strong>{{$ctrl.order.pickupdate | date:'EEE dd/MM/yy HH:mm'}}</strong>
+									</dd>
+									<dt>Inleveren:</dt>
+									<dd>
+										<strong> {{$ctrl.order.returndate | date:'EEE dd/MM/yy HH:mm'}}</strong>
+									</dd>
+									<dt>Duur</dt>
+									<dd>{{$ctrl.OrderDuration()}}</dd>
+									<dt ng-show="$ctrl.order.requestdate">Aangevraagd op:</dt>
+									<dd ng-show="$ctrl.order.requestdate">{{$ctrl.order.requestdate | date: 'EEE dd/MM/yy HH:mm'}}</dd>
+								</dl>
+							</div>
+						</div>
+					</div>
+					<div class="col-md-4" ng-show="$ctrl.order.group">
+						<div class="panel panel-default">
+							<div class="panel-heading">Vereniging</div>
+							<div class="panel-body">
+								<dl class="dl-horizontal info">
+									<dt>Naam:</dt>
+									<dd>{{$ctrl.order.group.name}}</dd>
+								</dl>
+							</div>
 						</div>
 					</div>
 				</div>
-
-				<div class="form-group">
-					<label>Afhaal tijdstip: </label>
-					<a ng-click="pickupCollapsed = !pickupCollapsed">{{$ctrl.order.pickupdate | date:'EEE dd/MM/yy HH:mm'}}
-							<i class="fa fa-pencil fa" aria-hidden="true"></i>
-						</a>
-					<div uib-collapse="pickupCollapsed">
-						<div class="well">
-							<uib-datepicker ng-model="$ctrl.order.pickupdate" datepicker-options="$ctrl.options">
-							</uib-datepicker>
-							<uib-timepicker ng-model="$ctrl.order.pickupdate" show-meridian="ismeridian">
+				<button type="button" class="btn btn-default" ng-click="$ctrl.infoEditMode = true">
+					<i class="glyphicon glyphicon-pencil"></i>
+				</button>
+			</div>
+			<div ng-show="$ctrl.infoEditMode && $ctrl.isTabVisible($ctrl.TAB_INFO)" class="container-fluid">
+				<form id="info" class="form-horizontal">
+					<div class="form-group">
+						<label for="owner" class="col-md-2">Eigenaar</label>
+						<div class="col-md-4">
+							<select ng-model="$ctrl.order.owner" class="form-control" ng-options="user.name for user in $ctrl.users |orderBy: 'name' track by user._id ">
+							</select>
+						</div>
+					</div>
+					<div class="form-group">
+						<label for="category" class="col-md-2">Vereniging *</label>
+						<div class="col-md-4">
+							<select id="Category" class="form-control" ng-model="$ctrl.order.group" ng-options="group as group.name for group in groups | orderBy: 'name' track by group._id"
+							 ng-model-options="{ updateOn: 'blur' }">
+								<option value="">Prive</option>
+							</select>
+						</div>
+					</div>
+					<div class="form-group">
+						<label for="Naam" class="col-md-2">Naam evenement *</label>
+						<div class="col-md-4">
+							<input type="text" class="form-control" id="NaamEvenement" placeholder='Evenement' ng-model='$ctrl.order.name'>
+						</div>
+					</div>
+					<!-- Start evenement -->
+					<div class="form-group">
+						<label class="col-md-2">Start evenement: </label>
+						<div class="col-md-4">
+							<p class="input-group">
+								<input type="text" class="form-control" uib-datepicker-popup="{{format}}" ng-model="$ctrl.order.eventstart" is-open="popups.eventstart"
+								 datepicker-options="$ctrl.eventstartoptions" ng-required="true" close-text="Close" readonly custom-class="$ctrl.getDayClass(date, mode)"
+								/>
+								<span class="input-group-btn">
+									<button type="button" class="btn btn-default" ng-click="$ctrl.openEventStart()">
+										<i class="glyphicon glyphicon-calendar"></i>
+									</button>
+								</span>
+							</p>
+						</div>
+						<div class="col-md-2">
+							<uib-timepicker ng-model="$ctrl.order.eventstart" ng-change="$ctrl.changedTime()" show-meridian="ismeridian" show-spinners="false">
 							</uib-timepicker>
 						</div>
 					</div>
-				</div>
-
-				<div class="form-group">
-					<label>Retour moment: </label>
-					<a ng-click="returnCollapsed = !returnCollapsed">{{$ctrl.order.returndate | date:'EEE dd/MM/yy HH:mm'}}
-						<i class="fa fa-pencil fa" aria-hidden="true"></i>
-					</a>
-					<div uib-collapse="returnCollapsed">
-						<div class="well">
-							<uib-datepicker ng-model="$ctrl.order.returndate" datepicker-options="$ctrl.options">
-							</uib-datepicker>
-							<uib-timepicker ng-model="$ctrl.order.returndate" show-meridian="ismeridian">
+					<!-- Einde evenement -->
+					<div class="form-group">
+						<label class="col-md-2">Einde evenement: </label>
+						<div class="col-md-4">
+							<p class="input-group">
+								<input type="text" class="form-control" uib-datepicker-popup="{{format}}" ng-model="$ctrl.order.eventstop" is-open="popups.eventstop"
+								 datepicker-options="$ctrl.eventstopoptions" ng-required="true" close-text="Close" readonly custom-class="$ctrl.getDayClass(date, mode)"
+								/>
+								<span class="input-group-btn">
+									<button type="button" class="btn btn-default" ng-click="$ctrl.openEventStop()">
+										<i class="glyphicon glyphicon-calendar"></i>
+									</button>
+								</span>
+							</p>
+						</div>
+						<div class="col-md-2">
+							<uib-timepicker ng-model="$ctrl.order.eventstop" ng-change="$ctrl.changedTime()" show-meridian="ismeridian" show-spinners="false">
 							</uib-timepicker>
 						</div>
 					</div>
-				</div>
-			</form>
+					<!-- Afhalen -->
+					<div class="form-group">
+						<label class="col-md-2">Afhaal tijdstip: </label>
+						<div class="col-md-4">
+							<p class="input-group">
+								<input type="text" class="form-control" uib-datepicker-popup="{{format}}" ng-model="$ctrl.order.pickupdate" is-open="popups.pickupdate"
+								 date-disabled="$ctrl.closedDates(date, mode)" ng-disabled="!$ctrl.isEventDefined()" datepicker-options="$ctrl.pickupoptions"
+								 ng-required="true" close-text="Close" readonly custom-class="$ctrl.getDayClass(date, mode)" />
+								<span class="input-group-btn">
+									<button type="button" class="btn btn-default" ng-click="$ctrl.openPickup()" ng-disabled="!$ctrl.isEventDefined()">
+										<i class="glyphicon glyphicon-calendar"></i>
+									</button>
+								</span>
+							</p>
+						</div>
+						<div class="col-md-2">
+							<uib-timepicker ng-model="$ctrl.order.pickupdate" ng-change="$ctrl.changedTime()" show-meridian="ismeridian" show-spinners="false"
+							 readonly-input="true">
+							</uib-timepicker>
+						</div>
+					</div>
+					<!-- Terug brengen -->
+					<div class="form-group">
+						<label class="col-md-2">Retour tijdstip: </label>
+						<div class="col-md-4">
+							<p class="input-group">
+								<input type="text" class="form-control" uib-datepicker-popup="{{format}}" ng-model="$ctrl.order.returndate" is-open="popups.returndate"
+								 date-disabled="$ctrl.closedDates(date, mode)" ng-disabled="!$ctrl.isEventDefined()" datepicker-options="$ctrl.retouroptions"
+								 ng-required="true" close-text="Close" readonly custom-class="$ctrl.getDayClass(date, mode)" />
+								<span class="input-group-btn">
+									<button type="button" class="btn btn-default" ng-click="$ctrl.openReturn()" ng-disabled="!$ctrl.isEventDefined()">
+										<i class="glyphicon glyphicon-calendar"></i>
+									</button>
+								</span>
+							</p>
+						</div>
+						<div class="col-md-2">
+							<uib-timepicker ng-model="$ctrl.order.returndate" ng-change="$ctrl.changedTime()" show-meridian="ismeridian" show-spinners="false"
+							 readonly-input="true">
+							</uib-timepicker>
+						</div>
+					</div>
+				</form>
+				<button type="button" class="btn btn-default" ng-click="$ctrl.infoEditMode = false">
+					<i class="glyphicon glyphicon-eye-open"></i>
+				</button>
+			</div>
 			<div id="cart" ng-show="$ctrl.isTabVisible($ctrl.TAB_CART)">
 				<div class="form-group row">
 					<div class="col-sm-2">
 						<div class="input-group">
-							<div class="input-group-addon"><i class="fa fa-search"></i></div>
+							<div class="input-group-addon">
+								<i class="fa fa-search"></i>
+							</div>
 
 							<input type="text" class="form-control" placeholder="sku" ng-model="searchProduct2.product.code">
 						</div>
 					</div>
 					<div class="col-sm-2">
 						<div class="input-group">
-							<div class="input-group-addon"><i class="fa fa-search"></i></div>
+							<div class="input-group-addon">
+								<i class="fa fa-search"></i>
+							</div>
 
 							<input type="text" class="form-control" placeholder="naam" ng-model="searchProduct2.product.name">
 						</div>
@@ -155,17 +269,20 @@
 				<div class="row">
 					<div class="col-sm-2">
 						<div class="checkbox">
-							<label for=""><input type="checkbox" ng-model="$ctrl.showAvailability">Beschikbaarheid</label>
+							<label for="">
+								<input type="checkbox" ng-model="$ctrl.showAvailability">Beschikbaarheid</label>
 						</div>
 					</div>
 					<div class="col-sm-2">
 						<div class="checkbox">
-							<label for=""><input type="checkbox" ng-model="$ctrl.showPrices">Prijzen</label>
+							<label for="">
+								<input type="checkbox" ng-model="$ctrl.showPrices">Prijzen</label>
 						</div>
 					</div>
 					<div class="col-sm-2">
 						<div class="checkbox">
-							<label for=""><input type="checkbox" ng-model="$ctrl.hideDoneItems">Afgewerkte verbergen</label>
+							<label for="">
+								<input type="checkbox" ng-model="$ctrl.hideDoneItems">Afgewerkte verbergen</label>
 						</div>
 					</div>
 				</div>
@@ -225,10 +342,14 @@
 							<td>
 								{{productitem.received - productitem.returned}}
 							</td>
-							<td ng-if="$ctrl.showPrices"><input type="number" class="price" ng-model="productitem.unitprice" ng-disabled="$ctrl.order.state=='CANCELLED' || $ctrl.order.state == 'CLOSED'"
-								 ng-change="$ctrl.instantSave()" ng-model-options="{ updateOn: 'blur' }"></td>
+							<td ng-if="$ctrl.showPrices">
+								<input type="number" class="price" ng-model="productitem.unitprice" ng-disabled="$ctrl.order.state=='CANCELLED' || $ctrl.order.state == 'CLOSED'"
+								 ng-change="$ctrl.instantSave()" ng-model-options="{ updateOn: 'blur' }">
+							</td>
 							<td ng-if="$ctrl.showPrices">{{productitem.unitprice * productitem.received | currency:'€' }} </td>
-							<td><input type="text" class="item_comment_field" ng-model="productitem.comment" ng-change="$ctrl.instantSave()" ng-model-options="{ updateOn: 'blur' }"></td>
+							<td>
+								<input type="text" class="item_comment_field" ng-model="productitem.comment" ng-change="$ctrl.instantSave()" ng-model-options="{ updateOn: 'blur' }">
+							</td>
 						</tr>
 					</tbody>
 				</table>
@@ -279,7 +400,9 @@
 						<tbody>
 							<tr ng-repeat="product in $ctrl.products | orderBy:'name' | filter:searchfield | filter:$ctrl.productService.matchByProductCategory($ctrl.categoryFilter)">
 								<td>{{product.code}}</td>
-								<td><strong>{{product.name}}</strong></td>
+								<td>
+									<strong>{{product.name}}</strong>
+								</td>
 								<td>{{product.unitprice | currency:'€'}}</td>
 								<td>{{product.stock - product.ordered}}</td>
 								<td>
@@ -332,7 +455,8 @@
 						<tr ng-repeat="shortage in $ctrl.order.shortages" ng-class="{resolved: shortage.qty_short <= shortage.qty_ok, short: shortage.qty_short > shortage.qty_ok}">
 							<td>{{shortage.product.name}}</td>
 							<td>{{shortage.qty_short}}</td>
-							<td><input type="number" ng-model="shortage.qty_ok" ng-disabled="$ctrl.orderService.orderIsClosed($ctrl.order)" ng-change="$ctrl.instantSave()"
+							<td>
+								<input type="number" ng-model="shortage.qty_ok" ng-disabled="$ctrl.orderService.orderIsClosed($ctrl.order)" ng-change="$ctrl.instantSave()"
 								 ng-model-options="{ updateOn: 'blur' }">
 							</td>
 							<td>

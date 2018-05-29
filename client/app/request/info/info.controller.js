@@ -91,7 +91,7 @@ class InfoComponent {
 			}
 		});
 
-		// test code
+		// popup mgmt
 		this.$scope.popups = {
 			'eventstart': false,
 			'eventstop': false,

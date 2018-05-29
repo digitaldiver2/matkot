@@ -18,3 +18,29 @@
 .short {
     background-color: tomato;
 }
+
+/* begin calendar */
+.event button span, .event .active {
+    background-color: lightgreen;
+}
+
+.pickup button, .pickup .active {
+    background-color: orange;
+}
+
+.return button, .return .active {
+    background-color: cornflowerblue;
+}
+/* end calendar */
+
+
+/* begin descriptive list */
+dl.info dt {
+	text-align: left;
+	width: 160px;
+}
+
+dl.info  > dd {
+	margin-left: 120px;
+}
+/* end descriptive list */
