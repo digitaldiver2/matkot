@@ -6,3 +6,16 @@
 .qty {
 	min-width: 70px;
 }
+
+dl.info dt {
+	text-align: left;
+	width: 100px;
+}
+
+dl.info  > dd {
+	margin-left: 120px;
+}
+
+#productlijst .selected-product {
+	background-color: antiquewhite;
+}

@@ -8,90 +8,134 @@
 					<a ng-click="$ctrl.selectTab($ctrl.TAB_INFO)">Info</a>
 				</li>
 				<li role="presentation" ng-class="{active: $ctrl.isTabVisible($ctrl.TAB_SHOP)}">
-					<a ng-click="$ctrl.selectTab($ctrl.TAB_SHOP)">Productlijst</a></li>
+					<a ng-click="$ctrl.selectTab($ctrl.TAB_SHOP)">Productlijst</a>
+				</li>
 				<li role="presentation" ng-class="{active: $ctrl.isTabVisible($ctrl.TAB_CART)}">
-					<a ng-click="$ctrl.selectTab($ctrl.TAB_CART)">Winkelmandje<span class="badge">{{$ctrl.order.products.length}}</span></a>
+					<a ng-click="$ctrl.selectTab($ctrl.TAB_CART)">Winkelmandje
+						<span class="badge">{{$ctrl.order.products.length}}</span>
+					</a>
 				</li>
 				<li role="presentation" ng-class="{active: $ctrl.isTabVisible($ctrl.TAB_MESSAGES)}">
-					<a ng-click="$ctrl.selectTab($ctrl.TAB_MESSAGES)">Berichten<span class="badge">{{$ctrl.order.comments.length}}</span></a>
+					<a ng-click="$ctrl.selectTab($ctrl.TAB_MESSAGES)">Berichten
+						<span class="badge">{{$ctrl.order.comments.length}}</span>
+					</a>
 				</li>
 				<li role="presentation" ng-class="{active: $ctrl.isTabVisible($ctrl.TAB_SHORTAGE)}">
-					<a ng-click="$ctrl.selectTab($ctrl.TAB_SHORTAGE)">Tekorten<span class="badge">{{$ctrl.order.unresolved_shortages}}</span></a>
+					<a ng-click="$ctrl.selectTab($ctrl.TAB_SHORTAGE)">Tekorten
+						<span class="badge">{{$ctrl.order.unresolved_shortages}}</span>
+					</a>
 				</li>
 			</ul>
 			<button type="button" class="btn btn-warning" ng-click="$ctrl.save()">Opslaan</button>
-			<button 
-				class="btn btn-success" 
-				ng-click="$ctrl.saveAndRequest()" 
-				ng-disabled="!$ctrl.orderService.orderIsDraft($ctrl.order)">Order aanvragen</button>
+			<button class="btn btn-success" ng-click="$ctrl.saveAndRequest()" ng-disabled="!$ctrl.orderService.orderIsDraft($ctrl.order)">Order aanvragen</button>
 		</div>
 		<div class="col-sm-9 col-md-10">
-			<div id="info" ng-show="$ctrl.isTabVisible($ctrl.TAB_INFO)">
-				<h2>Info</h2>
-				<h3>{{$ctrl.order.name}}</h3>
-				<section>
-					<h4>Verantwoordelijke:</h4>
-					<address>
-						{{$ctrl.order.owner.name}}<br>
-						Email: {{$ctrl.order.owner.email}}</br>
-						Telefoon: {{$ctrl.order.owner.phone}}
-					</address>
-				</section>
-				<section>
-					<h4>Evenement: </h4>
-					van <strong>{{$ctrl.order.eventstart | date:'EEE dd/MM/yy HH:mm'}}</strong>
-					tot <strong>{{$ctrl.order.eventstop  | date:'EEE dd/MM/yy HH:mm'}}</strong>
-				</section>
-				<section>
-					<h4>Uitlening:</h4>
-					afhalen op <strong>{{$ctrl.order.pickupdate | date:'EEE dd/MM/yy HH:mm'}}</strong><br>
-					inleveren op <strong> {{$ctrl.order.returndate | date:'EEE dd/MM/yy HH:mm'}}</strong>
-				</section>
-				<p ng-show="$ctrl.order.requestdate">Aangevraagd op {{$ctrl.order.requestdate | date: 'EEE dd/MM/yy HH:mm'}}</p>
-
-
-			</div>
-			<div id="shop" ng-show="$ctrl.isTabVisible($ctrl.TAB_SHOP) && $ctrl.orderService.orderIsDraft($ctrl.order)">
-
-				<div class="form-group">
-					<label for="searchfield">Filter</label>
-					<input type="text" 
-						ng-model="searchfield.name">
+			<div id="info" ng-show="$ctrl.isTabVisible($ctrl.TAB_INFO)" class="container-fluid">
+				<div class="row">
+					<div class="col-md-4">
+						<div class="panel panel-default">
+							<div class="panel-heading">Evenement</div>
+							<div class="panel-body">
+								<dl class="dl-horizontal info">
+									<dt>Naam:</dt>
+									<dd>{{$ctrl.order.name}}</dd>
+									<dt>Start:</dt>
+									<dd>{{$ctrl.order.eventstart | date:'EEE dd/MM/yy HH:mm'}}</dd>
+									<dt>Einde:</dt>
+									<dd>{{$ctrl.order.eventstop | date:'EEE dd/MM/yy HH:mm'}}</dd>
+								</dl>
+							</div>
+						</div>
+					</div>
+					<div class="col-md-4">
+						<div class="panel panel-default">
+							<div class="panel-heading">Verantwoordelijke</div>
+							<div class="panel-body">
+								<dl class="dl-horizontal info">
+									<dt>Naam:</dt>
+									<dd>{{$ctrl.order.owner.name}}</dd>
+									<dt>Email:</dt>
+									<dd>{{$ctrl.order.owner.email}}</dd>
+									<dt>Telefoon:</dt>
+									<dd>{{$ctrl.order.owner.phone}}</dd>
+								</dl>
+							</div>
+						</div>
+					</div>
 				</div>
-				<div class="form-group">
-					<label for="category">Product groep</label>
-					<select ng-model="$ctrl.categoryFilter" class="form-control"
-							ng-options="category.name for category in $ctrl.productcategories |orderBy:'name'">
-					</select>
+				<div class="row">
+					<div class="col-md-4">
+						<div class="panel panel-primary">
+							<div class="panel-heading">Uitlening</div>
+							<div class="panel-body">
+								<dl class="dl-horizontal info">
+									<dt>Afhalen:</dt>
+									<dd>
+										<strong>{{$ctrl.order.pickupdate | date:'EEE dd/MM/yy HH:mm'}}</strong>
+									</dd>
+									<dt>Inleveren:</dt>
+									<dd>
+										<strong> {{$ctrl.order.returndate | date:'EEE dd/MM/yy HH:mm'}}</strong>
+									</dd>
+									<dt ng-show="$ctrl.order.requestdate">Aangevraagd op:</dt>
+									<dd ng-show="$ctrl.order.requestdate">{{$ctrl.order.requestdate | date: 'EEE dd/MM/yy HH:mm'}}</dd>
+								</dl>
+							</div>
+						</div>
+					</div>
+					<div class="col-md-4" ng-show="$ctrl.order.group">
+						<div class="panel panel-default">
+							<div class="panel-heading">Vereniging</div>
+							<div class="panel-body">
+								<dl class="dl-horizontal info">
+									<dt>Naam:</dt>
+									<dd>{{$ctrl.order.group.name}}</dd>
+								</dl>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+			<div id="shop" class="container" ng-show="$ctrl.isTabVisible($ctrl.TAB_SHOP) && $ctrl.orderService.orderIsDraft($ctrl.order)">
+				<div class="form-group row">
+					<div class="col-md-2">
+						<label for="searchfield">Filter</label>
+					</div>
+					<div class="col-md-5">
+						<input class="form-control" type="text" ng-model="searchfield.name">
+					</div>
+				</div>
+				<div class="form-group row">
+					<div class="col-md-2">
+						<label for="category">Product groep</label>
+					</div>
+					<div class="col-md-5">
+						<select ng-model="$ctrl.categoryFilter" class="form-control" ng-options="category.name for category in $ctrl.productcategories |orderBy:'name'">
+						</select>
+					</div>
 				</div>
 				<div id="productlijst">
-					<table class="table">
+					<table class="table table-condensed table-striped table-hover">
 						<thead>
 							<tr>
-								<th>
-									Product
-								</th>
-								<th>
-									Prijs
-								</th>
-								<th>
-									Beschikbaar
-								</th>
-								<th>
-									Aangevraagd
-								</th>
+								<th>Product</th>
+								<th>Prijs</th>
+								<th>Beschikbaar</th>
+								<th>Aangevraagd</th>
 							</tr>
 						</thead>
 						<tbody>
-							<tr ng-repeat="product in $ctrl.products | orderBy:'name' | filter:searchfield | filter:$ctrl.productService.matchByProductCategory($ctrl.categoryFilter)"	>
-								<td><strong>{{product.name}}</strong></td>
+							<tr ng-repeat="product in $ctrl.products | orderBy:'name' | filter:searchfield | filter:$ctrl.productService.matchByProductCategory($ctrl.categoryFilter)"
+								ng-class="{'selected-product': product.ordered > 0}">
+								<td>
+									<strong>{{product.name}}</strong>
+								</td>
 								<td>{{product.unitprice | currency:'€'}}</td>
 								<td>{{product.stock - product.ordered}}</td>
-								<td><input class="qty" type="number" ng-model="product.ordered" 
-									id="ordered" max="{{product.stock}}" 
-									min="0" ng-disabled="!$ctrl.orderService.orderIsDraft($ctrl.order)" 
-									ng-change="$ctrl.updateProductInOrder(product)"
-									ng-model-options="{ updateOn: 'blur' }"></td>
+								<td>
+									<input class="qty" type="number" ng-model="product.ordered" id="ordered" max="{{product.stock}}" min="0" ng-disabled="!$ctrl.orderService.orderIsDraft($ctrl.order)"
+									 ng-change="$ctrl.updateProductInOrder(product)" ng-model-options="{ updateOn: 'blur' }">
+								</td>
 							</tr>
 						</tbody>
 					</table>
@@ -117,12 +161,10 @@
 						<tr ng-repeat="product in $ctrl.order.products | orderBy:'name'">
 							<td>{{product.product.name}}</td>
 							<td>
-								<input class="qty" type="number" 
-									ng-model="product.ordered" 
-									id="ordered" 
-									max="{{product.stock}}" min="0" 
-									ng-disabled="!$ctrl.orderService.orderIsDraft($ctrl.order)">
-								<a ng-hide="!$ctrl.orderService.orderIsDraft($ctrl.order)"><i class="fa fa-times" aria-hidden="true" ng-click="$ctrl.clear($index)"></i></a>
+								<input class="qty" type="number" ng-model="product.ordered" id="ordered" max="{{product.stock}}" min="0" ng-disabled="!$ctrl.orderService.orderIsDraft($ctrl.order)">
+								<a ng-hide="!$ctrl.orderService.orderIsDraft($ctrl.order)">
+									<i class="fa fa-times" aria-hidden="true" ng-click="$ctrl.clear($index)"></i>
+								</a>
 							</td>
 							<td>{{product.approved}}</td>
 							<td>{{product.received}}</td>
@@ -131,7 +173,7 @@
 								{{product.received - product.returned}}
 							</td>
 							<td>{{product.unitprice | currency:'€'}}</td>
-							<td>{{product.unitprice * product.received | currency:'€' }}	</td>
+							<td>{{product.unitprice * product.received | currency:'€' }} </td>
 							<th>{{product.comment}}</th>
 						</tr>
 					</tbody>
@@ -155,10 +197,10 @@
 				</div>
 
 				<h3>Nieuw bericht</h3>
-				<textarea class="form-control" ng-model="$ctrl.comment_body" class="col-sm-12"  rows="3"></textarea>
+				<textarea class="form-control" ng-model="$ctrl.comment_body" class="col-sm-12" rows="3"></textarea>
 				<br>
-				<button type="button" class="btn btn-default"  ng-click="$ctrl.addComment()">Add comment</button>
-			</div>	
+				<button type="button" class="btn btn-default" ng-click="$ctrl.addComment()">Add comment</button>
+			</div>
 			<div id="shortages" ng-show="$ctrl.isTabVisible($ctrl.TAB_SHORTAGE)">
 				<h2>Tekorten</h2>
 				<table class="table">
@@ -170,8 +212,7 @@
 
 					</thead>
 					<tbody>
-						<tr ng-repeat="shortage in $ctrl.order.shortages" 
-							ng-class="{resolved: shortage.qty_short <= shortage.qty_ok, short: shortage.qty_short > shortage.qty_ok}">
+						<tr ng-repeat="shortage in $ctrl.order.shortages" ng-class="{resolved: shortage.qty_short <= shortage.qty_ok, short: shortage.qty_short > shortage.qty_ok}">
 							<td>{{shortage.product.name}}</td>
 							<td>{{shortage.qty_short}}</td>
 							<td>{{shortage.qty_ok}}</td>

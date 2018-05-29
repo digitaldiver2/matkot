@@ -100,6 +100,14 @@ class ShopComponent {
   }
 
   saveAndRequest () {
+    //TODO: give warning when no products are available
+    if (this.order.products.length == 0) {
+      const msg = 'Uw order kan niet worden aangevraagd omdat het geen producten bevat.';
+      alert(msg);
+      console.log(msg);
+      return;
+    }
+
   	this.order.state = 'ORDERED';
     if (!this.order.requestdate) {
       this.order.requestdate = new Date();

@@ -1,0 +1,11 @@
+.event button span, .event .active {
+    background-color: lightgreen;
+}
+
+.pickup button, .pickup .active {
+    background-color: orange;
+}
+
+.return button, .return .active {
+    background-color: cornflowerblue;
+}

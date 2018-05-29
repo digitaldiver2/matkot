@@ -1,5 +1,5 @@
 <div class="container">
-	<form class="form-horizontal">
+	<form class="form-horizontal" name="info">
 		<!-- test form -->
 		<div class="form-group">
 			<label for="category" class="col-md-2">Vereniging *</label>
@@ -24,9 +24,9 @@
 			<div class="col-md-4">
 				<p class="input-group">
 					<input type="text" class="form-control" uib-datepicker-popup="{{format}}" ng-model="request.eventstart" is-open="popups.eventstart"
-					 datepicker-options="$ctrl.eventstartoptions" ng-required="true" close-text="Close" readonly/>
+					 datepicker-options="$ctrl.eventstartoptions" ng-required="true" close-text="Close" readonly custom-class="$ctrl.getDayClass(date, mode)"/>
 					<span class="input-group-btn">
-						<button type="button" class="btn btn-default" ng-click="$ctrl.openEventStart()">
+						<button type="button" ng-disabled="!isDraft" class="btn btn-default" ng-click="$ctrl.openEventStart()">
 							<i class="glyphicon glyphicon-calendar"></i>
 						</button>
 					</span>
@@ -44,9 +44,9 @@
 			<div class="col-md-4">
 				<p class="input-group">
 					<input type="text" class="form-control" uib-datepicker-popup="{{format}}" ng-model="request.eventstop" is-open="popups.eventstop"
-					 datepicker-options="$ctrl.eventstopoptions" ng-required="true" close-text="Close" readonly/>
+					 datepicker-options="$ctrl.eventstopoptions" ng-required="true" close-text="Close" readonly custom-class="$ctrl.getDayClass(date, mode)"/>
 					<span class="input-group-btn">
-						<button type="button" class="btn btn-default" ng-click="$ctrl.openEventStop()">
+						<button type="button" class="btn btn-default" ng-disabled="!isDraft" ng-click="$ctrl.openEventStop()">
 							<i class="glyphicon glyphicon-calendar"></i>
 						</button>
 					</span>
@@ -64,10 +64,10 @@
 			<div class="col-md-4">
 				<p class="input-group">
 					<input type="text" class="form-control" uib-datepicker-popup="{{format}}" ng-model="request.pickupdate" is-open="popups.pickupdate"
-					 date-disabled="$ctrl.closedDates(date, mode)" ng-disabled="!$ctrl.isEventDefined()" ng-change="$ctrl.changePickupDate()"
-					 datepicker-options="$ctrl.pickupoptions" ng-required="true" close-text="Close" readonly/>
+					 date-disabled="$ctrl.closedDates(date, mode)" ng-disabled="!$ctrl.isEventDefined() || !isDraft" ng-change="$ctrl.changePickupDate()"
+					 datepicker-options="$ctrl.pickupoptions" ng-required="true" close-text="Close" readonly custom-class="$ctrl.getDayClass(date, mode)"/>
 					<span class="input-group-btn">
-						<button type="button" class="btn btn-default" ng-click="$ctrl.openPickup()" ng-disabled="!$ctrl.isEventDefined()">
+						<button type="button" class="btn btn-default" ng-click="$ctrl.openPickup()" ng-disabled="!$ctrl.isEventDefined() || !isDraft">
 							<i class="glyphicon glyphicon-calendar"></i>
 						</button>
 					</span>
@@ -85,10 +85,10 @@
 			<div class="col-md-4">
 				<p class="input-group">
 					<input type="text" class="form-control" uib-datepicker-popup="{{format}}" ng-model="request.returndate" is-open="popups.returndate"
-					 date-disabled="$ctrl.closedDates(date, mode)" ng-disabled="!$ctrl.isEventDefined()" ng-change="$ctrl.changeReturnDate()"
-					 datepicker-options="$ctrl.returnoptions" ng-required="true" close-text="Close" readonly/>
+					 date-disabled="$ctrl.closedDates(date, mode)" ng-disabled="!$ctrl.isEventDefined() || !isDraft" ng-change="$ctrl.changeReturnDate()"
+					 datepicker-options="$ctrl.retouroptions" ng-required="true" close-text="Close" readonly custom-class="$ctrl.getDayClass(date, mode)"/>
 					<span class="input-group-btn">
-						<button type="button" class="btn btn-default" ng-click="$ctrl.openReturn()" ng-disabled="!$ctrl.isEventDefined()">
+						<button type="button" class="btn btn-default" ng-click="$ctrl.openReturn()" ng-disabled="!$ctrl.isEventDefined() || !isDraft">
 							<i class="glyphicon glyphicon-calendar"></i>
 						</button>
 					</span>

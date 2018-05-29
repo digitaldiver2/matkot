@@ -13,7 +13,24 @@ class InfoComponent {
 		this.$scope.isDraft = false;
 		this.test = false;
 
+		this.getDayClass = function(date, mode) {
+			const classes = [];
+			if (mode === 'day') {
+				if (moment(date).isBetween(this.$scope.request.eventstart, this.$scope.request.eventstop, 'day', '[]')) {
+					classes.push('event');
+				}
+				if(moment(date).isSame(this.$scope.request.pickupdate, 'day')) {
+					classes.push('pickup');
+				}
+				if(moment(date).isSame(this.$scope.request.returndate, 'day')) {
+					classes.push('return');
+				}
+			}
+			return classes.join(' ');
+		}
+		
 		this.retouroptions = {
+			customClass: this.getDayClass,
 			minDate: null,
 			maxDate: null,
 			initDate: null,
@@ -81,6 +98,13 @@ class InfoComponent {
 			'pickupdate': false,
 			'returndate': false,
 		}
+
+		this.$scope.events = [
+			{
+				date: new Date() + 1,
+				status: 'start'
+			}
+		];
 		this.$scope.format = 'EEE dd/MM/yy';
 	}
 
@@ -89,24 +113,24 @@ class InfoComponent {
 	};
 
 	changePickupDate() {
-		this.$scope.request.pickupdate.setHours(20);
-		this.$scope.request.pickupdate.setMinutes(30);
-		console.log(this.$scope.request.pickupdate);
+		if (this.$scope.request.pickupdate !== undefined) {
+			this.$scope.request.pickupdate.setHours(20);
+			this.$scope.request.pickupdate.setMinutes(30);
+		}
 	}
 
 	changeReturnDate() {
-		this.$scope.request.returndate.setHours(20);
-		this.$scope.request.returndate.setMinutes(0);
-		console.log(this.$scope.request.returndate);
+		if (this.$scope.request.returndate !== undefined) {
+			this.$scope.request.returndate.setHours(20);
+			this.$scope.request.returndate.setMinutes(0);
+		}
 	}
 
 	openEventStart() {
 		if (this.$scope.request.eventstop !== null && this.$scope.request.eventstop !== undefined) {
 			this.eventstartoptions.maxDate = this.$scope.request.eventstop;
-			console.log('a')
 		} else {
 			this.eventstartoptions.maxDate = undefined
-			console.log('c')
 		}
 		this.open('eventstart');
 	}
@@ -114,10 +138,8 @@ class InfoComponent {
 	openEventStop() {
 		if (this.$scope.request.eventstart !== null && this.$scope.request.eventstart !== undefined) {
 			this.eventstopoptions.minDate = this.$scope.request.eventstart;
-			console.log('d')
 		} else {
 			this.eventstopoptions.minDate = undefined 
-			console.log('e')
 		}
 		this.open('eventstop');
 	}
@@ -126,10 +148,8 @@ class InfoComponent {
 		if (this.$scope.request.eventstart !== null && this.$scope.request.eventstart !== undefined) {
 			this.pickupoptions.maxDate = this.$scope.request.eventstart;
 			this.pickupoptions.initDate = this.$scope.request.eventstart;
-			console.log('d')
 		} else {
 			this.pickupoptions.maxDate = undefined 
-			console.log('e')
 		}
 		this.open('pickupdate');
 	}
@@ -138,16 +158,14 @@ class InfoComponent {
 		if (this.$scope.request.eventstop !== null && this.$scope.request.eventstop !== undefined) {
 			this.retouroptions.minDate = this.$scope.request.eventstop;
 			this.pickupoptions.initDate = this.$scope.request.eventstop;
-			console.log('d')
 		} else {
 			this.eventstopoptions.minDate = undefined 
-			console.log('e')
 		}
 		this.open('returndate');
 	}
 
 	open(popupname) {
-		this.$scope.popups[popupname] =  true;
+		this.$scope.popups[popupname] = true;
 	}
 
   	submit (proceed) {
@@ -188,13 +206,12 @@ class InfoComponent {
 	}
 
 	isDraft () {
-		return !this.$scope.isNoDraft();
+		return !this.isNoDraft();
 	}
 
 	isEventDefined () {
 		const result = this.$scope.request.eventstart !== null && this.$scope.request.eventstart !== undefined 
 		 && this.$scope.request.eventstart !== null && this.$scope.request.eventstart !== undefined;
-		console.log(result);
 		return result;
 	}
 }
