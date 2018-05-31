@@ -78,25 +78,12 @@ class UsersComponent {
         });
     }
   }
-  // addThing() {
-  //   if (this.newThing) {
-  //     this.$http.post('/api/things', { name: this.newThing });
-  //     this.newThing = '';
-  //   }
-  // }
-
-  // deleteThing(thing) {
-  //   this.$http.delete('/api/things/' + thing._id);
-  // }
-
-
 }
 
 angular.module('matkotApp.admin')
   .component('users', {
     templateUrl: 'app/admin/users/users.html',
-    controller: UsersComponent,
-    controllerAs: 'usersCtrl'
+    controller: UsersComponent
   });
 
 })();

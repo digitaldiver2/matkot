@@ -51,8 +51,8 @@
 				</thead>
 				<tbody>
 					<tr ng-class="{'list-group-item-danger': user.requested_groups && user.requested_groups.length > 0}" 
-						ng-repeat="user in usersCtrl.users | filter:userCtrl.search | orderBy:userSortType:userSortReverse"
-						ng-click="usersCtrl.openUser(user)">
+						ng-repeat="user in $ctrl.users | filter:userCtrl.search | orderBy:userSortType:userSortReverse"
+						ng-click="$ctrl.openUser(user)">
 						<td>{{user.name}}</td>
 						<td>{{user.phone}}</td>
 						<td>{{user.email}}</td>
@@ -60,7 +60,7 @@
 					</tr>
 				</tbody>
 			</table>
-			<button class="btn btn-default" ng-click="usersCtrl.new_user()">Add user</button>
+			<button class="btn btn-default" ng-click="$ctrl.new_user()">Add user</button>
 		</div>
 	</div>
 
@@ -94,14 +94,14 @@
 					</tr>
 				</thead>
 				<tbody>
-					<tr ng-repeat="group in usersCtrl.groups | filter:userCtrl.search | orderBy: groupSortType: groupSortReverse" ng-click="usersCtrl.openGroup(group)">
+					<tr ng-repeat="group in $ctrl.groups | filter:userCtrl.search | orderBy: groupSortType: groupSortReverse" ng-click="$ctrl.openGroup(group)">
 						<td>{{group.name}}</td>
 						<td>{{group.pricecategory.name}}</td>
 						<td>{{group.info}}</td>
 					</tr>
 				</tbody>
 			</table>
-			<button class="btn btn-primary" ng-click="usersCtrl.new_group()">Add group</button>
+			<button class="btn btn-primary" ng-click="$ctrl.new_group()">Add group</button>
 		</div>
 	</div>
 </div>
