@@ -10,6 +10,21 @@ class UsersComponent {
     this.users = [];
     this.groups = [];
     this.$scope.errmsg = '';
+
+    this.$scope.userSortType = 'name';
+    this.$scope.userSortReverse = false;
+    this.$scope.groupSortType = 'name';
+    this.$scope.groupSortReverse = false;
+
+    this.search = '';
+
+    this.openUser = function (user) {
+      this.$location.path(`/admin/user/${user._id}`);
+    }
+
+    this.openGroup = function (group) {
+      this.$location.path(`/admin/group/${group._id}`);
+    }
   }
 
   $onInit() {

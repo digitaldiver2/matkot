@@ -1,16 +1,16 @@
 <div class="container">
-
-	id: {{userid}}
-	{{user.requested_groups}}
-
 	<form ng-submit="$ctrl.submit()">
 		<div class="form-group">
-	    	<label for="Name">Name</label>
-	    	<input type="text" class="form-control" id="Name" placeholder="Name" ng-model="user.name">
+	    	<label for="Name">Naam</label>
+	    	<input type="text" class="form-control" id="Name" placeholder="Naam" ng-model="user.name">
 		</div>
 		<div class="form-group">
-			<label for="Email">Email address</label>
+			<label for="Email">Email adres</label>
 			<input type="email" class="form-control" id="Email" placeholder="Email" ng-model="user.email">
+		</div>
+		<div class="form-group">
+			<label for="Phone">Telefoon</label>
+			<input type="phone" class="form-control" id="phone" placeholder="Telefoon" ng-model="user.phone">
 		</div>
 		<div class="checkbox">
 			<label>

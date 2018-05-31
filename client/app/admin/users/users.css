@@ -18,3 +18,7 @@
 	text-decoration: none;
 }
 	
+#UserTable , #GroupTable{
+	overflow-y: scroll;
+	max-height: 40vh;
+}

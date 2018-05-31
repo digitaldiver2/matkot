@@ -77,7 +77,9 @@ function handleError(res, statusCode) {
 
 // Gets a list of Usergroups
 export function index(req, res) {
-  return Usergroup.find().exec()
+  return Usergroup.find()
+    .populate('pricecategory')
+    .exec()
     .then(respondWithResult(res))
     .catch(handleError(res));
 }
