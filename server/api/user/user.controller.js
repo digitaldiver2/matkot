@@ -35,8 +35,8 @@ function saveUpdates(updates) {
     //remove groups and orders from updates
     // console.log('groups');
     if (updates.groups) {
-      updates.groups.forEach(function (group_id) {
-        entity.groups.push(group_id);
+      updates.groups.forEach(function (group) {
+        entity.groups.push(typeof(group) === 'object'? group._id : group);
       });
     }
 
@@ -47,8 +47,8 @@ function saveUpdates(updates) {
     }
 
     if (updates.requested_groups) {
-      updates.requested_groups.forEach(function (order_id) {
-        entity.requested_groups.push(order_id);
+      updates.requested_groups.forEach(function (group) {
+        entity.requested_groups.push(typeof(group) === 'object'? group._id : group);
       });
     }
 
@@ -61,8 +61,14 @@ function saveUpdates(updates) {
 
     return updated.save()
       .then(updated => {
+        return User.findById(updated._id, '-salt -password')
+          .populate('groups')
+          .populate('requested_groups')
+          .exec()
+      })
+      .then(updated => {
         return updated;
-      });
+      })
   };
 }
 
@@ -116,6 +122,8 @@ function handleError(res, statusCode) {
  */
 export function index(req, res) {
   return User.find({}, '-salt -password')
+    .populate('groups')
+    .populate('requested_groups')
     .exec()
     .then(users => {
       res.status(200).json(users);
@@ -162,7 +170,7 @@ export function show(req, res, next) {
 export function admin_show(req, res, next) {
   var userId = req.params.id;
 
-  return User.findById(userId, '-salt -password -_id -__v')
+  return User.findById(userId, '-salt -password -__v')
     .populate('groups')
     .populate('requested_groups')
     .exec()
@@ -234,8 +242,6 @@ export function update(req, res) {
     delete req.body._id;
   }
   return User.findById(req.params.id)
-    .populate('groups')
-    .populate('requested_groups')
     .exec()
     .then(handleEntityNotFound(res))
     .then(saveUpdates(req.body))

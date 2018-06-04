@@ -2,10 +2,11 @@
 (function(){
 
 class UsersComponent {
-  constructor($http, $scope, socket, $location) {
+  constructor($http, $scope, socket, $location, userService) {
     this.$scope = $scope;
     this.$http = $http;
     this.$location = $location;
+    this.userService = userService;
     this.socket = socket;
     this.users = [];
     this.groups = [];
@@ -18,25 +19,13 @@ class UsersComponent {
 
     this.search = '';
 
-    this.openUser = function (user) {
-      this.$location.path(`/admin/user/${user._id}`);
-    }
-
-    this.openGroup = function (group) {
-      this.$location.path(`/admin/group/${group._id}`);
-    }
   }
 
   $onInit() {
-    this.$http.get('/api/users').then(response => {
-      this.users = response.data;
-      // this.socket.syncUpdates('thing', this.awesomeThings);
-    });
+    this.userService.getUsers().then(users => this.users = users);
 
-    this.$http.get('/api/usergroups').then(response => {
-      this.groups = response.data;
-      // this.socket.syncUpdates('thing', this.awesomeThings);
-    });
+
+    this.userService.getUserGroups().then(groups => this.groups = groups);
   }
 
   new_user () {

@@ -2,13 +2,14 @@
 (function(){
 
 class GroupComponent {
-  constructor($scope, $http, $stateParams, $location) {
+  constructor($scope, $http, $stateParams, $location, userService) {
   	this.$scope = $scope;
   	this.$http = $http;
   	this.$location = $location;
+    this.userService = userService;
   	this.id = $stateParams.id;
     this.$scope.group = undefined;
-    this.$scope.pricecategories = undefined
+    this.$scope.pricecategories = undefined;
   }
 
   $onInit () {

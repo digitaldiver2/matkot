@@ -5,7 +5,7 @@
 	<div class="row">
 		<label class="col-md-2">Zoeken</label>
 		<div class="col-md-2">
-			<input type="text" ng-model="userCtrl.search">
+			<input type="text" ng-model="$ctrl.search">
 		</div>
 	</div>
 	<div class="row">
@@ -51,8 +51,8 @@
 				</thead>
 				<tbody>
 					<tr ng-class="{'list-group-item-danger': user.requested_groups && user.requested_groups.length > 0}" 
-						ng-repeat="user in $ctrl.users | filter:userCtrl.search | orderBy:userSortType:userSortReverse"
-						ng-click="$ctrl.openUser(user)">
+						ng-repeat="user in $ctrl.users | filter:$ctrl.search | orderBy:userSortType:userSortReverse"
+						ng-click="$ctrl.userService.openUser(user)">
 						<td>{{user.name}}</td>
 						<td>{{user.phone}}</td>
 						<td>{{user.email}}</td>
@@ -98,7 +98,7 @@
 					</tr>
 				</thead>
 				<tbody>
-					<tr ng-repeat="group in $ctrl.groups | filter:userCtrl.search | orderBy: groupSortType: groupSortReverse" ng-click="$ctrl.openGroup(group)">
+					<tr ng-show="$ctrl.groups" ng-repeat="group in $ctrl.groups | filter:$ctrl.search | orderBy: groupSortType: groupSortReverse" ng-click="$ctrl.userService.openGroup(group)">
 						<td>{{group.name}}</td>
 						<td>{{group.pricecategory.name}}</td>
 						<td>{{group.info}}</td>
