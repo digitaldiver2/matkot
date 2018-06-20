@@ -2,11 +2,12 @@
 (function(){
 
 class InfoComponent {
-	constructor($scope, Auth, $stateParams, $location, $http) {
+	constructor($scope, Auth, $stateParams, $location, $http, orderService) {
 		this.getCurrentUser = Auth.getCurrentUser;
 		this.$scope = $scope;
 		this.$location = $location;
 		this.$http = $http;
+		this.orderService = orderService;
 		this.Auth = Auth;
 		this.id = $stateParams.id;
 		this.$scope.request = {};
@@ -67,8 +68,8 @@ class InfoComponent {
 				this.$scope.user = user;
 				if (this.id) {
 			  		//load request
-			  		this.$http.get('/api/orders/' + this.id).then(response => {
-				        this.$scope.request = response.data;
+			  		this.orderService.getOrder(this.id).then(order => {
+				        this.$scope.request = order;
 						// this.setGroupSelected(this.$scope.request.group);
 						
 						// don't set presets for empty dates, but force the user to fill them in
@@ -173,7 +174,7 @@ class InfoComponent {
   		if (this.isDraft()) {
 			this.$scope.request.modifier = this.$scope.user._id;
 		  	if (this.id) {
-		  		this.$http.put('/api/orders/' + this.id, this.$scope.request);
+		  		this.orderService.saveOrder(this.$scope.request);
 				if (proceed) {
 					this.$location.path('/request/shop/' + this.id);
 				} else {
@@ -182,9 +183,9 @@ class InfoComponent {
 		  	} else {
 		  		this.$scope.request.creator = this.$scope.user._id;
 		  		this.$scope.request.owner = this.$scope.user._id;
-				this.$http.post('/api/orders/', this.$scope.request).then(response => {
+				this.orderService.saveOrder(this.$scope.request).then(response => {
 					if (proceed) {
-						this.$location.path('/request/shop/' + response.data._id);
+						this.$location.path('/request/shop/' + response._id);
 					} else {
 						this.$location.path('/orders');
 					}

@@ -13,20 +13,30 @@ angular.module('matkotApp.orderService', [])
 		this.STATE_REOPENED = 'REOPENED';
 		this.STATES = ['DRAFT', 'ORDERED', 'APPROVED', 'DELIVERED', 'OPEN', 'CLOSED', 'CANCELLED', 'REOPEN'];
 
+		// get orders should always collect all the orders the current user has permissions for
+		this.orders = undefined;
+		this.$q = $q;
+		this.$http = $http;
+
 		this.saveOrder = function (order) {
-			order.products = order.products.filter(product => {
-				return this.OrderProductUsed(product);
-			});
+			// new order with only info has not products yet
+			if (order.products) {
+				order.products = order.products.filter(product => {
+					return this.OrderProductUsed(product);
+				});
+			}
 
 			if (order._id) {
 				return $http.put('/api/orders/' + order._id, order).then(res => {
-					return;
+					this.handle_updated_order(res.data);
+					return res.data;
 				}, err => {
 					return $q.reject(err.data);
 				});
 			} else {
 				return $http.post('/api/orders/', order).then(res => {
-					return;
+					this.handle_updated_order(res.data);
+					return res.data;
 				}, err => {
 					return $q.reject(err.data);
 				});
@@ -39,6 +49,7 @@ angular.module('matkotApp.orderService', [])
 			});
 			if (order._id) {
 				return $http.put('/api/orders/request/' + order._id, order).then(res => {
+					this.handle_updated_order(res.data);
 				}, err => {
 					return $q.reject(err.data);
 				});
@@ -46,12 +57,26 @@ angular.module('matkotApp.orderService', [])
 				// save first and get id
 				alert('Gelieve eerst uw aanvraag op te slaan');
 				return $q.reject(err.data);
+			}
+		}
+
+		this.handle_updated_order = function (order) {
+			// called when order was saved and the saved version was sent as response.
+			// it will update the order in the order list or add it if not yet existing
+			if (this.orders) {
+				const index = this.orders.findIndex(_order => _order._id === order._id);
+				if (index > -1) {
+					this.orders[index] = order;
+				} else {
+					this.orders.push(order);
+				}
 			}
 		}
 
 		this.approveOrder = function (order) {
 			if (order._id) {
 				return $http.put('/api/orders/approve/' + order._id, order).then(res => {
+					this.handle_updated_order(res.data);
 				}, err => {
 					return $q.reject(err.data);
 				});
@@ -60,16 +85,6 @@ angular.module('matkotApp.orderService', [])
 				alert('Gelieve eerst uw aanvraag op te slaan');
 				return $q.reject(err.data);
 			}
-		}
-
-		this.getUserOrders = function (user_id) {
-			return $http.get('/api/orders/user/' + user_id)
-				.then(res => {
-					return res.data;
-				})
-				.catch(err => {
-					return $q.reject(err.data);
-				});
 		}
 
 		this.convertDates = function (order) {
@@ -84,45 +99,80 @@ angular.module('matkotApp.orderService', [])
 			order.unresolved_shortages = order.shortages ? order.shortages.filter(function (obj) { return !obj.resolved }).length : [];
 		}
 
-		this.getOrder = function (order_id) {
-			return $http.get('/api/orders/' + order_id)
-				.then(res => {
-					var order = res.data;
-					order.staged_comments = [];
-					this.convertDates(order);
-					this.calcUnResolvedShortages(order);
-					console.dir(order);
-					return order;
-				})
-				.catch(err => {
-					return $q.reject(err.data);
-				});
-		}
-
 		this.OrderProductUsed = function (product) {
 			return product.ordered || product.approved || product.received || product.returned;
 		}
 
-
-
-		this.getGroupOrders = function (group_id) {
-			return $http.get('/api/orders/group/' + group_id)
-				.then(res => {
-					return res.data;
-				})
-				.catch(err => {
-					return $q.reject(err.data);
-				});
+		this.getOrders = function () {
+			// the serverside is responsibly for only giving the permitted orders to the website
+			if (this.orders === undefined) {
+				return $http.get('/api/orders/')
+					.then(res => {
+						this.orders = res.data;
+						return this.orders;
+					})
+					.catch(err => {
+						console.error(err);
+						return $q.reject(err.data);
+					});
+			} else {
+				const deferred = this.$q.defer();
+				deferred.resolve(this.orders);
+				return deferred.promise;
+			}
 		}
 
-		this.getOrders = function () {
-			return $http.get('/api/orders/')
-				.then(res => {
-					return res.data;
-				})
-				.catch(err => {
-					return $q.reject(err.data);
+		this.getOrder = function (order_id) {
+			return this.getOrders().then(orders => {
+				const order = orders.find(_order => _order._id === order_id);
+				if (order) {
+						// don't set presets for empty dates, but force the user to fill them in
+				        if (order.eventstart != undefined)
+							order.eventstart = new Date(order.eventstart );
+				        if (order.eventstop != undefined)
+				        	order.eventstop = new Date(order.eventstop );
+				        if (order.pickupdate != undefined)
+				        	order.pickupdate = new Date(order.pickupdate );
+				        if (order.returndate != undefined)
+				        	order.returndate = new Date(order.returndate );
+
+					this.calcUnResolvedShortages(order);
+				}
+				console.dir(order);
+				return order;
+			});
+
+			// return $http.get('/api/orders/' + order_id)
+			// 	.then(res => {
+			// 		var order = res.data;
+			// 		order.staged_comments = [];
+			// 		this.convertDates(order);
+			// 		this.calcUnResolvedShortages(order);
+			// 		console.dir(order);
+			// 		return order;
+			// 	})
+			// 	.catch(err => {
+			// 		return $q.reject(err.data);
+			// 	});
+		}
+
+
+		this.getUserOrders = function (user_id) {
+			// get orders where owner == user
+			return this.getOrders().then(orders => {
+				return orders.filter(order => {
+					return order.owner == user_id || (typeof(order.owner) === 'object' && order.owner._id === user_id);
 				});
+			});
+		}
+
+		this.getGroupOrders = function (group_id) {
+			// get orders where group == group_id 
+			return this.getOrders().then(orders => {
+				return orders.filter(order => {
+					return order.group && (order.group == group_id || (typeof(order.group) === 'object' && order.group._id === group_id));
+				});
+			});
 		}
 
 		this.isDeletable = function (order) {
@@ -198,6 +248,42 @@ angular.module('matkotApp.orderService', [])
 			order.shortages = [];
 			//TODO log reopening
 
+		}
+
+		this._ordersTimeOverlap = function(a, b) {
+			// pickupdate A between pickupdate b and returndate b
+			// returndate A between pickupdate b and returndate b
+			// pickupdate A === pickupdate B
+			// ignore same orders
+			if (a._id === b._id)
+				//comparing with itself should not match, as this will never be useful
+				return false;
+			return this.orderInPeriod(a, b.pickupdate, b.returndate);
+		}
+
+		this.orderInPeriod = function (order, start, end) {
+			//returns if an order is away during the period. The order pickup and return don't need to be both in the period.
+			// The order can also contain the period.
+			return order.pickupdate && order.returndate && order.pickupdate !== undefined && order.returndate !== undefined && 
+				order.pickupdate !== null && order.returndate !== null && (
+				moment(order.pickupdate).isBetween(start, end) || moment(order.returndate).isBetween(start, end) ||
+				(moment(start).isBetween(order.pickupdate, order.returndate) && moment(end).isBetween(order.pickupdate, order.returndate)) ||
+				moment(order.pickupdate).isSame(start, 'day') || moment(order.returndate).isSame(end, 'day'));
+		}
+		
+		this.orderOverlappingItems = function (a, b) {
+			// return all products that a and b have in common
+			return b.products.filter(b_item => {
+				return a.products.find(a_item => a_item.product._id === b_item.product._id) !== undefined;
+			});
+		}
+
+		this.getOverlappingOrders = function (order) {
+			// search the overlapping orders of order in the cached orders
+			return this.getOrders().then(orders => {
+				return orders.filter(_order => 
+					order.state !== this.STATE_DRAFT && order.state !== this.STATE_CANCELLED &&this._ordersTimeOverlap(order, _order));
+			});
 		}
 
 		this.calcProductAvailability = function (order, prod) {

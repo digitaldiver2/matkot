@@ -194,7 +194,12 @@ function saveUpdates(updates, postSave) {
         if (postSave != null) {
           postSave(updated);
         }
-        return updated;
+        // return updated;
+        return Order.findById(updated._id)
+          .populate('group', { 'name': true })
+          .populate('owner', { 'name': true, 'email': true, 'phone': true })
+          .populate('products.product')
+          .populate('comments.creator', 'name');
       });
   };
 }
@@ -251,6 +256,8 @@ export function index(req, res) {
   return Order.find()
     .populate('group', { 'name': true })
     .populate('owner', { 'name': true, 'email': true, 'phone': true })
+    .populate('products.product')
+    .populate('comments.creator', 'name')
     .exec()
     .then(respondWithResult(res))
     .catch(handleError(res));
@@ -262,7 +269,9 @@ export function userindex(req, res) {
 
   return Order.find({ creator: userid })
     .populate('group')
-    .populate('owner')
+    .populate('owner', { 'name': true, 'email': true, 'phone': true })
+    .populate('products.product')
+    .populate('comments.creator', 'name')
     .exec()
     .then(respondWithResult(res))
     .catch(handleError(res));
@@ -273,7 +282,9 @@ export function groupindex(req, res) {
   var groupid = req.params.id;
   return Order.find({ group: groupid })
     .populate('group')
-    .populate('owner')
+    .populate('owner', { 'name': true, 'email': true, 'phone': true })
+    .populate('products.product')
+    .populate('comments.creator', 'name')
     .exec()
     .then(respondWithResult(res))
     .catch(handleError(res));

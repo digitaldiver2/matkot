@@ -52,7 +52,8 @@ class ShopComponent {
 
         //handle order
         this.order = answer[1];
-        var group_id = this.order.group? this.order.group._id: '0';
+        console.dir(this.order);
+        var group_id = this.order.group? (typeof(this.order.group) === 'object'? this.order.group._id: this.order.group): '0';
         var price_category_id = this.order.group? this.order.group.pricecategory: undefined;
 
         this.productService.getGroupProducts(group_id, price_category_id).then(products => {

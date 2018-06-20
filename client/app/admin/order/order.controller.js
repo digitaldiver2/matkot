@@ -65,6 +65,8 @@
         'pickupdate': false,
         'returndate': false,
       }
+      this.$scope.format = 'EEE dd/MM/yy';
+
       this.retouroptions = {
         customClass: this.getDayClass,
         minDate: null,
@@ -114,6 +116,9 @@
 
       this.$q.all([orderQ, productQ, categoryQ, userGroupQ, productFamilyQ, userQ]).then(answer => {
         this.order = answer[0];
+        this.orderService.getOverlappingOrders(this.order).then(orders => {
+          this.overlappingOrders = orders;
+        });
         this.products = answer[1];
         this.$scope.pricecategories = answer[2];
         this.$scope.groups = answer[3];
@@ -131,23 +136,8 @@
         this.errMsg = err;
       });
 
-      this.$scope.returnCollapsed = true;
-      this.$scope.pickupCollapsed = true;
-      this.$scope.eventstartCollapsed = true;
-      this.$scope.eventstopCollapsed = true;
-      this.$scope.addProductCollapsed = true;
-
+      // whether info is in edit mode or not
       this.infoEditMode = false;
-
-      this.$scope.retouroptions = {
-        dateDisabled: this.closedDates
-      };
-      this.$scope.pickupoptions = {
-        dateDisabled: this.closedDates
-      }
-      this.$scope.closedDates = function (calendarDate, mode) {
-        return mode === 'day' && calendarDate.getDay() != 3;
-      };
 
       this.socket.syncUpdates('order', this.dummyOrders, (event, item, list) => {
         //actually only a full update is needed if products or shortages have changed
@@ -177,6 +167,8 @@
     }
 
     prepareOrder() {
+      console.dir(this.order);
+      console.dir(this.products);
       this.productService.syncProductsWithOrder(this.products, this.order);
       this.CalculateTotals();
       for (var i = 0; i < this.order.products.length; i++) {

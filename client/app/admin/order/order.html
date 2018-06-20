@@ -128,6 +128,13 @@
 						</div>
 					</div>
 				</div>
+				<div class="row">
+					<div class="col-md-12">
+						<ul>
+							<li ng-repeat="order in $ctrl.overlappingOrders">{{order.name}} {{$ctrl.orderService.orderOverlappingItems($ctrl.order, order).length}}</li>
+						</ul>
+					</div>
+				</div>
 				<button type="button" class="btn btn-default" ng-click="$ctrl.infoEditMode = true">
 					<i class="glyphicon glyphicon-pencil"></i>
 				</button>
@@ -158,11 +165,11 @@
 					</div>
 					<!-- Start evenement -->
 					<div class="form-group">
-						<label class="col-md-2">Start evenement: </label>
+						<label class="col-md-2">Start evenement: {{$ctrl.order.eventstart}}--</label>
 						<div class="col-md-4">
 							<p class="input-group">
 								<input type="text" class="form-control" uib-datepicker-popup="{{format}}" ng-model="$ctrl.order.eventstart" is-open="popups.eventstart"
-								 datepicker-options="$ctrl.eventstartoptions" ng-required="true" close-text="Close" readonly custom-class="$ctrl.getDayClass(date, mode)"
+								 ng-required="true" close-text="Close" readonly 
 								/>
 								<span class="input-group-btn">
 									<button type="button" class="btn btn-default" ng-click="$ctrl.openEventStart()">
@@ -202,7 +209,7 @@
 						<div class="col-md-4">
 							<p class="input-group">
 								<input type="text" class="form-control" uib-datepicker-popup="{{format}}" ng-model="$ctrl.order.pickupdate" is-open="popups.pickupdate"
-								 date-disabled="$ctrl.closedDates(date, mode)" ng-disabled="!$ctrl.isEventDefined()" datepicker-options="$ctrl.pickupoptions"
+								 ng-disabled="!$ctrl.isEventDefined()" datepicker-options="$ctrl.pickupoptions"
 								 ng-required="true" close-text="Close" readonly custom-class="$ctrl.getDayClass(date, mode)" />
 								<span class="input-group-btn">
 									<button type="button" class="btn btn-default" ng-click="$ctrl.openPickup()" ng-disabled="!$ctrl.isEventDefined()">
@@ -223,7 +230,7 @@
 						<div class="col-md-4">
 							<p class="input-group">
 								<input type="text" class="form-control" uib-datepicker-popup="{{format}}" ng-model="$ctrl.order.returndate" is-open="popups.returndate"
-								 date-disabled="$ctrl.closedDates(date, mode)" ng-disabled="!$ctrl.isEventDefined()" datepicker-options="$ctrl.retouroptions"
+								 ng-disabled="!$ctrl.isEventDefined()" datepicker-options="$ctrl.retouroptions"
 								 ng-required="true" close-text="Close" readonly custom-class="$ctrl.getDayClass(date, mode)" />
 								<span class="input-group-btn">
 									<button type="button" class="btn btn-default" ng-click="$ctrl.openReturn()" ng-disabled="!$ctrl.isEventDefined()">

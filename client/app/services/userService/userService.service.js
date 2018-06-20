@@ -65,6 +65,8 @@ angular.module('matkotApp.userService', ['matkotApp.mailService'])
                 if (index > -1) {
                     this.users[index] = updated_user;
                     console.log('user updated');
+                } else {
+                    this.users.push(updated_user);
                 }
             });
         }

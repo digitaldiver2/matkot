@@ -1,0 +1,8 @@
+#main {
+	max-height: 80vh;
+    overflow-y: scroll;
+}
+
+#selection {
+    min-height: 200px;
+}
