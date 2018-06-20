@@ -79,6 +79,7 @@
 
         });
       });
+      this.distinctItems = this.distinctItems.filter(item => item.orders.length > 1);
 
     }
 

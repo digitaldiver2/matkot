@@ -141,6 +141,7 @@
     <div id="selection">
         <div class="row">
             <div class="col-md-12" ng-show="$ctrl.selectedItem">
+                <h3>{{$ctrl.selectedItem.product.name}}</h3>
                 <table class="table table-striped table-hover">
                     <thead>
                         <tr>
@@ -152,10 +153,10 @@
                         </tr>
                     </thead>
                     <tbody>
-                        <tr ng-repeat="entry in $ctrl.selectedItem.orders">
+                        <tr ng-repeat="entry in $ctrl.selectedItem.orders | orderBy:'order.pickupdate'">
                             <td>{{entry.order.name}}</td>
-                            <td>{{entry.order.pickupdate | date:'dd/MM/yy'}}}}</td>
-                            <td>{{entry.order.returndate | date:'dd/MM/yy'}}}}</td>
+                            <td>{{entry.order.pickupdate | date:'dd/MM/yy'}}</td>
+                            <td>{{entry.order.returndate | date:'dd/MM/yy'}}</td>
                             <td>{{entry.ordered}}</td>
                             <td>{{entry.approved}}</td>
                         </tr>
