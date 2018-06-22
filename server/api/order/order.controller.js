@@ -55,7 +55,7 @@ function sendNewRequestMails(order) {
       to: order.owner.email,
       subject: subjectClient,
       body:
-      `Beste ${order.owner.name},
+        `Beste ${order.owner.name},
 
 wij hebben uw aanvraag goed ontvangen. We zullen u zo snel mogelijk een antwoord sturen.
 
@@ -83,7 +83,7 @@ function sendRequestApprovedMails(order) {
       to: order.owner.email,
       subject: `Aanvraag ${order.fulltitle} goedgekeurd`,
       body:
-      `Beste ${order.owner.name},
+        `Beste ${order.owner.name},
 
 uw aanvraag werd goedgekeurd. U kan op onderstaande link terugvinden welke materialen werden goedgekeurd.
 Uw aanvraag: ${config.host}/request/info/${order._id}
@@ -133,7 +133,7 @@ function sendNewCommentMails(order) {
       var mail = {
         to: config.adminEmail,
         subject: subject,
-        body: body + admin_url 
+        body: body + admin_url
       };
 
       mailController.sendMail(mail).then(() => {
@@ -210,7 +210,7 @@ function addCommentToOrder(req, postSave) {
     entity.comments.push({ creator: req.user._id, body: req.body.body, date: now });
     return entity.save()
       .then(updated => {
-        if (postSave!= null) {
+        if (postSave != null) {
           postSave(updated);
         }
         return updated;
@@ -253,14 +253,34 @@ function handleError(res, statusCode) {
 
 // Gets a list of Orders
 export function index(req, res) {
-  return Order.find()
-    .populate('group', { 'name': true })
-    .populate('owner', { 'name': true, 'email': true, 'phone': true })
-    .populate('products.product')
-    .populate('comments.creator', 'name')
-    .exec()
-    .then(respondWithResult(res))
-    .catch(handleError(res));
+  if (req.user.role === 'admin') {
+    return Order.find()
+      .populate('group', { 'name': true })
+      .populate('owner', { 'name': true, 'email': true, 'phone': true })
+      .populate('products.product')
+      .populate('comments.creator', 'name')
+      .exec()
+      .then(respondWithResult(res))
+      .catch(handleError(res));
+  } else {
+    console.log(req.user._id);
+    let query = {
+      $or: [
+        {owner: req.user._id},
+      ]
+    };
+    req.user.groups.forEach(groupid => {
+      query['$or'].push({group: groupid});
+    });
+    return Order.find(query)
+      .populate('group', { 'name': true })
+      .populate('owner', { 'name': true, 'email': true, 'phone': true })
+      .populate('products.product')
+      .populate('comments.creator', 'name')
+      .exec()
+      .then(respondWithResult(res))
+      .catch(handleError(res));
+  }
 }
 
 // Gets a list of Orders for user

@@ -15,7 +15,7 @@
 	<tbody>
 		<!-- <tr ng-repeat="item in list | orderBy:sortType:sortReversed" ng-click="listOptions.itemClickEvent(item)"> -->
 		<tr ng-repeat="item in list | orderBy:sortType:sortReversed" ng-click="clickEvent({item: item})">
-			<td ng-repeat="column in listOptions.columns">{{item[column.member]}}</td>
+			<td ng-repeat="column in listOptions.columns">{{traverse(item, column.member)}}</td>
 			<td ng-show="deletable && deletable({item:item})">
 				<a ng-click="deleteItem({item:item}); $event.stopPropagation();" class="trash"><span class="fa fa-trash fa-2x"></span></a>
 			</td>

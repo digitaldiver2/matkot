@@ -7,10 +7,10 @@ angular.module('matkotApp')
       restrict: 'E',
       transclude: true,
       scope: {
-      	list: '=',
-      	clickEvent: '&',
-      	deletable: '&',
-      	deleteItem: '&',
+        list: '=',
+        clickEvent: '&',
+        deletable: '&',
+        deleteItem: '&',
         listOptions: '='
       },
       link: function (scope, element, attrs) {
@@ -23,6 +23,18 @@ angular.module('matkotApp')
           $scope.sortType = 'order.' + column;
           $scope.sortReversed = !$scope.sortReversed;
         }
+
+        $scope.traverse = function (obj, keys) {
+          return keys.split('.').reduce(function (cur, key) {
+            if (cur[key] == undefined) {
+              return '';
+            } else {
+              return cur[key];
+            }
+
+          }, obj);
+        };
+
       }
     };
   });
