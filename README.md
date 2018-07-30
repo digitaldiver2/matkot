@@ -4,15 +4,19 @@ This project was generated with the [Angular Full-Stack Generator](https://githu
 
 ## Getting Started
 
+
 ### Prerequisites
 
+- [nvm](https://github.com/creationix/nvm)
 - [Git](https://git-scm.com/)
 - [Node.js and npm](nodejs.org) Node ^4.2.3, npm ^2.14.7
 - [Bower](bower.io) (`npm install --global bower`)
-- [Grunt](http://gruntjs.com/) (`npm install --global grunt-cli`)
+- [Grunt](http://gruntjs.com/) (`npm install --global grunt-cli@1.2.0 grunt@0.4.5`)
 - [MongoDB](https://www.mongodb.org/) - Keep a running daemon with `mongod`
 
 ### Developing
+
+* install nvm in your home directory. you might need to source your bash profile again. navigate back to this repo and execute "nvm install"
 
 1. Run `npm install` to install server dependencies.
 
