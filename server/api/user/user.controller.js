@@ -233,6 +233,23 @@ export function changePassword(req, res, next) {
 }
 
 /**
+ * Admin reset user password
+ */
+export function adminChangePassword(req, res, next) {
+  let userId = req.params.id;
+  var password = String(req.body.password);
+
+  return User.findById(userId).exec()
+    .then(user => {
+        user.password = password;
+        return user.save()
+          .then(() => {
+            res.status(204).end();
+          })
+          .catch(validationError(res));
+    });
+}
+/**
  * update data
  */
 

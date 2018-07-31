@@ -116,6 +116,18 @@ angular.module('matkotApp.userService', ['matkotApp.mailService'])
             }
         }
 
+        this.adminChangePassword = function (userid, password) {
+            if (userid && password) {
+                return $http.put(`/api/users/admin/resetpassword/${userid}`, {'password': password}).then(res => {
+                    return true;
+                }, err => {
+                    return $q.reject(err.data);
+                });
+            } else {
+                return $q.reject('userid or password missing')
+            }
+        }
+
         this.requestToken = function (email) {
             if (email) {
                 return $http.get('/api/users/requestreset/' + email)

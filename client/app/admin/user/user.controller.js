@@ -51,6 +51,13 @@
       }
     }
 
+    adminResetPassword() {
+      this.userService.adminChangePassword(this.$scope.user._id, this.$scope.password).then(result => {
+        console.log('password reset ok!');
+        alert('password reset succesful');
+      });
+    }
+
 
     getGroups() {
       this.$scope.user.groups = [];
