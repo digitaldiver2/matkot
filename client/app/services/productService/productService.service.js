@@ -161,11 +161,8 @@ angular.module('matkotApp.productService', [])
                 shopproduct.approved = productitem.approved;
                 shopproduct.received = productitem.received;
                 shopproduct.returned = productitem.returned;
-            } else if (shopproduct.ordered && shopproduct.ordered > 0) {
-                shopproduct.ordered = 0;
-                shopproduct.approved = 0;
-                shopproduct.received = 0;
-                shopproduct.returned = 0;
+            } else {
+                console.log(`product with id ${productitem.product._id} (${productitem.product.name}) not found'`)
             }
         }
     }
