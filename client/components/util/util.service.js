@@ -53,7 +53,16 @@ function UtilService($window) {
           url.protocol === o.protocol;
       });
       return (origins.length >= 1);
-    }
+    },
+		sortAsInt(a, b) {
+      if (a && b) {
+        const sA = isNaN(Number(a.value)) ? a.value : Number(a.value);
+        const sB = isNaN(Number(b.value)) ? b.value : Number(b.value);
+        return sA < sB ? -1 : sA === sB ? 0 : 1;
+      } else {
+        return 0;
+      }
+		},
   };
 
   return Util;

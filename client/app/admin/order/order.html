@@ -297,14 +297,14 @@
 					<thead>
 						<tr>
 							<th>
-								<a href="#" ng-click="sortType = 'product.code'; sortReverse = !sortReverse">
+								<a href="#" ng-click="sortType = 'product.code'; sortReverse = !sortReverse; sortFct=$ctrl.sortBySKU">
 									SKU
 									<span ng-show="sortType == 'product.code' && !sortReverse" class="fa fa-caret-down"></span>
 									<span ng-show="sortType == 'product.code' && sortReverse" class="fa fa-caret-up"></span>
 								</a>
 							</th>
 							<th>
-								<a href="#" ng-click="sortType = 'product.name'; sortReverse = !sortReverse">
+								<a href="#" ng-click="sortType = 'product.name'; sortReverse = !sortReverse; sortFct=undefined">
 									Naam
 									<span ng-show="sortType == 'product.name' && !sortReverse" class="fa fa-caret-down"></span>
 									<span ng-show="sortType == 'product.name' && sortReverse" class="fa fa-caret-up"></span>
@@ -326,7 +326,7 @@
 					</thead>
 					<tbody>
 						<!-- <tr ng-repeat-start="productitem in $ctrl.order.products | orderBy:sortType:sortReverse | filter:searchProduct2 "> -->
-						<tr ng-repeat="productitem in $ctrl.order.products | filter:$ctrl.isItemNotDone | orderBy:sortType:sortReverse | filter:searchProduct2 ">
+						<tr ng-repeat="productitem in $ctrl.order.products | filter:$ctrl.isItemNotDone | orderBy:sortType:sortReverse:sortFct | filter:searchProduct2 ">
 							<td>{{productitem.product.code}}</td>
 							<td>{{productitem.product.name}}</td>
 							<td ng-if="$ctrl.showAvailability">{{productitem.product.stock}}</td>

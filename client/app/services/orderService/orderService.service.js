@@ -138,7 +138,6 @@ angular.module('matkotApp.orderService', [])
 
 					this.calcUnResolvedShortages(order);
 				}
-				console.dir(order);
 				return order;
 			});
 
@@ -609,7 +608,6 @@ ${order.owner.name} - ${order.group ? order.group.name + ' - ' : ''}${pickupDate
 				},
 				pageSize: 'A4'
 			};
-			console.dir(docDefinition);
 			pdfMake.createPdf(docDefinition).download(`${order.ordernumber ? order.ordernumber + '_' : ''}${order.name}`);
 		}
 

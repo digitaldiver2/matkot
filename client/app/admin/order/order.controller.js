@@ -2,17 +2,19 @@
 (function () {
 
   class OrderComponent {
-    constructor($scope, $http, $location, $stateParams, orderService, productService, userService, socket, $q) {
+    constructor($scope, $http, $location, $stateParams, orderService, productService, userService, socket, $q, Util) {
       this.$scope = $scope;
       this.$http = $http;
       this.$location = $location;
       this.id = $stateParams.id;
+      this.sortFct = undefined;
 
       this.orderService = orderService;
       this.userService = userService;
       this.productService = productService;
       this.socket = socket;
       this.$q = $q;
+      this.sortBySKU = Util.sortAsInt;
 
       this.options = {
         initDate: new Date(),
@@ -167,8 +169,6 @@
     }
 
     prepareOrder() {
-      console.dir(this.order);
-      console.dir(this.products);
       this.productService.syncProductsWithOrder(this.products, this.order);
       this.CalculateTotals();
       for (var i = 0; i < this.order.products.length; i++) {
