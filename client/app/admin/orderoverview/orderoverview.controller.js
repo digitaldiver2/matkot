@@ -1,106 +1,158 @@
 'use strict';
-(function(){
+(function () {
 
-class OrderoverviewComponent {
-  constructor($http, $scope, $location, orderService) {
-  	this.$http = $http;
-  	this.$scope = $scope;
-    this.$location = $location;
-    this.orderService = orderService;
+  class OrderoverviewComponent {
+    constructor($q, $http, $scope, $location, orderService, productService, userService) {
+      this.$q = $q;
+      this.$http = $http;
+      this.$scope = $scope;
+      this.$location = $location;
 
-  	this.orders = [];
+      this.orderService = orderService;
+      this.productService = productService;
+      this.userService = userService;
 
-    this.TAB_APPROVED = 'APPROVED';
-    this.TAB_REQUESTED = 'REQUESTED';
-    this.TAB_DELIVERED = 'DELIVERED';
-    this.TAB_SHORTS = 'SHORTS';
-    this.TAB_DRAFTS = 'DRAFTS';
-    this.TAB_PREVS = 'PREVS';
-    this.TAB_SEARCH = 'SEARCH';
+      // query object
+      this.q = {};
 
-    this.currenttab = this.TAB_REQUESTED;
+      this.tabmap = {
+        APPROVED: {
+          filter: {
+            state: 'APPROVED'
+          },
+          title: 'Aangevraagd',
+          showLength: true
+        },
+        REQUESTED: {
+          filter: {
+            state: 'ORDERED',
+          },
+          title: 'Komend',
+          showLength: true
+        },
+        DELIVERED: {
+          filter: {
+            state: 'DELIVERED',
+          },
+          title: 'Uitgeleend',
+          showLength: true
+        },
+        SHORTS: {
+          filter: {
+            state: 'OPEN',
+          },
+          title: 'Tekorten',
+          showLength: true
+        },
+        DRAFTS: {
+          filter: {
+            state: 'DRAFT',
+          },
+          title: 'Concepten',
+          showLength: true
+        },
+        PREVS: {
+          filter: {
+            state: 'CLOSED',
+          },
+          title: 'Volledig',
+          showLength: true
+        },
+        SEARCH: {
+          filter: this.query,
+          title: 'Zoeken',
+          showLength: false
+        }
+      }
 
-    //the orders on the selected tab
-    this.tabOrders = [];
-    this.tabTitle = '';
+      this.tabs = [
+        'APPROVED',
+        'REQUESTED',
+        'DELIVERED',
+        'SHORTS',
+        'DRAFTS',
+        'PREVS',
+        'SEARCH'
+      ];
 
-  }
+      this.currenttab = 'APPROVED';
 
-  $onInit () {
-  	this.orderService.getOrders().then (orders => {
-  		this.orders = orders;
-      this.drafts = this.orders.filter(function (order) { return order.state=='DRAFT'})
-      this.requested = this.orders.filter(function (order) { return order.state=='ORDERED'});
-      this.approved = this.orders.filter(function (order) { return order.state=='APPROVED'});
-      this.delivered = this.orders.filter(function (order) { return order.state=='DELIVERED'});
-      this.shorts = this.orders.filter(function (order) { return order.state=='OPEN'});
-      this.prevs = this.orders.filter(function (order) { return order.state=='CLOSED'});
-      this.others = this.orders.filter(function(order) { 
-        return 
-          order.state != 'DRAFT' && 
-          order.state != 'ORDERED' &&
-          order.state != 'APPROVED' &&
-          order.state != 'DELIVERED' &&
-          order.state != 'OPEN' &&
-          order.state != 'CLOSED' })
-      this.selectTab(this.currenttab);  
-    });
-  }
+      this.tabTitle = '';
+      this.tabFilter = undefined;
+      this.orders = [];
+      this.errMsg = undefined;
 
-  selectTab(tab) {
-    this.currenttab = tab;
-    switch (tab) {
-      case this.TAB_APPROVED:
-        this.tabOrders = this.approved;
-        this.tabTitle = 'Aangevraagd';
-        break;
-      case this.TAB_REQUESTED:
-        this.tabOrders = this.requested;
-        this.tabTitle = 'Aangevraagd';
-        break;
-      case this.TAB_DELIVERED:
-        this.tabOrders = this.delivered;
-        this.tabTitle = 'Uitgeleend';
-        break;
-      case this.TAB_SHORTS:
-        this.tabOrders = this.shorts;
-        this.tabTitle = 'Tekorten';
-        break;
-      case this.TAB_DRAFTS:
-        this.tabOrders = this.drafts;
-        this.tabTitle = 'Concepten';
-        break;
-      case this.TAB_PREVS:
-        this.tabOrders = this.prevs;
-        this.tabTitle = 'Volledig';
-        break;
-      case this.TAB_SEARCH:
-        this.tabOrders = this.orders;
-        this.tabTitle = 'Zoeken'
-        break;
+    }
+
+    $onInit() {
+      let orderQ = this.orderService.getOrders();
+      let productQ = this.productService.getProducts();
+      let categoryQ = this.productService.getPriceCategories();
+      let userGroupQ = this.userService.getUserGroups();
+      let productFamilyQ = this.productService.getProductFamilies();
+      let userQ = this.userService.getUsers();
+
+      this.$q.all([orderQ, productQ, categoryQ, userGroupQ, productFamilyQ, userQ]).then(answer => {
+        this.orders = answer[0];
+        this.products = answer[1];
+        this.pricecategories = answer[2];
+        this.groups = answer[3];
+        this.productcategories = answer[4];
+        this.users = answer[5];
+
+        this.groups.push({name: 'Prive', _id: 'Prive'}, {name: 'All', _id: 'All'});
+        // calculate order array lengths for each filter
+        this.tabs.forEach(element => {
+          let mapItem = this.tabmap[element];
+          if (mapItem.showLength) {
+            mapItem.length = this.orders.filter(function (order) { return order.state == mapItem.filter.state }).length;
+          }
+        });
+        this.selectTab(this.currenttab);
+
+      }, err => {
+        this.errMsg = err;
+      });
+    }
+
+    query = (order, index, array) => {
+      let result = true;
+      // user
+      if (this.q.owner) {
+        result &= this.q.owner._id === order.owner._id;
+      }
+      if (this.q.group) {
+        let tmp = true;
+        if (this.q.group._id === 'Prive') {
+          tmp = order.hasOwnProperty('group') === false;
+        } else if (this.q.group._id === 'All') {
+          tmp = true
+        } else {
+          tmp = order.group && this.q.group._id === order.group._id;
+        }
+        result &= tmp;
+      }
+      if (this.q.name) {
+        result &= order.name.toLowerCase().search(this.q.name.toLowerCase())> -1;
+      }
+      return result;
+    }
+
+    selectTab(tab) {
+      this.currenttab = tab;
+      this.tabTitle = this.tabmap[tab].title;
+      this.tabFilter = this.tabmap[tab].filter;
+    }
+
+    isTabVisible(tab) {
+      return this.currenttab === tab;
     }
   }
 
-  isTabVisible(tab) {
-    return this.currenttab === tab;
-  }
-
-  open (id) {
-    this.$location.path('/admin/order/' + id);
-  }
-
-  Sort(v1, v2) {
-    // todo: handle dates (regex)
-    console.log(v1, v2);
-    console.log(v1.value, v2.value);
-    return naturalSort()(v1.value, v2.value);
-  }
-}
-
-angular.module('matkotApp.admin')
-  .component('orderoverview', {
-    templateUrl: 'app/admin/orderoverview/orderoverview.html',
-    controller: OrderoverviewComponent
-  });
+  angular.module('matkotApp.admin')
+    .component('orderoverview', {
+      templateUrl: 'app/admin/orderoverview/orderoverview.html',
+      controller: OrderoverviewComponent
+    });
 
 })();

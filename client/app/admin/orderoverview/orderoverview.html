@@ -3,95 +3,51 @@
 		<div class="col-sm-3 col-md-2 sidebar">
 			<h2>Aanvragen</h2>
 			<ul class="nav nav-stacked nav-pills">
-				<li role="presentation" ng-class="{active: $ctrl.isTabVisible($ctrl.TAB_APPROVED)}">
-					<a ng-click="$ctrl.selectTab($ctrl.TAB_APPROVED)">Komend<span class="badge">{{$ctrl.approved.length}}</span></a>
-				</li>
-				<li role="presentation" ng-class="{active: $ctrl.isTabVisible($ctrl.TAB_REQUESTED)}">
-					<a ng-click="$ctrl.selectTab($ctrl.TAB_REQUESTED)">Aangevraagd<span class="badge">{{$ctrl.requested.length}}</span></a>
-				</li>
-				<li role="presentation" ng-class="{active: $ctrl.isTabVisible($ctrl.TAB_DELIVERED)}">
-					<a ng-click="$ctrl.selectTab($ctrl.TAB_DELIVERED)">Uitgeleend<span class="badge">{{$ctrl.delivered.length}}</span></a>
-				</li>
-				<li role="presentation" ng-class="{active: $ctrl.isTabVisible($ctrl.TAB_SHORTS)}">
-					<a ng-click="$ctrl.selectTab($ctrl.TAB_SHORTS)">Tekorten<span class="badge">{{$ctrl.shorts.length}}</span></a>
-				</li>
-				<li role="presentation" ng-class="{active: $ctrl.isTabVisible($ctrl.TAB_DRAFTS)}">
-					<a ng-click="$ctrl.selectTab($ctrl.TAB_DRAFTS)">Concept<span class="badge">{{$ctrl.drafts.length}}</span></a>
-				</li>
-				<li role="presentation" ng-class="{active: $ctrl.isTabVisible($ctrl.TAB_PREVS)}">
-					<a ng-click="$ctrl.selectTab($ctrl.TAB_PREVS)">Volledig<span class="badge">{{$ctrl.prevs.length}}</span></a>
-				</li>
-				<li role="presentation" ng-class="{active: $ctrl.isTabVisible($ctrl.TAB_SEARCH)}">
-					<a ng-click="$ctrl.selectTab($ctrl.TAB_SEARCH)">Zoeken</a>
+				<li ng-repeat="tab in $ctrl.tabs" role="presentation" ng-class="{active: $ctrl.isTabVisible(tab)}">
+					<a ng-click="$ctrl.selectTab(tab)">{{$ctrl.tabmap[tab].title}}
+						<span ng-show="$ctrl.tabmap[tab].showLength" class="badge">{{$ctrl.tabmap[tab].length}}</span>
+					</a>
 				</li>
 			</ul>
 		</div>
 		<div class="col-sm-9 col-md-10 content">
 			<h3>{{$ctrl.tabTitle}}</h3>
-			<table class="table table-hover table-condensed" ng-show="$ctrl.tabOrders.length">
-				<thead>
-					<tr>
-						<th>
-							<a href="#" ng-click="sortType = 'order.ordernumber'; sortReverse = !sortReverse">
-									Nr.
-									<span ng-show="sortType == 'order.ordernumber' && !sortReverse" class="fa fa-caret-down"></span>
-									<span ng-show="sortType == 'order.ordernumber' && sortReverse" class="fa fa-caret-up"></span>
-							</a>
-						</th>
-						<th>
-							<a href="#" ng-click="sortType = 'order.name'; sortReverse = !sortReverse">
-									Order
-									<span ng-show="sortType == 'order.name' && !sortReverse" class="fa fa-caret-down"></span>
-									<span ng-show="sortType == 'order.name' && sortReverse" class="fa fa-caret-up"></span>
-							</a>
-						</th>
-						<th>
-							<a href="#" ng-click="sortType = 'order.owner.name'; sortReverse = !sortReverse">
-									Verantw.
-									<span ng-show="sortType == 'order.owner.name' && !sortReverse" class="fa fa-caret-down"></span>
-									<span ng-show="sortType == 'order.owner.name' && sortReverse" class="fa fa-caret-up"></span>
-							</a>
-						</th>
-						<th>
-							<a href="#" ng-click="sortType = 'order.group.name'; sortReverse = !sortReverse">
-									Groep
-									<span ng-show="sortType == 'order.group.name' && !sortReverse" class="fa fa-caret-down"></span>
-									<span ng-show="sortType == 'order.group.name' && sortReverse" class="fa fa-caret-up"></span>
-							</a>
-						</th>
-						<th>
-							<a href="#" ng-click="sortType = 'order.pickupdate'; sortReverse = !sortReverse">
-									Van
-									<span ng-show="sortType == 'order.pickupdate' && !sortReverse" class="fa fa-caret-down"></span>
-									<span ng-show="sortType == 'order.pickupdate' && sortReverse" class="fa fa-caret-up"></span>
-							</a>
-						</th>
-						<th>
-							<a href="#" ng-click="sortType = 'order.returndate'; sortReverse = !sortReverse">
-									Tot
-									<span ng-show="sortType == 'order.returndate' && !sortReverse" class="fa fa-caret-down"></span>
-									<span ng-show="sortType == 'order.returndate' && sortReverse" class="fa fa-caret-up"></span>
-							</a>
-						</th>
-						<th>
-							#producten
-						</th>
-					</tr>
-				</thead>
-				<tbody>
-					<tr ng-repeat="order in $ctrl.tabOrders | orderBy: sortType:sortReverse" ng-click="$ctrl.open(order._id)">
-						<td>{{order.ordernumber}}</td>
-						<td>{{order.name}}</td>
-						<td>{{order.owner.name}}</td>
-						<td>{{order.group.name}}</td>
-						<td>{{order.pickupdate | date:'dd/MM/yy'}}</td>
-						<td>{{order.returndate | date:'dd/MM/yy'}}</td>
-						<td>{{order.products.length}}</td>
-					</tr>
-				</tbody>
-			</table>
-			<div ng-hide="$ctrl.tabOrders.length">
-				Er zijn geen items.
+			<div class="row" ng-show="$ctrl.isTabVisible('SEARCH')">
+				<div class="col-md-12">
+					<form id="info" class="form-horizontal">
+						<div class="form-group">
+							<label for="owner" class="col-md-2">Eigenaar</label>
+							<div class="col-md-4">
+								<select ng-model="$ctrl.q.owner" class="form-control" ng-options="user as user.name for user in $ctrl.users |orderBy: 'name' track by user._id ">
+								</select>
+							</div>
+						</div>
+						<div class="form-group">
+							<label for="category" class="col-md-2">Vereniging *</label>
+							<div class="col-md-4">
+								<select id="Category" class="form-control" ng-model="$ctrl.q.group" ng-options="group as group.name for group in $ctrl.groups | orderBy: 'name' track by group._id">
+									<option value="$ctrl.All">All</option>
+									<option value="$ctrl.Prive">Prive</option>
+								</select>
+							</div>
+						</div>
+						<div class="form-group">
+							<label for="Naam" class="col-md-2">Naam evenement *</label>
+							<div class="col-md-4">
+								<input type="text" class="form-control" id="NaamEvenement" placeholder='Evenement' ng-model='$ctrl.q.name'>
+							</div>
+						</div>
+						<button class="btn btn-default btn-small" ng-click="$ctrl.search()">Search</button>
+						<button class="btn btn-info btn-small" ng-click="$ctrl.q = {}">Reset</button>
+						<p>{{$ctrl.q |json}}</p>
+					</form>
+				</div>
+			</div>
+			<div class="row">
+				<div class="col-md-12">
+					<admin-orders orders="$ctrl.orders" search="$ctrl.tabFilter"></admin-orders>
+				</div>
 			</div>
 		</div>
+	</div>
 </div>
