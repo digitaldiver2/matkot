@@ -1,0 +1,29 @@
+<div class="row">
+    <div class="col-md-8">
+        <p class="input-group">
+            <input type="text" class="form-control" uib-datepicker-popup="{{$ctrl.format}}" ng-model="$ctrl.value" is-open="$ctrl.showPopup"
+                datepicker-options="$ctrl.datepickeroptions" ng-required="true" close-text="Close" readonly custom-class="$ctrl.dayclassfct({date:date, mode:mode})"
+                ng-change="$ctrl.ondatechanged({date: $ctrl.value})" date-disabled="$ctrl.disabledatesfct({date: date, mode:mode})"
+            />
+            <span class="input-group-btn">
+                <button type="button" ng-disabled="!$ctrl.enabled" class="btn btn-default" ng-click="$ctrl.showPopup = true">
+                    <i class="glyphicon glyphicon-calendar"></i>
+                </button>
+            </span>
+        </p>
+    </div>
+    <div class="col-md-4" ng-show="!$ctrl.dateonly">
+        <uib-timepicker 
+            ng-model="$ctrl.value" 
+            ng-change="$ctrl.ondatechanged({date: $ctrl.value})" 
+            show-meridian="ismeridian" 
+            show-spinners="false" 
+            ng-disabled="!$ctrl.enabled || $ctrl.fixedtime"
+            >
+        </uib-timepicker>
+    </div>
+</div>
+<div class="row">
+    <div class="col-md-12">
+    </div>
+</div>

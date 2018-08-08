@@ -17,88 +17,40 @@
 				 required="true">
 			</div>
 		</div>
-
 		<!-- Start evenement -->
 		<div class="form-group">
 			<label class="col-md-2">Start evenement: </label>
 			<div class="col-md-4">
-				<p class="input-group">
-					<input type="text" class="form-control" uib-datepicker-popup="{{format}}" ng-model="request.eventstart" is-open="popups.eventstart"
-					 datepicker-options="$ctrl.eventstartoptions" ng-required="true" close-text="Close" readonly custom-class="$ctrl.getDayClass(date, mode)"/>
-					<span class="input-group-btn">
-						<button type="button" ng-disabled="!isDraft" class="btn btn-default" ng-click="$ctrl.openEventStart()">
-							<i class="glyphicon glyphicon-calendar"></i>
-						</button>
-					</span>
-				</p>
-			</div>
-			<div class="col-md-2">
-				<uib-timepicker ng-model="request.eventstart" ng-change="$ctrl.changedTime()" show-meridian="ismeridian" show-spinners="false"
-				 ng-disabled="!isDraft">
-				</uib-timepicker>
+				<mk-datetime-picker value="request.eventstart" dayClassFct="$ctrl.getDayClass(date, mode)" datePickerOptions="$ctrl.eventstartoptions" enabled="isDraft" ondatechanged="$ctrl.eventStartChanged(date)"></mk-datetime-picker>
 			</div>
 		</div>
 		<!-- Einde evenement -->
 		<div class="form-group">
 			<label class="col-md-2">Einde evenement: </label>
 			<div class="col-md-4">
-				<p class="input-group">
-					<input type="text" class="form-control" uib-datepicker-popup="{{format}}" ng-model="request.eventstop" is-open="popups.eventstop"
-					 datepicker-options="$ctrl.eventstopoptions" ng-required="true" close-text="Close" readonly custom-class="$ctrl.getDayClass(date, mode)"/>
-					<span class="input-group-btn">
-						<button type="button" class="btn btn-default" ng-disabled="!isDraft" ng-click="$ctrl.openEventStop()">
-							<i class="glyphicon glyphicon-calendar"></i>
-						</button>
-					</span>
-				</p>
-			</div>
-			<div class="col-md-2">
-				<uib-timepicker ng-model="request.eventstop" ng-change="$ctrl.changedTime()" show-meridian="ismeridian" show-spinners="false"
-				 ng-disabled="!isDraft">
-				</uib-timepicker>
+				<mk-datetime-picker value="request.eventstop" dayClassFct="$ctrl.getDayClass(date, mode)" datePickeroptions="$ctrl.eventstopoptions" enabled="isDraft" ondatechanged="$ctrl.eventStopChanged(date)"></mk-datetime-picker>
 			</div>
 		</div>
 		<!-- Afhalen -->
 		<div class="form-group">
 			<label class="col-md-2">Afhaal tijdstip: </label>
 			<div class="col-md-4">
-				<p class="input-group">
-					<input type="text" class="form-control" uib-datepicker-popup="{{format}}" ng-model="request.pickupdate" is-open="popups.pickupdate"
-					 date-disabled="$ctrl.closedDates(date, mode)" ng-disabled="!$ctrl.isEventDefined() || !isDraft" ng-change="$ctrl.changePickupDate()"
-					 datepicker-options="$ctrl.pickupoptions" ng-required="true" close-text="Close" readonly custom-class="$ctrl.getDayClass(date, mode)"/>
-					<span class="input-group-btn">
-						<button type="button" class="btn btn-default" ng-click="$ctrl.openPickup()" ng-disabled="!$ctrl.isEventDefined() || !isDraft">
-							<i class="glyphicon glyphicon-calendar"></i>
-						</button>
-					</span>
-				</p>
-			</div>
-			<div class="col-md-2">
-				<uib-timepicker ng-model="request.pickupdate" ng-change="$ctrl.changedTime()" show-meridian="ismeridian" show-spinners="false" >
-				</uib-timepicker>
+				<mk-datetime-picker value="request.pickupdate" dayClassFct="$ctrl.getDayClass(date, mode)" datePickeroptions="$ctrl.pickupoptions" 
+					enabled="isDraft && $ctrl.isEventDefined()" 
+					disabledatesfct="$ctrl.closedDates(date, mode)"
+					ondatechanged="$ctrl.changePickupDate(date)" fixedtime="true"></mk-datetime-picker>
 			</div>
 		</div>
 		<!-- Terug brengen -->
 		<div class="form-group">
 			<label class="col-md-2">Retour tijdstip: </label>
 			<div class="col-md-4">
-				<p class="input-group">
-					<input type="text" class="form-control" uib-datepicker-popup="{{format}}" ng-model="request.returndate" is-open="popups.returndate"
-					 date-disabled="$ctrl.closedDates(date, mode)" ng-disabled="!$ctrl.isEventDefined() || !isDraft" ng-change="$ctrl.changeReturnDate()"
-					 datepicker-options="$ctrl.retouroptions" ng-required="true" close-text="Close" readonly custom-class="$ctrl.getDayClass(date, mode)"/>
-					<span class="input-group-btn">
-						<button type="button" class="btn btn-default" ng-click="$ctrl.openReturn()" ng-disabled="!$ctrl.isEventDefined() || !isDraft">
-							<i class="glyphicon glyphicon-calendar"></i>
-						</button>
-					</span>
-				</p>
-			</div>
-			<div class="col-md-2">
-				<uib-timepicker ng-model="request.returndate" ng-change="$ctrl.changedTime()" show-meridian="ismeridian" show-spinners="false">
-				</uib-timepicker>
+				<mk-datetime-picker value="request.returndate" fixedTime="true" dayclassfct="$ctrl.getDayClass(date, mode)" datepickeroptions="$ctrl.retouroptions" 
+					enabled="isDraft && $ctrl.isEventDefined()" 
+					disabledatesfct="$ctrl.closedDates(date, mode)" ondatechanged="$ctrl.changeReturnDate(date)"></mk-datetime-picker>
 			</div>
 		</div>
-		<button class="btn btn-primary btn" ng-click="$ctrl.submit()" ng-disabled="!isDraft || !info.$valid">Opslaan</button>
-		<button class="btn btn-success" ng-click="$ctrl.submit(true)" ng-disabled="!info.$valid && isDraft">Naar materiaallijst</button>
+		<button class="btn btn-primary btn" ng-click="$ctrl.submit()" ng-disabled="!isDraft || !info.$valid" type="button" >Opslaan</button>
+		<button class="btn btn-success" ng-click="$ctrl.submit(true)" ng-disabled="!info.$valid && isDraft" type="button" >Naar materiaallijst</button>
 	</form>
 </div>

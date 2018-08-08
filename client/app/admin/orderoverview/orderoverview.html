@@ -26,8 +26,6 @@
 							<label for="category" class="col-md-2">Vereniging *</label>
 							<div class="col-md-4">
 								<select id="Category" class="form-control" ng-model="$ctrl.q.group" ng-options="group as group.name for group in $ctrl.groups | orderBy: 'name' track by group._id">
-									<option value="$ctrl.All">All</option>
-									<option value="$ctrl.Prive">Prive</option>
 								</select>
 							</div>
 						</div>
