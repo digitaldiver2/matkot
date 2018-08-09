@@ -16,6 +16,12 @@
 				<div class="col-md-12">
 					<form id="info" class="form-horizontal">
 						<div class="form-group">
+							<label for="Naam" class="col-md-2">Naam evenement</label>
+							<div class="col-md-4">
+								<input type="text" class="form-control" id="NaamEvenement" placeholder='Evenement' ng-model='$ctrl.q.name'>
+							</div>
+						</div>
+						<div class="form-group">
 							<label for="owner" class="col-md-2">Eigenaar</label>
 							<div class="col-md-4">
 								<select ng-model="$ctrl.q.owner" class="form-control" ng-options="user as user.name for user in $ctrl.users |orderBy: 'name' track by user._id ">
@@ -23,19 +29,45 @@
 							</div>
 						</div>
 						<div class="form-group">
-							<label for="category" class="col-md-2">Vereniging *</label>
+							<label for="group" class="col-md-2">Vereniging</label>
 							<div class="col-md-4">
-								<select id="Category" class="form-control" ng-model="$ctrl.q.group" ng-options="group as group.name for group in $ctrl.groups | orderBy: 'name' track by group._id">
+								<select id="group" class="form-control" ng-model="$ctrl.q.group" ng-options="group as group.name for group in $ctrl.groups | orderBy: 'name' track by group._id">
 								</select>
 							</div>
 						</div>
 						<div class="form-group">
-							<label for="Naam" class="col-md-2">Naam evenement *</label>
+							<label for="category" class="col-md-2">PrijsCategorie</label>
 							<div class="col-md-4">
-								<input type="text" class="form-control" id="NaamEvenement" placeholder='Evenement' ng-model='$ctrl.q.name'>
+								<select id="category" class="form-control" ng-model="$ctrl.q.category" ng-options="category as category.name for category in $ctrl.pricecategories | orderBy: 'name' track by category._id">
+								</select>
 							</div>
 						</div>
-						<button class="btn btn-default btn-small" ng-click="$ctrl.search()">Search</button>
+						<div class="form-group">
+							<label for="state" class="col-md-2">Status</label>
+							<div class="col-md-4">
+								<select id="state" class="form-control" ng-model="$ctrl.q.state" ng-options="state for state in $ctrl.orderService.STATES">
+								</select>
+							</div>
+						</div>
+						<div class="form-group">
+							<label for="Begin" class="col-md-2">Vanaf</label>
+							<div class="col-md-4">
+								<mk-datetime-picker value="$ctrl.q.begin" ondatechanged="$ctrl.qBeginChanged(date)" dateonly="true" enabled="true"></mk-datetime-picker>
+							</div>
+						</div>
+						<div class="form-group">
+							<label for="Begin" class="col-md-2">Tot</label>
+							<div class="col-md-4">
+								<mk-datetime-picker value="$ctrl.q.end" ondatechanged="$ctrl.qEndChanged(date)" dateonly="true" enabled="true"></mk-datetime-picker>
+							</div>
+						</div>
+						<div class="form-group">
+							<label for="products" class="col-md-2">Bevat</label>
+							<div class="col-md-4">
+								<select id="products" class="form-control" ng-model="$ctrl.q.product" ng-options="product as product.name for product in $ctrl.products | orderBy: 'name' track by product._id">
+								</select>
+							</div>
+						</div>
 						<button class="btn btn-info btn-small" ng-click="$ctrl.q = {}">Reset</button>
 						<p>{{$ctrl.q |json}}</p>
 					</form>

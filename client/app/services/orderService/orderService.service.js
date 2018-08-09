@@ -11,7 +11,7 @@ angular.module('matkotApp.orderService', [])
 		this.STATE_CLOSED = 'CLOSED';
 		this.STATE_CANCELLED = 'CANCELLED';
 		this.STATE_REOPENED = 'REOPENED';
-		this.STATES = ['DRAFT', 'ORDERED', 'APPROVED', 'DELIVERED', 'OPEN', 'CLOSED', 'CANCELLED', 'REOPEN'];
+		this.STATES = ['DRAFT', 'ORDERED', 'APPROVED', 'DELIVERED', 'OPEN', 'CLOSED', 'CANCELLED', 'REOPENED'];
 
 		// get orders should always collect all the orders the current user has permissions for
 		this.orders = undefined;
@@ -24,7 +24,7 @@ angular.module('matkotApp.orderService', [])
 				order.products = order.products.filter(product => {
 					return this.OrderProductUsed(product);
 				});
-			}
+			}	
 
 			if (order._id) {
 				return $http.put('/api/orders/' + order._id, order).then(res => {
@@ -265,8 +265,8 @@ angular.module('matkotApp.orderService', [])
 			// The order can also contain the period.
 			return order.pickupdate && order.returndate && order.pickupdate !== undefined && order.returndate !== undefined && 
 				order.pickupdate !== null && order.returndate !== null && (
-				moment(order.pickupdate).isBetween(start, end) || moment(order.returndate).isBetween(start, end) ||
-				(moment(start).isBetween(order.pickupdate, order.returndate) && moment(end).isBetween(order.pickupdate, order.returndate)) ||
+				moment(order.pickupdate).isBetween(start, end, 'day', '[]') || moment(order.returndate).isBetween(start, end, 'day', '[]') ||
+				(moment(start).isBetween(order.pickupdate, order.returndate, 'day', '[]') && moment(end).isBetween(order.pickupdate, order.returndate, 'day', '[]')) ||
 				moment(order.pickupdate).isSame(start, 'day') || moment(order.returndate).isSame(end, 'day'));
 		}
 		
@@ -621,6 +621,11 @@ ${order.owner.name} - ${order.group ? order.group.name + ' - ' : ''}${pickupDate
 			const nameA = a.product.name;
 			const nameB = b.product.name;
 			return nameA < nameB ? -1 : nameA === nameB ? 0 : 1;
+		}
+
+		this.orderContainsProduct = function (order, product) {
+			let id = typeof(product) === 'object'? product._id: product;
+			return order.products.filter(item => item.product._id === id).length > 0;
 		}
 
 	});

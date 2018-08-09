@@ -2,7 +2,7 @@
 (function () {
 
   class OrderoverviewComponent {
-    constructor($q, $http, $scope, $location, orderService, productService, userService) {
+    constructor($q, $http, $scope, $location, orderService, productService, userService, stateService) {
       this.$q = $q;
       this.$http = $http;
       this.$scope = $scope;
@@ -11,9 +11,11 @@
       this.orderService = orderService;
       this.productService = productService;
       this.userService = userService;
+      this.state = stateService;
 
-      // query object
-      this.q = {};
+      // query object, read from state;
+      this.q = this.state.orderOverviewQ;
+      this.currenttab = this.state.orderOverviewTab? this.state.orderOverviewTab: 'APPROVED';
 
       this.tabmap = {
         APPROVED: {
@@ -75,7 +77,6 @@
         'SEARCH'
       ];
 
-      this.currenttab = 'APPROVED';
 
       this.tabTitle = '';
       this.tabFilter = undefined;
@@ -115,12 +116,19 @@
       });
     }
 
+    $onDestroy() {
+      this.state.orderOverviewQ = this.q;
+      this.state.orderOverviewTab = this.currenttab;
+    }
+
     query = (order, index, array) => {
       let result = true;
       // user
-      if (this.q.owner) {
-        result &= this.q.owner._id === order.owner._id;
+      if (this.q.owner && this.q.owner._id !== order.owner._id) {
+        return false;
       }
+
+      // group
       if (this.q.group) {
         let tmp = true;
         if (this.q.group._id === 'Prive') {
@@ -130,12 +138,49 @@
         } else {
           tmp = order.group && this.q.group._id === order.group._id;
         }
-        result &= tmp;
+        if (!tmp) {
+          return false;
+        } else {
+          result &= tmp;
+        }
       }
-      if (this.q.name) {
-        result &= order.name.toLowerCase().search(this.q.name.toLowerCase())> -1;
+      // name contains ..
+      if (this.q.name && order.name.toLowerCase().search(this.q.name.toLowerCase()) === -1) {
+        return false;
       }
+
+      // begin after
+      if (this.q.begin && moment(order.pickupdate).isBefore(this.q.begin, 'day')) {
+        return false;
+      }
+
+      // end before
+      if (this.q.end && moment(order.returndate).isBefore(this.q.end, 'day')) {
+        return false;
+      }
+
+      // contains product
+      if (this.q.product && !this.orderService.orderContainsProduct(order, this.q.product)) {
+        return false;
+      }
+
+      if (this.q.state && order.state !== this.q.state) {
+        return false;
+      }
+
+      if (this.q.category && order.pricecategory !== this.q.category) {
+        return false;
+      }
+
       return result;
+    }
+
+    qBeginChanged(date) {
+      this.q.begin = date;
+    }
+
+    qEndChanged(date) {
+      this.q.end = date;
     }
 
     selectTab(tab) {
