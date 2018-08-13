@@ -13,6 +13,19 @@
 
       this.$q = $q;
       this.userService = userService;
+
+      this.columns = [
+        {
+          title: 'Naam',
+          field: 'name'
+        }, {
+          title: 'Categorie',
+          field: 'pricecategory.name'
+        }, {
+          title: 'Info',
+          field: 'info'
+        }
+      ]
     }
 
     $onInit() {
@@ -41,6 +54,13 @@
         });
       });
 
+    }
+
+    onAdd(group) {
+      this.userService.approveGroup(undefined, this.$scope.user, group);
+    }
+    onRemove(group) {
+      this.userService.declineGroup(undefined, this.$scope.user, group);
     }
 
     changerole() {

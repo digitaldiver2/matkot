@@ -5,4 +5,7 @@ angular.module('matkotApp')
         // admin orderOverview state
         this.orderOverviewQ = {};
         this.orderOverviewTab = undefined;
+
+        // admin products
+        this.adminProducts = {};
     });

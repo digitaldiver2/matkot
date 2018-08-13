@@ -2,11 +2,12 @@
 (function(){
 
 class UsersComponent {
-  constructor($http, $scope, socket, $location, userService) {
+  constructor($http, $scope, socket, $location, userService, orderService) {
     this.$scope = $scope;
     this.$http = $http;
     this.$location = $location;
     this.userService = userService;
+    this.orderService = orderService;
     this.socket = socket;
     this.users = [];
     this.groups = [];
@@ -22,10 +23,25 @@ class UsersComponent {
   }
 
   $onInit() {
-    this.userService.getUsers().then(users => this.users = users);
-
-
-    this.userService.getUserGroups().then(groups => this.groups = groups);
+    //first get the orders so they are cached
+    this.orderService.getOrders().then(() => {
+      this.userService.getUsers().then(users => {
+        this.users = users;
+        this.users.forEach(
+          user => this.orderService.getUserOrders(user).then(
+            orders => {
+              user.orders = orders;
+            }
+          )
+        )
+      });
+      this.userService.getUserGroups().then(groups => {
+        this.groups = groups;
+        this.groups.forEach(group => this.orderService.getGroupOrders(group).then(
+          orders => group.orders = orders
+        ));
+      });
+    });
   }
 
   new_user () {
@@ -44,6 +60,7 @@ class UsersComponent {
         .then(response => {
           this.$http.get('/api/usergroups').then(response => {
               this.groups = response.data;
+              this.groups.forEach(group => group.orders = 0);
             });
         })
         .catch(err => {

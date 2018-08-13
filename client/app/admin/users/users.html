@@ -47,6 +47,13 @@
 								<span ng-show="userSortType == 'requested_groups.length' && userSortReverse" class="fa fa-caret-up"></span>
 							</a>
 						</th>
+						<th>
+							<a href="#" ng-click="userSortType = 'orders.length'; userSortReverse = !userSortReverse">
+								# Aanvragen
+								<span ng-show="userSortType == 'orders.length' && !userSortReverse" class="fa fa-caret-down"></span>
+								<span ng-show="userSortType == 'orders.length' && userSortReverse" class="fa fa-caret-up"></span>
+							</a>
+						</th>
 					</tr>
 				</thead>
 				<tbody>
@@ -57,6 +64,7 @@
 						<td>{{user.phone}}</td>
 						<td>{{user.email}}</td>
 						<td>{{user.requested_groups.length}}</td>
+						<td>{{user.orders.length}}</td>
 					</tr>
 				</tbody>
 			</table>
@@ -89,6 +97,13 @@
 							</a>
 						</th>
 						<th>
+							<a href="#" ng-click="groupSortType = 'orders.length'; groupSortReverse = !groupSortReverse">
+								# Aanvragen
+								<span ng-show="groupSortType == 'order.length' && !groupSortReverse" class="fa fa-caret-down"></span>
+								<span ng-show="groupSortType == 'order.length' && groupSortReverse" class="fa fa-caret-up"></span>
+							</a>
+						</th>
+						<th>
 							<a href="#" ng-click="groupSortType = 'info'; groupSortReverse = !groupSortReverse">
 								Info
 								<span ng-show="groupSortType == 'info' && !groupSortReverse" class="fa fa-caret-down"></span>
@@ -101,6 +116,7 @@
 					<tr ng-show="$ctrl.groups" ng-repeat="group in $ctrl.groups | filter:$ctrl.search | orderBy: groupSortType: groupSortReverse" ng-click="$ctrl.userService.openGroup(group)">
 						<td>{{group.name}}</td>
 						<td>{{group.pricecategory.name}}</td>
+						<td>{{group.orders.length}}</td>
 						<td>{{group.info}}</td>
 					</tr>
 				</tbody>

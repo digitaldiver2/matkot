@@ -46,7 +46,11 @@ function saveUpdates(updates) {
     var updated = _.merge(entity, updates);
     return updated.save()
       .then(updated => {
-        return updated;
+        // return updated;
+        return Product.findById(updated._id)
+          .populate('visiblegroups')
+          .populate('productfamily')
+          .populate('prices.pricecategory');
       });
   };
 }
@@ -112,7 +116,11 @@ function handleError(res, statusCode) {
 
 // Gets a list of Products
 export function index(req, res) {
-  return Product.find().exec()
+  return Product.find()
+    .populate('visiblegroups')
+    .populate('productfamily')
+    .populate('prices.pricecategory')
+    .exec()
     .then(respondWithResult(res))
     .catch(handleError(res));
 }

@@ -19,8 +19,9 @@ angular.module('matkotApp.orderService', [])
 		this.$http = $http;
 
 		this.saveOrder = function (order) {
-			// new order with only info has not products yet
+			// new order with only info has no products yet
 			if (order.products) {
+				// clean up empty product items
 				order.products = order.products.filter(product => {
 					return this.OrderProductUsed(product);
 				});
@@ -106,6 +107,7 @@ angular.module('matkotApp.orderService', [])
 		this.getOrders = function () {
 			// the serverside is responsibly for only giving the permitted orders to the website
 			if (this.orders === undefined) {
+				console.log('load orders from db');
 				return $http.get('/api/orders/')
 					.then(res => {
 						this.orders = res.data;
@@ -156,20 +158,23 @@ angular.module('matkotApp.orderService', [])
 		}
 
 
-		this.getUserOrders = function (user_id) {
+		// get user orders by promise
+		this.getUserOrders = function (user) {
+			const id = typeof(user) === 'object'? user._id: user;
 			// get orders where owner == user
 			return this.getOrders().then(orders => {
 				return orders.filter(order => {
-					return order.owner == user_id || (typeof(order.owner) === 'object' && order.owner._id === user_id);
+					return order.owner == id || (typeof(order.owner) === 'object' && order.owner._id === id);
 				});
 			});
 		}
 
-		this.getGroupOrders = function (group_id) {
+		this.getGroupOrders = function (group) {
+			const id = typeof(group) === 'object'? group._id: group;
 			// get orders where group == group_id 
 			return this.getOrders().then(orders => {
 				return orders.filter(order => {
-					return order.group && (order.group == group_id || (typeof(order.group) === 'object' && order.group._id === group_id));
+					return order.group && (order.group == id || (typeof(order.group) === 'object' && order.group._id === id));
 				});
 			});
 		}

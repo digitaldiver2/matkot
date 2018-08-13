@@ -13,8 +13,7 @@
 		</div>
 		<div class="form-group">
 			<label for="active">
-				<input type="checkbox" id="active" ng-model="$ctrl.product.active">
-				Actief
+				<input type="checkbox" id="active" ng-model="$ctrl.product.active"> Actief
 			</label>
 		</div>
 		<div class="form-group">
@@ -23,55 +22,59 @@
 		</div>
 		<div class="form-group">
 			<label for="consumable">
-				<input type="checkbox" id="consumable" ng-model="$ctrl.product.isconsumable">
-				Verbruiksgoed
+				<input type="checkbox" id="consumable" ng-model="$ctrl.product.isconsumable"> Verbruiksgoed
 			</label>
 		</div>
 		<div class="form-group" ng-show="$ctrl.product._id">
 			<label for="stock">Stock</label>
 			{{$ctrl.product.stock}} stuks
-			<br>
-			aangepast op {{$ctrl.product.stock_date | date}} door {{$ctrl.product.stock_modifier.name}}. Reden: {{$ctrl.product.stock_mod_reason}}
+			<br> aangepast op {{$ctrl.product.stock_date | date}} door {{$ctrl.product.stock_modifier.name}}. Reden: {{$ctrl.product.stock_mod_reason}}
 
-			<br>
-			Nieuw aantal: <input type="number" id="stock" ng-model="$ctrl.newStock" class="form-control">
-			Reden: <input type="text" ng-model="$ctrl.stock_mod_reason">
+			<br> Nieuw aantal:
+			<input type="number" id="stock" ng-model="$ctrl.newStock" class="form-control"> Reden:
+			<input type="text" ng-model="$ctrl.stock_mod_reason">
 			<button class="btn btn-default" type="button" ng-click="$ctrl.updateStock($ctrl.newStock, $ctrl.stock_mod_reason);">Update stock</button>
 
 		</div>
 		<h3>Product groep</h3>
-		<ul class="list-group">
-			<div ng-repeat="category in $ctrl.productcategories | orderBy:'name'">
-				<input type="checkbox" id="{{category._id}}" ng-model="category.checked">
-				{{category.name}}
-			</div>
-		</ul>
+		<mk-table items="$ctrl.product.productfamily" itemcolumns="$ctrl.productFamilyColumns" showremove="true" onremove="$ctrl.onRemoveProductFamily(item)" showadd="true"
+		 additems="$ctrl.productcategories" additemdisplayfield="'name'" onadd="$ctrl.onAddProductFamily(item)"></mk-table>
 
 		<h3>Zichtbaar voor</h3>
 		<p>Indien geen groep geselecteerd, dan is het product beschikbaar voor alle groepen.</p>
-		<ul class="list-group">
-			<div ng-repeat="group in $ctrl.groups | orderBy:'name'">
-				<input type="checkbox" id="{{group._id}}" ng-model="group.checked">
-				{{group.name}} 
-			</div>
-		</ul>
+		<mk-table items="$ctrl.product.visiblegroups" itemcolumns="$ctrl.visibleGroupsColumns" showremove="true" onremove="$ctrl.onRemoveVisibleGroup(item)" showadd="true"
+		 additems="$ctrl.groups" additemdisplayfield="'name'" onadd="$ctrl.onAddVisibleGroup(item)"></mk-table>
 		<h3>Prijzen</h3>
 		<table>
 			<tr>
 				<td>Standaard</td>
-				<td><input type="number" step="any" id="standaard" ng-model="$ctrl.product.defaultprice"></td>
+				<td>
+					<input type="number" step="any" id="standaard" ng-model="$ctrl.product.defaultprice">
+				</td>
 			</tr>
 			<tr ng-repeat="pricecategory in $ctrl.pricecategories">
 				<td>{{pricecategory.name}}</td>
-				<td><input type="number" step="any" id="standaard" ng-model="pricecategory.price" ng-disabled="!pricecategory.hasprice"></td>
-				<td><input type="checkbox" id="{{pricecategory._id}}" ng-model="pricecategory.hasprice" ng-change="$ctrl.todefaultprice(pricecategory)"></td>
+				<td>
+					<input type="number" step="any" id="standaard" ng-model="pricecategory.price" ng-disabled="!pricecategory.hasprice">
+				</td>
+				<td>
+					<input type="checkbox" id="{{pricecategory._id}}" ng-model="pricecategory.hasprice" ng-change="$ctrl.todefaultprice(pricecategory)">
+				</td>
 				<td>custom</td>
 			</tr>
 			<tr>
 				<td>Verlies of kapot</td>
-				<td><input type="number" step="any" id="replacement" ng-model="$ctrl.product.replacementprice"></td>
+				<td>
+					<input type="number" step="any" id="replacement" ng-model="$ctrl.product.replacementprice">
+				</td>
 			</tr>
 		</table>
-	<button class="btn btn-default" type="submit">Opslaan</button>
+		<button class="btn btn-default" type="submit">Opslaan</button>
 	</form>
+	<div class="row">
+		<div class="col-md-12">
+			<h2>Aangevraagd in</h2>
+			<admin-orders orders="$ctrl.product.orders"></admin-orders>
+		</div>
+	</div>
 </div>

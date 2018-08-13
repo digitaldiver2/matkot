@@ -1,0 +1,43 @@
+<div class="row">
+    <div class="col-md-12">
+        <table class="table table-hover table-condensed" ng-show="filtered.length">
+            <thead>
+                <tr>
+                    <th ng-repeat="column in $ctrl.itemcolumns">
+                        <a href="#" ng-click="$ctrl.sortType = column.field; $ctrl.sortReverse = !$ctrl.sortReverse">
+                            {{column.title}} {{sortType + ' ' + sortReverse}}
+                            <span ng-show="$ctrl.sortType === column.field && !$ctrl.sortReverse" class="fa fa-caret-down"></span>
+                            <span ng-show="$ctrl.sortType === column.field && $ctrl.sortReverse" class="fa fa-caret-up"></span>
+                        </a>
+                    </th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr ng-repeat="item in $ctrl.items | filter:$ctrl.filterobject | orderBy: $ctrl.sortType:$ctrl.sortReverse as filtered" ng-click="$ctrl.clickevent({item: item})">
+                    <td ng-repeat="column in $ctrl.itemcolumns">
+                        <div ng-switch on="column.type">
+                            <div ng-switch-when="date">{{$ctrl.getField(item, column.field) | date:'dd/MM/yy'}}</div>
+                            <div ng-switch-default>{{$ctrl.getField(item, column.field)}}</div>
+                        </div>
+                    </td>
+                    <td ng-show="$ctrl.showremove">
+                        <button type="button" class="btn btn-warning" ng-click="$ctrl.removeItem($event, item)">X</button>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+        <div ng-hide="filtered.length">
+            Er zijn geen items.
+        </div>
+
+    </div>
+</div>
+<div class="row" ng-show="$ctrl.showadd">
+    <div class="col-md-3">
+        <select class="form-control" ng-model="item2add" ng-options="item as item[$ctrl.additemdisplayfield] for item in $ctrl.additems | orderBy:$ctrl.additemdisplayfield">
+        </select>
+    </div>
+    <div class="col-md-2">
+        <button type="button" class="btn btn-default" ng-click="$ctrl.addItem($event,item2add)">Toevoegen</button>
+    </div>
+</div>

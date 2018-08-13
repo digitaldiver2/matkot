@@ -2,16 +2,20 @@
 	<div class="alert alert-danger" ng-show="errmsg !=''">
 		{{errmsg}}
 	</div>
-	<h3>Producten</h3>
 	<div class="form-group">
 		<div class="input-group">
-			<div class="input-group-addon"><i class="fa fa-search"></i></div>
-			
-			<input type="text" class="form-control" ng-model="productname.name">
-		</div>   
+			<div class="input-group-addon">
+				<i class="fa fa-search"></i>
+			</div>
+
+			<input type="text" class="form-control" ng-model="$ctrl.search.name">
+		</div>
 	</div>
-	<ul class="list-group product-list"  id="productlist">
-		<li class="list-group-item" ng-repeat="product in $ctrl.products | orderBy: 'name' | filter:productname">
+	<h3>Producten</h3>
+	<mk-table items="$ctrl.products" itemcolumns="$ctrl.productColumns" showremove="true" onremove="$ctrl.onRemoveProduct(item)" 
+		filterobject="$ctrl.search" clickevent="$ctrl.openProduct(item)"></mk-table>
+	<!-- <ul class="list-group product-list"  id="productlist">
+		<li class="list-group-item" ng-repeat="product in $ctrl.products | orderBy: 'name' | filter:$ctrl.search track by product._id">
 			<div class="row">
 				<div class="col-sm-11">
 					<strong>{{product.name}}</strong></br>
@@ -23,19 +27,13 @@
       			</div>
 			</div>
 		</li>
-	</ul>
+	</ul> -->
 	<button class="btn btn-default" ng-click="$ctrl.NewProduct()">Nieuw product</button>
 
 	<h3>Product groepen</h3>
-	<div class="form-group">
-		<div class="input-group">
-			<div class="input-group-addon"><i class="fa fa-search"></i></div>
-			
-			<input type="text" class="form-control" ng-model="categoryname.name">
-		</div>   
-	</div>
-	<ul class="list-group productcategory-list" id="categorylist">
-		<li class="list-group-item" ng-repeat="category in $ctrl.productcategories | orderBy: 'name' |filter:categoryname">
+	<mk-table items="$ctrl.productcategories" itemcolumns="$ctrl.productCategoryColumns" showremove="true" onremove="$ctrl.onRemoveCategory(item)" filterobject="$ctrl.search" clickevent="$ctrl.openProductFamily(item)"></mk-table>
+	<!-- <ul class="list-group productcategory-list" id="categorylist">
+		<li class="list-group-item" ng-repeat="category in $ctrl.productcategories | orderBy: 'name' |filter:$ctrl.search">
 			<div class="row">
 				<div class="col-sm-11">
 					<strong>{{category.name}}</strong><br>
@@ -46,6 +44,6 @@
 		      	</div>
 			</div>
 		</li>
-	</ul>
+	</ul> -->
 	<button class="btn btn-default" ng-click="$ctrl.NewGroup()">Nieuwe groep</button>
 </div>
