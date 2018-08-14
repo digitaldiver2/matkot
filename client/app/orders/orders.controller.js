@@ -63,7 +63,6 @@
       this.user.groups.forEach((group) => {
         this.orderService.getGroupOrders(group._id).then(orders => {
           group.orders = orders;
-          console.dir(group.orders)
         })
           .catch(err => {
             this.errMsg = err.data;

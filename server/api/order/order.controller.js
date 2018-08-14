@@ -168,12 +168,14 @@ function saveUpdates(updates, postSave) {
   console.log('saving updates');
 
   return function (entity) {
-    entity.products = new Array();
-    updates.products.forEach(function (product) {
-      entity.products.push(product);
-    });
-    delete updates.products;
+    console.log('5');
+    // entity.products = new Array();
+    // updates.products.forEach(function (product) {
+    //   entity.products.push(product);
+    // });
+    // delete updates.products;
 
+    console.log('4');
     if (updates.shortages != undefined) {
       entity.shortages = new Array();
       updates.shortages.forEach(function (product) {
@@ -181,20 +183,25 @@ function saveUpdates(updates, postSave) {
       });
       delete updates.shortages;
     }
-    if (typeof (updates.group) == 'object') {
-      updates.group = updates.group._id;
-    }
-    if (typeof (updates.owner) == 'object') {
-      updates.owner = updates.owner._id;
-    }
+    console.log('3');
+    // if (updates.group && typeof (updates.group) == 'object') {
+    //   updates.group = updates.group._id;
+    // }
+    console.log('2');
+    // if (typeof (updates.owner) == 'object') {
+    //   updates.owner = updates.owner._id;
+    // }
 
     var updated = _.merge(entity, updates);
+    console.log('1');
+    console.dir(updated);
     return updated.save()
       .then(updated => {
         if (postSave != null) {
           postSave(updated);
         }
         // return updated;
+        console.log('before updated');
         return Order.findById(updated._id)
           .populate('group', { 'name': true })
           .populate('owner', { 'name': true, 'email': true, 'phone': true })

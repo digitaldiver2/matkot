@@ -2,7 +2,6 @@
 
 angular.module('matkotApp.productService', [])
     .service('productService', function ($http, $q, $location) {
-        console.log('-------new productService-----------');
         // AngularJS will instantiate a singleton by calling "new" on this function
         this.$q = $q;
         this.products = undefined;
