@@ -20,14 +20,14 @@
       this.tabmap = {
         APPROVED: {
           filter: {
-            state: 'APPROVED'
+            state: 'ORDERED'
           },
           title: 'Aangevraagd',
           showLength: true
         },
         REQUESTED: {
           filter: {
-            state: 'ORDERED',
+            state: 'APPROVED',
           },
           title: 'Komend',
           showLength: true

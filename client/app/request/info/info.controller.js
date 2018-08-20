@@ -12,7 +12,6 @@
 			this.id = $stateParams.id;
 			this.$scope.request = {};
 			this.$scope.isDraft = false;
-			this.test = false;
 
 			this.getDayClass = function (date, mode) {
 				const classes = [];

@@ -5,6 +5,7 @@
     constructor() {
       this.showPopup = false;
       this.format = 'EEE dd/MM/yy';
+      // this.enabled = true;
     }
 
     $onInit() {
@@ -20,8 +21,8 @@
         value: '<',
         dayclassfct: '&',
         datepickeroptions: '<',
+        isenabled: '<',
         fixedtime: '<',
-        enabled: '<',
         disabledatesfct: '&',
         ondatechanged: '&',
         dateonly: '<'

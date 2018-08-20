@@ -21,14 +21,14 @@
 		<div class="form-group">
 			<label class="col-md-2">Start evenement: </label>
 			<div class="col-md-4">
-				<mk-datetime-picker value="request.eventstart" dayClassFct="$ctrl.getDayClass(date, mode)" datePickerOptions="$ctrl.eventstartoptions" enabled="isDraft" ondatechanged="$ctrl.eventStartChanged(date)"></mk-datetime-picker>
+				<mk-datetime-picker value="request.eventstart" dayClassFct="$ctrl.getDayClass(date, mode)" datePickerOptions="$ctrl.eventstartoptions" isenabled="isDraft" ondatechanged="$ctrl.eventStartChanged(date)"></mk-datetime-picker>
 			</div>
 		</div>
 		<!-- Einde evenement -->
 		<div class="form-group">
 			<label class="col-md-2">Einde evenement: </label>
 			<div class="col-md-4">
-				<mk-datetime-picker value="request.eventstop" dayClassFct="$ctrl.getDayClass(date, mode)" datePickeroptions="$ctrl.eventstopoptions" enabled="isDraft" ondatechanged="$ctrl.eventStopChanged(date)"></mk-datetime-picker>
+				<mk-datetime-picker value="request.eventstop" dayClassFct="$ctrl.getDayClass(date, mode)" datePickeroptions="$ctrl.eventstopoptions" isenabled="isDraft" ondatechanged="$ctrl.eventStopChanged(date)"></mk-datetime-picker>
 			</div>
 		</div>
 		<!-- Afhalen -->
@@ -36,7 +36,7 @@
 			<label class="col-md-2">Afhaal tijdstip: </label>
 			<div class="col-md-4">
 				<mk-datetime-picker value="request.pickupdate" dayClassFct="$ctrl.getDayClass(date, mode)" datePickeroptions="$ctrl.pickupoptions" 
-					enabled="isDraft && $ctrl.isEventDefined()" 
+					isenabled="isDraft && $ctrl.isEventDefined()" 
 					disabledatesfct="$ctrl.closedDates(date, mode)"
 					ondatechanged="$ctrl.changePickupDate(date)" fixedtime="true"></mk-datetime-picker>
 			</div>
@@ -46,7 +46,7 @@
 			<label class="col-md-2">Retour tijdstip: </label>
 			<div class="col-md-4">
 				<mk-datetime-picker value="request.returndate" fixedTime="true" dayclassfct="$ctrl.getDayClass(date, mode)" datepickeroptions="$ctrl.retouroptions" 
-					enabled="isDraft && $ctrl.isEventDefined()" 
+					isenabled="isDraft && $ctrl.isEventDefined()" 
 					disabledatesfct="$ctrl.closedDates(date, mode)" ondatechanged="$ctrl.changeReturnDate(date)"></mk-datetime-picker>
 			</div>
 		</div>

@@ -6,7 +6,7 @@
                 ng-change="$ctrl.ondatechanged({date: $ctrl.value})" date-disabled="$ctrl.disabledatesfct({date: date, mode:mode})"
             />
             <span class="input-group-btn">
-                <button type="button" ng-disabled="!$ctrl.enabled" class="btn btn-default" ng-click="$ctrl.showPopup = true">
+                <button type="button" ng-disabled="!$ctrl.isenabled" class="btn btn-default" ng-click="$ctrl.showPopup = true">
                     <i class="glyphicon glyphicon-calendar"></i>
                 </button>
             </span>
@@ -18,12 +18,8 @@
             ng-change="$ctrl.ondatechanged({date: $ctrl.value})" 
             show-meridian="ismeridian" 
             show-spinners="false" 
-            ng-disabled="!$ctrl.enabled || $ctrl.fixedtime"
+            ng-disabled="!$ctrl.isenabled || $ctrl.fixedtime"
             >
         </uib-timepicker>
-    </div>
-</div>
-<div class="row">
-    <div class="col-md-12">
     </div>
 </div>
